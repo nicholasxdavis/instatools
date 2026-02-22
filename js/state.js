@@ -1,0 +1,264 @@
+/**
+ * Application State Management
+ * Contains state, constants, templates, and icon mappings
+ */
+
+// --- STATE MANAGEMENT ---
+const PRESETS_KEY = "ig_news_gen_presets_vanilla_v1";
+const NOISE_SVG = `data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E`;
+
+const state = {
+    mode: 'post', // 'post' | 'highlight'
+    activeTab: 'editor',
+    isExporting: false,
+    
+    // Post State
+    post: {
+        template: 'template1', // 'template1' | 'template2' | 'template3'
+        headline: "OBAMA CLAIMS [ALIENS] ARE {REAL}",
+        caption: "He also denied that they're being held at Area 51",
+        bgImage: "https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/obama.webp",
+
+        // Template 2 state (simple: white top bar, image below, watermark BL)
+        t2: {
+            headline: "Donald Trump Says 'I Don't Like Young Handsome Men'",
+            bgImage: "https://dims.apnews.com/dims4/default/ecd7c9e/2147483647/strip/true/crop/2993x1995+0+0/resize/1020x680!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F2e%2F49%2F3567936f86ceb8625b25f35d975d%2Fff97e8a599a442ba8d7016a4b29f03c4",
+            fontFamily: 'DM Sans',
+            customFontFamily: '',
+            fontSize: 67,
+            watermarkUrl: 'https://cdn.shopify.com/s/files/1/0114/9403/1418/files/nj_logo_300x_300_1.png?v=1602025721',
+            watermarkSize: 201,
+            watermarkOpacity: 0.61,
+            showWatermark: true,
+            watermarkPosX: 3,
+            watermarkPosY: 99,
+            imagePosX: 50,
+            imagePosY: 50,
+            imageScale: 100,
+            fontWeight: 400,
+        },
+
+        // Template 3 state (Wealth style: image top, brand divider, bold yellow text bottom)
+        t3: {
+            headline: "HOW MANY MILLIONAIRES AND BILLIONAIRES EXIST IN THE WORLD",
+            bgImage: "https://cdn.britannica.com/45/223045-050-A6453D5D/Telsa-CEO-Elon-Musk-2014.jpg",
+            fontFamily: 'Oswald',
+            customFontFamily: '',
+            fontSize: 86,
+            fontStyle: 'normal',
+            fontWeight: 700,
+            headlineColor: '#FFD800',
+            bgColor: '#0a0a0a',
+            imageSplit: 57,
+            imagePosX: 89,
+            imagePosY: 0,
+            imageScale: 100,
+            brandName: 'ealth',
+            brandLetter: 'w',
+            showBrandLetter: true,
+            brandColor: '#FFFFFF',
+            showBrand: true,
+            brandSize: 37,
+            lineHeight: 1.15,
+            letterSpacing: 0,
+            showBgColor: true,
+            showBottomFade: true,
+            bottomFadeColor: '#0a0a0a',
+            bottomFadeOpacity: 1.0,
+            bottomFadeHeight: 79,
+            bottomFadePosY: 0,
+        },
+        
+        style: {
+            fontFamily: 'Archivo Black',
+            customFontFamily: '',
+            primaryColor: '#FFFFFF',
+            highlightColor: '#FF5500',
+            secondaryColor: '#3B82F6',
+            useBracketColor: true,
+            useBraceColor: true,
+            overlayColor: '#000000',
+            overlayOpacity: 0.5,
+            fontSize: 85,
+            lineHeight: 0.9,
+            letterSpacing: -0.02,
+            logoUrl: '',
+            logoSize: 150,
+            logoOpacity: 1.0,
+            showSwipeBadge: true,
+            swipeText: "Swipe Left",
+            swipeFontSize: 20,
+            swipeFontFamily: 'Inter',
+            customSwipeFontFamily: '',
+            swipeTextColor: '#FFFFFF',
+            swipeColor: '#FFFFFF',
+            swipeOpacity: 0.9,
+            swipeLetterSpacing: 0.1,
+            swipeShowIcon: true,
+            swipeIconSize: 24,
+            showNewsBadge: true,
+            showSource: true,
+            badgeText: "NEWS",
+            sourceText: "SOURCE: GITHUB",
+            imagePosX: 50, imagePosY: 50, imageScale: 100,
+            bgOpacity: 1.0,
+            bgNoise: 0.0,
+            overlayImgUrl: 'https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/aliens.jpg',
+            overlayImgSize: 450,
+            overlayImgPosX: 74, overlayImgPosY: 65,
+            overlayBorderWidth: 12,
+            overlayBorderColor: '#FF5500',
+            showOverlayBorder: true,
+            showOverlayGlow: false,
+            overlayGlowColor: '#FF5500',
+            overlayGlowIntensity: 0.5,
+            overlayGlowSize: 1.0,
+            overlayNoise: 0.0,
+            watermarkUrl: 'https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/example-watermark.png',
+            watermarkSize: 323,
+            watermarkPosX: 0,
+            watermarkPosY: 0,
+            watermarkOpacity: 0.8,
+            showWatermark: true,
+        },
+        sources: { bg: 'GITHUB', overlay: 'GITHUB', watermark: 'GITHUB' }
+    },
+
+    // Highlight State
+    highlight: {
+        iconType: 'icon', // 'icon' | 'custom' | 'fa'
+        iconName: 'Mic',
+        customIconUrl: '',
+        faClass: '',
+        bgColor: '#000000',
+        ringColor: '#FF5500',
+        iconColor: '#FFFFFF',
+        ringWidth: 15,
+        iconSize: 400
+    },
+
+    presets: []
+};
+
+const CONSTANTS = {
+    POST_WIDTH: 1080,
+    POST_HEIGHT: 1350,
+    HIGHLIGHT_SIZE: 1080,
+    FONTS: ['Google Sans', 'Arial', 'Archivo Black', 'Anton', 'Bebas Neue', 'Inter', 'Montserrat', 'Oswald', 'Poppins', 'Roboto Condensed', 'Teko'],
+    COLORS: ['#FF5500', '#EF4444', '#3B82F6', '#10B981', '#A855F7', '#EAB308', '#000000', '#FFFFFF', '#06B6D4', '#EC4899', '#84CC16', '#6366F1', '#F97316', '#14B8A6']
+};
+
+// --- TEMPLATES SYSTEM ---
+const SYSTEM_TEMPLATES = [
+    {
+        id: 'template1',
+        name: 'News (Classic)',
+        previewImage: 'src/ui/templates/template1.png',
+        templateId: 'template1',
+        style: {
+            fontFamily: 'Archivo Black',
+            customFontFamily: '',
+            primaryColor: '#FFFFFF',
+            highlightColor: '#FF5500',
+            secondaryColor: '#3B82F6',
+            useBracketColor: true,
+            useBraceColor: true,
+            overlayColor: '#000000',
+            overlayOpacity: 0.5,
+            fontSize: 85,
+            lineHeight: 0.9,
+            letterSpacing: -0.02,
+            imagePosX: 50, imagePosY: 50, imageScale: 100,
+            bgOpacity: 1.0,
+            bgNoise: 0.0,
+            overlayImgSize: 450,
+            overlayImgPosX: 74, overlayImgPosY: 65,
+            overlayBorderWidth: 12,
+            overlayBorderColor: '#FF5500',
+            showOverlayBorder: true,
+            showOverlayGlow: false,
+            overlayGlowColor: '#FF5500',
+            overlayGlowIntensity: 0.5,
+            overlayGlowSize: 1.0,
+            overlayNoise: 0.0,
+            watermarkSize: 323,
+            watermarkPosX: 0,
+            watermarkPosY: 0,
+            watermarkOpacity: 0.8,
+            showWatermark: true,
+            showSwipeBadge: true,
+            swipeText: "Swipe Left",
+            swipeFontSize: 20,
+            swipeFontFamily: 'Inter',
+            customSwipeFontFamily: '',
+            swipeTextColor: '#FFFFFF',
+            swipeColor: '#FFFFFF',
+            swipeOpacity: 0.9,
+            swipeLetterSpacing: 0.1,
+            swipeShowIcon: true,
+            swipeIconSize: 24,
+            showNewsBadge: true,
+            showSource: true,
+            badgeText: "NEWS",
+            sourceText: "SOURCE: GITHUB"
+        }
+    },
+    {
+        id: 'template2',
+        name: 'Clean (No Jumper)',
+        previewImage: 'src/ui/templates/template2.png',
+        templateId: 'template2'
+    },
+    {
+        id: 'template3',
+        name: 'Wealth (Split)',
+        previewImage: 'src/ui/templates/template3.png',
+        templateId: 'template3'
+    }
+];
+
+// Icon mapping for highlight generator
+const HIGHLIGHT_ICON_MAP = {
+    'Mic': 'mic',
+    'Music': 'music',
+    'Video': 'video',
+    'Zap': 'zap',
+    'Star': 'star',
+    'Heart': 'heart',
+    'Trophy': 'trophy',
+    'Flame': 'flame',
+    'Play': 'play',
+    'Camera': 'camera',
+    'Headphones': 'headphones',
+    'Radio': 'radio',
+    'Tv': 'tv',
+    'Smartphone': 'smartphone',
+    'Laptop': 'laptop',
+    'Gamepad': 'gamepad-2',
+    'Dumbbell': 'dumbbell',
+    'Plane': 'plane',
+    'ShoppingBag': 'shopping-bag',
+    'Shirt': 'shirt',
+    'DollarSign': 'dollar-sign',
+    'TrendingUp': 'trending-up',
+    'Users': 'users',
+    'MessageCircle': 'message-circle',
+    'Calendar': 'calendar',
+    'MapPin': 'map-pin',
+    'Instagram': 'instagram',
+    'Twitter': 'twitter',
+    'Facebook': 'facebook',
+    'Youtube': 'youtube',
+    'Globe': 'globe',
+    'Check': 'check'
+};
+
+// Make globally available
+if (typeof window !== 'undefined') {
+    window.PRESETS_KEY = PRESETS_KEY;
+    window.NOISE_SVG = NOISE_SVG;
+    window.state = state;
+    window.CONSTANTS = CONSTANTS;
+    window.SYSTEM_TEMPLATES = SYSTEM_TEMPLATES;
+    window.HIGHLIGHT_ICON_MAP = HIGHLIGHT_ICON_MAP;
+}
