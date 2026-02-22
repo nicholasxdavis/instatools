@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#131314" />
+    <title>All Tools — Instatools</title>
+
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+
+    <!-- Same stack as main app -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+
+    <!-- Inherit ALL main-app styles (sidebar, buttons, inputs, etc.) -->
+    <link rel="stylesheet" href="../../css/styles.css" />
+
+    <style>
+      /* ── Preview scroll ─────────────────────────────────────── */
+      #preview-container {
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.12) transparent;
+      }
+      #preview-container::-webkit-scrollbar { width: 6px; }
+      #preview-container::-webkit-scrollbar-track { background: transparent; }
+      #preview-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 6px; }
+
+      /* ── Logo always in top left ──────────────────── */
+      .mobile-logo-container {
+        display: block !important;
+        flex-shrink: 0;
+      }
+
+      /* ── Mobile header elements ─────────────────────────── */
+      @media (max-width: 768px) {
+        .top-navbar .export-header-btn {
+          display: inline-flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+        }
+      }
+
+      /* ── Tool Cards ──────────────────────────────────────── */
+      .tool-card {
+        background: #282828;
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.2s, transform 0.2s;
+      }
+      .tool-card:hover {
+        border-color: rgba(213,52,120,0.3);
+        transform: translateY(-2px);
+      }
+      .tool-card-header {
+        height: 130px;
+        background: #1e1e1e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .tool-card-header-dots {
+        position: absolute;
+        inset: 0;
+        opacity: 0.035;
+        background-image: radial-gradient(#fff 1px, transparent 1px);
+        background-size: 18px 18px;
+        pointer-events: none;
+      }
+      .tool-card-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+        flex-shrink: 0;
+      }
+      .tool-card-body {
+        padding: 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .tool-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #dddddd;
+        letter-spacing: -0.01em;
+        margin: 0 0 5px;
+      }
+      .tool-card-desc {
+        font-size: 12px;
+        color: rgba(221,221,221,0.45);
+        margin: 0;
+        line-height: 1.65;
+        font-weight: 400;
+      }
+      .tool-card-tags {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .tool-tag {
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(221,221,221,0.38);
+        background: #535353;
+        border-radius: 4px;
+        padding: 3px 8px;
+        line-height: 1.5;
+      }
+      .tool-launch-btn {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        background: linear-gradient(135deg, #d53478 0%, #b334a0 100%);
+        color: #fcf5f9;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        border-radius: 8px;
+        padding: 9px 16px;
+        text-decoration: none;
+        transition: opacity 0.18s, box-shadow 0.18s;
+        box-shadow: 0 2px 12px rgba(213,52,120,0.22);
+      }
+      .tool-launch-btn:hover {
+        opacity: 0.88;
+        box-shadow: 0 4px 20px rgba(213,52,120,0.38);
+        color: #fcf5f9;
+        text-decoration: none;
+      }
+      .tool-card-divider {
+        height: 1px;
+        background: rgba(255,255,255,0.06);
+        margin: 0 -18px;
+      }
+
+      /* ── Cards grid responsive ──────────────────────────── */
+      .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      @media (max-width: 860px) {
+        .tools-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 540px) {
+        .tools-grid {
+          grid-template-columns: 1fr;
+        }
+        #preview-container {
+          padding: 20px 16px 48px !important;
+        }
+      }
+      /* ── Floating Banner ────────────────────────────────── */
+      .floating-banner {
+        position: fixed;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        
+        /* The glossy "whiteish tint" background effect */
+        background: linear-gradient(180deg, #DD5F95 0%, #d53478 100%);
+        
+        /* Shadows scaled up for larger 3D glass effect */
+        box-shadow: 
+            inset 0 3px 4px rgba(255, 255, 255, 0.6),   /* Sharp white rim at the top */
+            inset 0 16px 32px rgba(255, 255, 255, 0.2), /* Soft white glare spilling down */
+            inset 0 -3px 5px rgba(0, 0, 0, 0.08),       /* Soft dark rim at the bottom */
+            0 16px 40px rgba(213, 52, 120, 0.45),       /* Big, vibrant pink outer glow */
+            0 6px 16px rgba(0, 0, 0, 0.1);              /* Base drop shadow */
+        
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 7px 7px 7px 11px; /* Scaled padding (approx 70%) */
+        width: max-content;
+      }
+
+      /* Left side (Icon + Text) */
+      .left-section {
+        display: flex;
+        align-items: center;
+        margin-right: 25px; /* Scaled gap (approx 70%) */
+      }
+
+      /* Custom image icon - Replaces the white circle */
+      .banner-icon {
+        width: 44px; /* Scaled up from 48px -> 70% of 62px is ~43.4px */
+        height: 44px;
+        background-color: #ffffff;
+        border-radius: 50%; /* Ensures it stays a perfect circle */
+        margin-right: 14px; /* Space between icon and text (approx 70%) */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Soft shadow for the icon itself */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      
+      .banner-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      /* Middle text - Scaled up */
+      .banner-text {
+        color: #000000;
+        font-weight: 600;
+        font-size: 15px;  /* Scaled up from 17px -> 70% of 22px is ~15.4px */
+        white-space: nowrap;
+        letter-spacing: -0.4px;
+      }
+
+      /* Black CTA button - Scaled up */
+      .cta-button {
+        background-color: #000000;
+        color: #ffffff;
+        border: none;
+        border-radius: 999px;
+        height: 44px; /* Scaled to match the new icon height */
+        padding: 0 29px; /* Scaled width (approx 70%) */
+        font-size: 15px; /* Scaled up from 16px -> 70% of 21px is ~14.7px */
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        white-space: nowrap;
+        letter-spacing: -0.2px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease, transform 0.1s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #1a1a1a;
+      }
+      
+      .cta-button:active {
+        transform: scale(0.98);
+      }
+
+      /* ── Floating Banner Mobile UI ──────────────────────── */
+      @media (max-width: 600px) {
+        .floating-banner {
+          width: calc(100% - 32px);
+          max-width: 400px;
+          bottom: 24px;
+          padding: 8px 8px 8px 10px;
+        }
+        .left-section {
+          margin-right: 12px;
+        }
+        .banner-icon {
+          width: 40px;
+          height: 40px;
+          margin-right: 12px;
+        }
+        .banner-icon svg {
+          width: 20px;
+          height: 20px;
+        }
+        .banner-text {
+          font-size: 14px;
+          white-space: normal;
+          line-height: 1.2;
+        }
+        .cta-button {
+          height: 40px;
+          padding: 0 20px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-[#131314] text-gray-900 font-sans flex flex-col h-screen overflow-hidden selection:bg-black selection:text-white">
+
+    <!-- Initial Loader -->
+    <div id="initial-loader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- ── Main Wrapper ───────────────────────────────────────── -->
+    <div class="my-container flex-1 flex flex-col h-full overflow-hidden">
+
+      <!-- Top Navbar -->
+      <nav class="navbar top-navbar navbar-light bg-[#131314] px-5 flex-shrink-0 border-b border-neutral-800">
+        <div class="flex items-center justify-between w-full">
+
+          <!-- Left: Logo -->
+          <div class="flex items-center gap-3">
+            <div class="mobile-logo-container">
+              <img src="../../src/ui/logo.png" alt="Instatools" style="height: 32px; width: auto; display: block;">
+            </div>
+          </div>
+
+          <!-- Right: SUPPORT US button -->
+          <div class="flex items-center gap-3">
+            <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="export-header-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+              SUPPORT US
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="none" style="flex-shrink:0;">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </nav>
+
+      <!-- Preview area -->
+      <div id="preview-container" class="flex-1 bg-[#131314] overflow-y-auto overflow-x-hidden relative" style="padding: 40px 32px 64px;">
+
+        <!-- Page heading -->
+        <div style="max-width: 880px; margin: 0 auto 32px;">
+          <p style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(221,221,221,0.3); margin: 0 0 8px;">Instatools</p>
+          <h1 style="font-size: 24px; font-weight: 700; color: #dddddd; margin: 0 0 6px; letter-spacing: -0.02em;">All Tools</h1>
+          <p style="font-size: 12px; color: rgba(221,221,221,0.4); margin: 0; font-weight: 400; line-height: 1.6;">A professional suite for Instagram content creation — posts, highlights, and profile previewing.</p>
+        </div>
+
+        <!-- Tool cards -->
+        <div class="tools-grid" style="max-width: 880px; margin: 0 auto;">
+
+          <!-- ── Card 1: Post Generator ── -->
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <div class="tool-card-header-dots"></div>
+              <!-- Mini post mockup illustration -->
+              <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <div style="width: 58px; height: 58px; background: #282828; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
+                  <div style="flex: 1; background: linear-gradient(135deg, rgba(213,52,120,0.35) 0%, rgba(179,52,160,0.35) 100%);"></div>
+                  <div style="padding: 5px 5px 4px; display: flex; flex-direction: column; gap: 3px;">
+                    <div style="height: 3px; background: rgba(221,221,221,0.5); border-radius: 2px; width: 80%;"></div>
+                    <div style="height: 3px; background: rgba(221,221,221,0.25); border-radius: 2px; width: 55%;"></div>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="width: 44px; height: 26px; background: #282828; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden;">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, rgba(213,52,120,0.3) 0%, rgba(179,52,160,0.3) 100%);"></div>
+                  </div>
+                  <div style="width: 44px; height: 26px; background: #282828; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden;">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, rgba(213,52,120,0.15) 0%, rgba(179,52,160,0.15) 100%);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tool-card-body">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <h2 class="tool-card-title">Post Generator</h2>
+                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #d53478; background: rgba(213,52,120,0.12); border: 1px solid rgba(213,52,120,0.25); border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0;">Main</span>
+                </div>
+                <p class="tool-card-desc">Design professional Instagram posts with custom typography, photo layouts, overlays, and high-resolution export.</p>
+              </div>
+              <div class="tool-card-tags">
+                <span class="tool-tag">Typography</span>
+                <span class="tool-tag">Layouts</span>
+                <span class="tool-tag">Export</span>
+              </div>
+              <div class="tool-card-divider"></div>
+              <a href="../../index.html" class="tool-launch-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fcf5f9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Open Tool
+              </a>
+            </div>
+          </div>
+
+          <!-- ── Card 2: Highlight Creator ── -->
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <div class="tool-card-header-dots"></div>
+              <!-- Mini highlights illustration -->
+              <div style="position: relative; z-index: 1; display: flex; align-items: flex-end; justify-content: center; gap: 9px;">
+                <!-- 4 story circle mocks -->
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #d53478, #b334a0);">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; background: #282828; border: 2px solid #1e1e1e;"></div>
+                  </div>
+                  <div style="height: 3px; width: 34px; background: rgba(221,221,221,0.25); border-radius: 2px;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; transform: translateY(-6px);">
+                  <div style="width: 50px; height: 50px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #d53478, #b334a0);">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; background: #282828; border: 2px solid #1e1e1e;"></div>
+                  </div>
+                  <div style="height: 3px; width: 38px; background: rgba(221,221,221,0.3); border-radius: 2px;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                  <div style="width: 44px; height: 44px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #d53478, #b334a0);">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; background: #282828; border: 2px solid #1e1e1e;"></div>
+                  </div>
+                  <div style="height: 3px; width: 34px; background: rgba(221,221,221,0.2); border-radius: 2px;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="tool-card-body">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <h2 class="tool-card-title">Highlight Creator</h2>
+                  
+                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(221,221,221,0.35); background: #535353; border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0;">New</span>
+                </div>
+                <p class="tool-card-desc">Create and customize Instagram highlight covers with matching icons, colors, and gradient rings.</p>
+              </div>
+              <div class="tool-card-tags">
+                <span class="tool-tag">Story Covers</span>
+                <span class="tool-tag">Icons</span>
+                <span class="tool-tag">Gradients</span>
+              </div>
+              <div class="tool-card-divider"></div>
+              <a href="../highlight/index.html" class="tool-launch-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fcf5f9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Open Tool
+              </a>
+            </div>
+          </div>
+
+          <!-- ── Card 3: Profile Previewer ── -->
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <div class="tool-card-header-dots"></div>
+              <!-- Mini profile preview illustration -->
+              <div style="position: relative; z-index: 1; background: #282828; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; width: 150px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                  <!-- Avatar -->
+                  <div style="width: 30px; height: 30px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, #d53478, #b334a0); flex-shrink: 0;">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; background: #3a3a3a; border: 1.5px solid #282828;"></div>
+                  </div>
+                  <!-- Username + stats -->
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="height: 3px; background: rgba(221,221,221,0.45); border-radius: 2px; width: 70%; margin-bottom: 4px;"></div>
+                    <div style="display: flex; gap: 4px;">
+                      <div style="height: 3px; background: rgba(221,221,221,0.2); border-radius: 2px; flex: 1;"></div>
+                      <div style="height: 3px; background: rgba(221,221,221,0.2); border-radius: 2px; flex: 1;"></div>
+                      <div style="height: 3px; background: rgba(221,221,221,0.2); border-radius: 2px; flex: 1;"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Bio lines -->
+                <div style="display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px;">
+                  <div style="height: 2.5px; background: rgba(221,221,221,0.3); border-radius: 2px; width: 90%;"></div>
+                  <div style="height: 2.5px; background: rgba(221,221,221,0.2); border-radius: 2px; width: 75%;"></div>
+                  <div style="height: 2.5px; background: rgba(221,221,221,0.15); border-radius: 2px; width: 55%;"></div>
+                </div>
+                <!-- Action buttons -->
+                <div style="display: flex; gap: 4px;">
+                  <div style="flex: 1; height: 14px; background: linear-gradient(135deg, rgba(213,52,120,0.6), rgba(179,52,160,0.6)); border-radius: 4px;"></div>
+                  <div style="flex: 1; height: 14px; background: #535353; border-radius: 4px;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="tool-card-body">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <h2 class="tool-card-title">Profile Previewer</h2>
+                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(221,221,221,0.35); background: #535353; border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0;">New</span>
+                </div>
+                <p class="tool-card-desc">Preview your full Instagram profile — bio, highlights, photo grid and action buttons — before going live.</p>
+              </div>
+              <div class="tool-card-tags">
+                <span class="tool-tag">Bio</span>
+                <span class="tool-tag">Highlights</span>
+                <span class="tool-tag">Preview</span>
+              </div>
+              <div class="tool-card-divider"></div>
+              <a href="../pfp/index.html" class="tool-launch-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fcf5f9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Open Tool
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Floating Banner -->
+    <div class="floating-banner">
+        <div class="left-section">
+            <div class="banner-icon">
+                <svg width="22px" height="22px" viewBox="-2 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <g transform="translate(-62.000000, -2559.000000)" fill="#DD5F95">
+                            <g transform="translate(56.000000, 160.000000)">
+                                <polygon points="14 2419 14 2411 6 2411 14 2399 14 2407 22 2407"></polygon>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <span class="banner-text">Edit smarter, create faster</span>
+        </div>
+        <a href="../../index.html" class="cta-button flex items-center justify-center" style="text-decoration: none;">Try now for free</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+    <!-- Initial Loader Logic -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var loader = document.getElementById('initial-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    setTimeout(function() {
+                        loader.remove();
+                    }, 500);
+                }
+            }, 3000);
+        });
+    </script>
+  </body>
+</html>

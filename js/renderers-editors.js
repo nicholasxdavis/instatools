@@ -76,36 +76,44 @@ function renderColorPicker(label, currentColor, onChangeStr) {
   // Create a global handler function name
   const handlerName = `handleColorPick_${id}`;
 
-  // Parse the onChange string — handles both:
-  //   "window.updatePostStyle('key', '$VAL')"   (all current callers)
-  //   "updatePostStyle('key', '$VAL')"           (legacy bare-name format)
+  // Parse the onChange string to extract function name and parameter
+  // Format is like: "window.updatePostStyle('highlightColor', '$VAL')"
   const match = onChangeStr.match(
-    /^(?:window\.)?(\w+)\(['"]([^'"]+)['"],\s*['"]\$VAL['"]\)$/,
+    /^([\w.]+)\(['"]([^'"]+)['"],\s*['"]\$VAL['"]\)$/,
   );
 
   // Register the handler globally
   window[handlerName] = function (color) {
     try {
       if (match) {
-        // Direct, eval-free call — works for every window.xxxState pattern
-        const funcName  = match[1];
+        // Direct function call approach
+        const funcName = match[1];
         const paramName = match[2];
-        if (typeof window[funcName] === 'function') {
-          window[funcName](paramName, color);
+
+        if (funcName === "updatePostStyle" || funcName === "window.updatePostStyle") {
+          window.updatePostStyle(paramName, color);
+        } else if (funcName === "updateHighlightState" || funcName === "window.updateHighlightState") {
+          window.updateHighlightState(paramName, color);
         } else {
-          console.error('[colorPicker] function not found on window:', funcName);
+          // Fallback to eval (safe in this context since we control the input)
+          const code = onChangeStr.replace(/['"]?\$VAL['"]?/g, JSON.stringify(color));
+          const fn = new Function("return " + code);
+          fn();
         }
       } else {
-        // Fallback for complex onChange expressions
-        const code = onChangeStr.replace(/\$VAL/g, JSON.stringify(color));
-        (0, eval)(code);
+        // Fallback: try to execute the onChange string directly
+        const code = onChangeStr.replace(/['"]?\$VAL['"]?/g, JSON.stringify(color));
+        const fn = new Function("return " + code);
+        fn();
       }
-      // Re-render sidebar so the color swatch updates immediately
+
+      // Don't close the picker - allow multiple color selections
+      // Re-render sidebar to update the color display
       window.renderSidebarContent();
     } catch (e) {
-      console.error('Color picker error:', e);
-      console.error('OnChange string:', onChangeStr);
-      console.error('Color value:', color);
+      console.error("Color picker error:", e);
+      console.error("OnChange string:", onChangeStr);
+      console.error("Color value:", color);
     }
   };
 
@@ -1663,18 +1671,18 @@ function renderHighlightEditor(container) {
                         <div class="grid grid-cols-2 gap-2">
                             <button 
                                 onclick="window.updateHighlightState('iconType', 'icon')" 
-                                class="rounded-lg p-3 text-center transition-all-200 flex flex-col items-center gap-1 ${h.iconType === "icon" ? "bg-[#131314] text-white shadow-md" : "bg-[#1e1e1e] text-gray-400 hover:bg-[#323232] hover:shadow-sm"}"
+                                class="rounded-lg h-[72px] text-center transition-all-200 flex flex-col items-center justify-center gap-1.5 ${h.iconType === "icon" ? "bg-[#131314] text-white shadow-md" : "bg-[#1e1e1e] text-gray-400 hover:bg-[#323232] hover:shadow-sm"}"
                                 style="${h.iconType === "icon" ? "border: 1px solid #d53478;" : "border: 1px solid #3e3e3e;"}"
                                 aria-label="Use icon gallery"
                             >
-                                <i data-lucide="grid-3x3" class="w-4 h-4"></i>
-                                <span class="text-xs font-bold">Gallery</span>
-                                <span class="text-[9px] opacity-70">Lucide</span>
+                                <i data-lucide="grid-3x3" class="w-4 h-4 mb-0.5"></i>
+                                <span class="text-xs font-bold leading-none capitalize">Gallery</span>
+                                <span class="text-[9px] opacity-70 leading-none uppercase">Lucide</span>
                             </button>
-                            <label class="cursor-pointer rounded-lg p-3 text-center transition-all-200 flex flex-col items-center gap-1 ${h.iconType === "custom" ? "bg-[#131314] text-white shadow-md" : "bg-[#1e1e1e] text-gray-400 hover:bg-[#323232] hover:shadow-sm"}" style="${h.iconType === "custom" ? "border: 1px solid #d53478;" : "border: 1px solid #3e3e3e;"}" aria-label="Upload custom icon">
-                                <i data-lucide="upload" class="w-4 h-4"></i>
-                                <span class="text-xs font-bold">Upload</span>
-                                <span class="text-[9px] opacity-70">Custom PNG</span>
+                            <label class="cursor-pointer rounded-lg h-[72px] text-center transition-all-200 flex flex-col items-center justify-center gap-1.5 ${h.iconType === "custom" ? "bg-[#131314] text-white shadow-md" : "bg-[#1e1e1e] text-gray-400 hover:bg-[#323232] hover:shadow-sm"}" style="${h.iconType === "custom" ? "border: 1px solid #d53478;" : "border: 1px solid #3e3e3e;"}" aria-label="Upload custom icon">
+                                <i data-lucide="upload" class="w-4 h-4 mb-0.5"></i>
+                                <span class="text-xs font-bold leading-none uppercase">Upload</span>
+                                <span class="text-[9px] opacity-70 leading-none uppercase">Custom PNG</span>
                                 <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'highlightIcon')">
                             </label>
                         </div>
@@ -1710,6 +1718,97 @@ function renderHighlightEditor(container) {
                     </div>
                 </div>
 
+                <!-- Background Image -->
+                <div class="space-y-3 pt-6 border-t border-[#3e3e3e] animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-2">
+                            <i data-lucide="image" class="w-3 h-3"></i> Highlight Background
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <span class="text-[9px] text-gray-400">Enable</span>
+                            <input type="checkbox" ${h.showBgImage ? "checked" : ""}
+                                onchange="window.updateHighlightState('showBgImage', this.checked)"
+                                class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle background image">
+                        </label>
+                    </div>
+                    
+                    <div class="bg-[#282828] p-4 rounded-lg space-y-4 transition-opacity duration-200 ${!h.showBgImage ? 'opacity-50 pointer-events-none' : ''}" style="border: 1px solid #3e3e3e;">
+                        <div class="flex gap-2">
+                            <input 
+                                type="text" 
+                                class="flex-1 bg-[#1e1e1e] border border-[#3e3e3e] rounded-lg p-2.5 text-xs text-white transition-all-200 focus:border-[#d53478]" 
+                                placeholder="Background Image URL..." 
+                                oninput="window.updateHighlightBgUrl(this.value)" 
+                                value="${h.bgImage && !h.bgImage.startsWith('data:') ? h.bgImage : ''}"
+                                aria-label="Background image URL"
+                            >
+                            <label class="bg-[#1e1e1e] hover:bg-[#323232] p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload background image">
+                                <i data-lucide="upload" class="w-3.5 h-3.5 text-gray-400"></i>
+                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'highlightBg')">
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5 font-sans">Zoom</label>
+                                <input 
+                                    type="range" 
+                                    min="100" 
+                                    max="300" 
+                                    value="${h.imageScale}" 
+                                    oninput="window.updateHighlightStateWithDisplay('imageScale', parseFloat(this.value), 'hl-zoom-display', 'percent-value')" 
+                                    class="w-full"
+                                    aria-label="Image zoom"
+                                >
+                                <div id="hl-zoom-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${h.imageScale}%</div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5 font-sans">Opacity</label>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="1" 
+                                    step="0.05" 
+                                    value="${h.bgOpacity}" 
+                                    oninput="window.updateHighlightStateWithDisplay('bgOpacity', parseFloat(this.value), 'hl-opacity-display', 'percent')" 
+                                    class="w-full"
+                                    aria-label="Image opacity"
+                                >
+                                <div id="hl-opacity-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(h.bgOpacity * 100)}%</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                             <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5 font-sans">Position X</label>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="100" 
+                                    value="${h.imagePosX}" 
+                                    oninput="window.updateHighlightStateWithDisplay('imagePosX', parseFloat(this.value), 'hl-posx-display', 'percent-value')" 
+                                    class="w-full"
+                                    aria-label="Position X"
+                                >
+                                <div id="hl-posx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${h.imagePosX}%</div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5 font-sans">Position Y</label>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="100" 
+                                    value="${h.imagePosY}" 
+                                    oninput="window.updateHighlightStateWithDisplay('imagePosY', parseFloat(this.value), 'hl-posy-display', 'percent-value')" 
+                                    class="w-full"
+                                    aria-label="Position Y"
+                                >
+                                <div id="hl-posy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${h.imagePosY}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Colors & Settings -->
                 <div class="space-y-3 pt-6 border-t border-[#3e3e3e] animate-fade-in">
                     <label class="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-2">
@@ -1718,7 +1817,7 @@ function renderHighlightEditor(container) {
                     
                     <div class="bg-[#282828] p-4 rounded-lg space-y-4" style="border: 1px solid #3e3e3e;">
                         <div class="space-y-3">
-                            <label class="text-[9px] uppercase font-bold text-gray-400 block">Colors</label>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block font-sans">Colors</label>
                             <div class="grid grid-cols-1 gap-2">
                                 ${window.renderColorPicker("Background", h.bgColor, "window.updateHighlightState('bgColor', '$VAL')")}
                                 <div id="highlight-ring-color-control">
@@ -2530,14 +2629,13 @@ function renderTemplate5Editor(container) {
   setTimeout(() => window.initializeIcons(container), 0);
 }
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // TEMPLATE 6 EDITOR  (Sports / Hurdels style)
 // ─────────────────────────────────────────────────────────────────────────────
 function renderTemplate6Editor(container) {
     const t6 = window.state.post.t6;
-    const safeBgUrl     = t6.bgImage      && !t6.bgImage.startsWith('data:')      ? window.escapeHtml(t6.bgImage)      : '';
-    const safeCircleUrl = t6.circleImage  && !t6.circleImage.startsWith('data:')  ? window.escapeHtml(t6.circleImage)  : '';
+    const safeBgUrl    = t6.bgImage     && !t6.bgImage.startsWith('data:')     ? window.escapeHtml(t6.bgImage)     : '';
+    const safeCircleUrl = t6.circleImage && !t6.circleImage.startsWith('data:') ? window.escapeHtml(t6.circleImage) : '';
 
     container.innerHTML = `
         <div class="space-y-6 animate-fade-in">
@@ -2597,8 +2695,8 @@ function renderTemplate6Editor(container) {
                 </div>
                 <div class="pt-2">
                     <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Font Weight</label>
-                    <div class="grid grid-cols-3 gap-1">
-                        ${[["300","Light"],["400","Reg"],["500","Med"],["600","Semi"],["700","Bold"],["900","Black"]].map(([w,label]) => `
+                    <div class="grid grid-cols-5 gap-1">
+                        ${[["300","Light"],["400","Regular"],["500","Medium"],["600","Semi"],["700","Bold"],["900","Black"]].map(([w,label]) => `
                             <button onclick="window.updateT6State('fontWeight',${w}); window.debouncedRenderCanvas(); window.renderSidebarContent()"
                                 class="py-2 rounded-lg border text-[9px] font-bold transition-all ${String(t6.fontWeight)===w ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400'}"
                                 style="font-weight:${w}">${label}</button>`).join('')}
@@ -2619,7 +2717,7 @@ function renderTemplate6Editor(container) {
                     <div id="t6-ls-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.letterSpacing}em</div>
                 </div>
                 <div class="pt-2">
-                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Bottom Padding (headline clearance)</label>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Bottom Padding (text clearance)</label>
                     <input type="range" min="60" max="220" value="${t6.paddingBottom}"
                         oninput="window.updateT6State('paddingBottom',parseFloat(this.value)); document.getElementById('t6-pb-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
                         class="w-full">
@@ -2737,7 +2835,7 @@ function renderTemplate6Editor(container) {
                         <div id="t6-brand-fs" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.brandFontSize}px</div>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-[9px] uppercase font-bold text-gray-400">Italic Style</span>
+                        <span class="text-[9px] uppercase font-bold text-gray-400">Italic</span>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" ${t6.brandItalic ? 'checked' : ''}
                                 onchange="window.updateT6State('brandItalic',this.checked); window.debouncedRenderCanvas()"
@@ -2853,7 +2951,7 @@ function renderTemplate6Editor(container) {
                     <div>
                         <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Family</label>
                         <div class="grid grid-cols-1 gap-1">
-                            ${["Bebas Neue","Oswald","Anton","Archivo Black","Inter"].map(font => `
+                            ${["Bebas Neue","Oswald","Anton","Rajdhani","Archivo Black","Inter"].map(font => `
                                 <button onclick="window.updateT6State('swipeFontFamily','${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
                                     class="flex items-center justify-between px-3 py-2 rounded-lg border text-xs transition-all ${t6.swipeFontFamily===font ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300'}"
                                 ><span style="font-family:${font}">Aa</span><span class="font-bold">${font}</span></button>`).join('')}
@@ -2901,6 +2999,7 @@ function renderTemplate6Editor(container) {
     `;
     setTimeout(() => window.initializeIcons(container), 0);
 }
+
 // Make globally available
 if (typeof window !== "undefined") {
   window.buildPresetsHtml = buildPresetsHtml;
@@ -2912,7 +3011,6 @@ if (typeof window !== "undefined") {
   window.renderTemplate3Editor = renderTemplate3Editor;
   window.renderTemplate4Editor = renderTemplate4Editor;
   window.renderTemplate5Editor = renderTemplate5Editor;
-  window.renderTemplate6Editor = renderTemplate6Editor;
   window.renderHighlightEditor = renderHighlightEditor;
   window.renderLibrary = renderLibrary;
   window.loadSystemTemplate = loadSystemTemplate;

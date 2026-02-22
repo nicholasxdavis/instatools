@@ -861,21 +861,33 @@ function renderCanvas() {
                 root.style.height = `${window.CONSTANTS.HIGHLIGHT_SIZE}px`;
                 root.style.backgroundColor = h.bgColor;
                 
-        let iconHTML = '';
+                let iconHTML = '';
                 if (h.iconType === 'custom' && h.customIconUrl) {
                     iconHTML = `<img src="${window.escapeHtml(window.getCorsProxyUrl(h.customIconUrl))}" style="width: ${h.iconSize}px; height: ${h.iconSize}px; object-fit: contain;" onerror="this.style.display='none'" alt="Custom icon">`;
                 } else if (h.iconType === 'fa' && h.faClass) {
                     iconHTML = `<i class="${window.escapeHtml(h.faClass)}" style="font-size: ${h.iconSize}px; color: ${h.iconColor}"></i>`;
                 } else {
                     // Lucide icon - use iconMap to get correct Lucide name
-            const iconDisplayName = h.iconName || 'Mic';
-            const lucideIconName = window.HIGHLIGHT_ICON_MAP[iconDisplayName] || 'mic';
+                    const iconDisplayName = h.iconName || 'Mic';
+                    const lucideIconName = window.HIGHLIGHT_ICON_MAP[iconDisplayName] || 'mic';
                     iconHTML = `<i data-lucide="${lucideIconName}" style="width: ${h.iconSize}px; height: ${h.iconSize}px; color: ${h.iconColor}"></i>`;
                 }
 
+                const safeBgImage = (h.showBgImage && h.bgImage) ? window.escapeHtml(window.getCorsProxyUrl(h.bgImage)) : '';
+
                 root.innerHTML = `
                     <div class="relative w-full h-full flex items-center justify-center overflow-hidden">
-                        <div class="absolute rounded-full border-solid box-border" data-ctx="highlight-ring" title="Click to edit ring" style="width: 90%; height: 90%; border-color: ${h.ringColor}; border-width: ${h.ringWidth}px; cursor:pointer;"></div>
+                        ${safeBgImage ? `
+                            <div class="absolute inset-0 z-0">
+                                <img 
+                                    src="${safeBgImage}" 
+                                    style="width: 100%; height: 100%; object-fit: cover; object-position: ${h.imagePosX}% ${h.imagePosY}%; transform: scale(${h.imageScale/100}); opacity: ${h.bgOpacity};" 
+                                    onerror="this.style.display='none'"
+                                    alt="Background"
+                                >
+                            </div>
+                        ` : ''}
+                        <div class="absolute rounded-full border-solid box-border" data-ctx="highlight-ring" title="Click to edit ring" style="width: 90%; height: 90%; border-color: ${h.ringColor}; border-width: ${h.ringWidth}px; cursor:pointer; z-index: 5;"></div>
                         <div class="flex items-center justify-center z-10" data-ctx="highlight-icon" title="Click to edit icon" style="cursor:pointer;">${iconHTML}</div>
                     </div>
                 `;

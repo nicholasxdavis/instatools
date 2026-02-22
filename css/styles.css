@@ -116,10 +116,23 @@
 
         #ctx-toolbar.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 
-        /* Universal hover outline for all toolbarable elements */
-        [data-ctx]:hover {
-            outline: 2px dashed rgba(255, 255, 255, 0.5);
-            outline-offset: 4px;
+        /* Universal hover outline for all toolbarable elements (desktop/hover devices only) */
+        @media (hover: hover) {
+            [data-ctx]:hover {
+                outline: 2px dashed rgba(255, 255, 255, 0.5);
+                outline-offset: 4px;
+            }
+        }
+
+        /* Mobile tap highlight for canvas elements */
+        [data-ctx] {
+            -webkit-tap-highlight-color: rgba(213, 52, 120, 0.18);
+            touch-action: manipulation;
+        }
+
+        /* Touch-action: manipulation removes the 300ms tap delay on buttons globally */
+        button, a, label[for], [role="button"] {
+            touch-action: manipulation;
         }
 
         /* Ghost element style for "hidden" items */
@@ -129,10 +142,12 @@
             transition: opacity 0.2s ease;
         }
 
-        .ctx-ghost:hover {
-            opacity: 0.4 !important;
-            outline: 2px dashed #d53478 !important; 
-            outline-offset: 4px;
+        @media (hover: hover) {
+            .ctx-ghost:hover {
+                opacity: 0.4 !important;
+                outline: 2px dashed #d53478 !important; 
+                outline-offset: 4px;
+            }
         }
 
         /* Deep linking highlight pulse */
@@ -175,15 +190,17 @@
             color: #ffffff !important;
         }
 
-        /* Hover hint for clickable text */
-        [data-ctx="headline"]:hover, 
-        [data-ctx="caption"]:hover, 
-        [data-ctx="badge"]:hover, 
-        [data-ctx="source"]:hover {
-            outline: 1.5px dashed rgba(255, 255, 255, 0.35);
-            outline-offset: 4px;
-            border-radius: 6px;
-            cursor: text;
+        /* Hover hint for clickable text (desktop only) */
+        @media (hover: hover) {
+            [data-ctx="headline"]:hover, 
+            [data-ctx="caption"]:hover, 
+            [data-ctx="badge"]:hover, 
+            [data-ctx="source"]:hover {
+                outline: 1.5px dashed rgba(255, 255, 255, 0.35);
+                outline-offset: 4px;
+                border-radius: 6px;
+                cursor: text;
+            }
         }
         .animate-fade-in {
             animation: fadeIn 0.3s ease-out;
@@ -322,26 +339,25 @@
 
         @media (max-width: 768px) {
 
-            /* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Layout ─────────────────────────────────────────────────── */
             body {
                 flex-direction: column !important;
             }
 
-            /* â”€â”€ Bottom Sheet Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Bottom Sheet Panel ─────────────────────────────────────── */
             .side-navbar {
                 width: 100vw !important;
-                height: 58vh !important;
+                height: 60vh !important;
                 left: 0 !important;
                 top: auto !important;
                 bottom: 0 !important;
                 margin-left: 0 !important;
-                margin-bottom: -58vh !important;
-                transition: margin-bottom 0.42s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                margin-bottom: -60vh !important;
+                transition: margin-bottom 0.44s cubic-bezier(0.16, 1, 0.3, 1) !important;
                 transform: none !important;
-                /* No rounding here â€” toggle button provides the visual cap */
                 border-radius: 0 !important;
-                background: #282828 !important;
-                box-shadow: 0 -6px 40px rgba(0,0,0,0.55) !important;
+                background: #1e1e1e !important;
+                box-shadow: 0 -8px 48px rgba(0,0,0,0.65), 0 -1px 0 rgba(255,255,255,0.06) !important;
                 border-right: none !important;
                 border-top: none !important;
                 will-change: margin-bottom;
@@ -354,121 +370,119 @@
             }
 
             .side-navbar > div {
-                height: 58vh !important;
+                height: 60vh !important;
                 padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
             }
 
-            /* â”€â”€ Mobile drag handle (inside panel top) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Mobile drag handle (inside panel top) ─────────────────── */
             .mobile-drag-handle {
                 display: flex !important;
                 justify-content: center;
                 align-items: center;
-                padding: 10px 0 6px;
+                padding: 12px 0 6px;
                 flex-shrink: 0;
                 cursor: pointer;
             }
 
             .drag-pill {
-                width: 36px;
+                width: 40px;
                 height: 4px;
-                background: rgba(255,255,255,0.18);
-                border-radius: 2px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 99px;
                 transition: background 0.2s, width 0.2s;
             }
 
-            .mobile-drag-handle:hover .drag-pill,
             .mobile-drag-handle:active .drag-pill {
-                background: rgba(255,255,255,0.35);
-                width: 44px;
+                background: rgba(255,255,255,0.45);
+                width: 52px;
             }
 
-            /* â”€â”€ Main content area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Main content area ──────────────────────────────────────── */
             .my-container {
                 flex: 1;
                 margin-left: 0 !important;
-                height: calc(100vh - 48px);
-                min-height: calc(100vh - 48px);
-                max-height: calc(100vh - 48px);
-                transition: height 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+                height: calc(100dvh - 52px);
+                min-height: calc(100dvh - 52px);
+                max-height: calc(100dvh - 52px);
+                transition: height 0.44s cubic-bezier(0.16, 1, 0.3, 1);
             }
 
             .my-container.active-cont {
                 margin-left: 0;
-                height: calc(42vh - 48px);
-                min-height: calc(42vh - 48px);
-                max-height: calc(42vh - 48px);
+                height: calc(40dvh - 52px);
+                min-height: calc(40dvh - 52px);
+                max-height: calc(40dvh - 52px);
             }
 
             #preview-container {
                 height: 100%;
-                padding: 10px !important;
+                padding: 14px 14px 10px !important;
             }
 
-            /* â”€â”€ Toggle handle bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Toggle handle bar (bottom fixed strip) ─────────────────── */
             #menu-btn {
                 display: none !important;
             }
 
             .mobile-toggle-button {
                 display: flex !important;
-                flex-direction: column;
+                flex-direction: row;
                 align-items: center;
                 justify-content: center;
-                gap: 5px;
+                gap: 8px;
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 right: 0;
                 width: 100%;
-                height: 48px;
-                background: #282828;
-                border-top: 1px solid rgba(255,255,255,0.07);
-                border-radius: 20px 20px 0 0;
-                color: #dddddd;
+                height: 52px;
+                background: #1e1e1e;
+                border-top: 1px solid rgba(255,255,255,0.08);
+                border-radius: 22px 22px 0 0;
+                color: #cccccc;
                 cursor: pointer;
-                transition: bottom 0.42s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
+                transition: bottom 0.44s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, border-radius 0.2s ease;
                 z-index: 1003;
-                padding: 0;
+                padding: 0 20px;
+                padding-bottom: env(safe-area-inset-bottom, 0px);
             }
 
             body.sidebar-open .mobile-toggle-button {
-                bottom: 58vh;
+                bottom: 60vh;
                 border-radius: 0;
-                border-top: 1px solid rgba(255,255,255,0.07);
+                border-top: 1px solid rgba(255,255,255,0.08);
             }
 
-            .mobile-toggle-button:hover  { background: #323232; }
-            .mobile-toggle-button:active { background: #3c3c3c; }
+            .mobile-toggle-button:active { background: #2a2a2a; }
 
             .toggle-handle-pill {
-                width: 34px;
-                height: 3px;
-                background: #dddddd;
-                border-radius: 2px;
-                transition: transform 0.3s ease, width 0.2s ease, background 0.2s ease;
+                width: 28px;
+                height: 2.5px;
+                background: rgba(255,255,255,0.5);
+                border-radius: 99px;
+                transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), width 0.2s ease, opacity 0.2s ease;
             }
 
             body.sidebar-open .toggle-handle-pill {
-                width: 46px;
-                background: #dddddd;
                 transform: rotate(180deg);
+                opacity: 0.7;
             }
 
             .toggle-handle-label {
-                font-size: 9px;
+                font-size: 10px;
                 font-weight: 700;
-                letter-spacing: 2px;
+                letter-spacing: 1.5px;
                 text-transform: uppercase;
-                color: #dddddd;
+                color: rgba(255,255,255,0.6);
                 transition: color 0.2s ease;
                 font-family: Inter, -apple-system, sans-serif;
                 display: flex;
                 align-items: center;
-                gap: 4px;
+                gap: 5px;
             }
 
             .toggle-handle-label i {
-                font-size: 14px;
+                font-size: 13px;
                 transition: transform 0.3s ease;
             }
 
@@ -477,10 +491,10 @@
             }
 
             body.sidebar-open .toggle-handle-label {
-                color: #dddddd;
+                color: rgba(255,255,255,0.75);
             }
 
-            /* â”€â”€ Sidebar content â€” vertical scroll only â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Sidebar content – vertical scroll only ─────────────────── */
             #sidebar-content {
                 overflow-x: hidden !important;
                 overflow-y: auto !important;
@@ -492,7 +506,7 @@
                 overflow-x: hidden !important;
             }
 
-            /* Remove the ugly 1200px horizontal-scroll hack */
+            /* Ensure all containers fill width properly */
             .side-navbar .space-y-3,
             .side-navbar .space-y-4,
             .side-navbar .space-y-8,
@@ -507,12 +521,12 @@
                 max-width: 100% !important;
             }
 
-            /* â”€â”€ Navigation helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Navigation helpers ─────────────────────────────────────── */
             .active-nav     { margin-left: 0 !important; }
             body.sidebar-open { overflow: hidden; }
 
-            /* â”€â”€ Top Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-            .top-navbar { padding: 6px 12px !important; }
+            /* ── Top Navbar ─────────────────────────────────────────────── */
+            .top-navbar { padding: 6px 14px !important; }
             .top-navbar > div {
                 flex-wrap: nowrap !important;
                 justify-content: space-between !important;
@@ -522,19 +536,158 @@
             .top-navbar .mobile-logo-container { flex-shrink: 0; }
             .top-navbar .mode-buttons-container { margin-left: auto; flex-shrink: 0; }
 
+            /* Mode buttons – compact pill switcher */
             #mode-post-btn, #mode-highlight-btn {
-                padding: 8px 10px !important;
+                padding: 7px 12px !important;
                 font-size: 10px !important;
-                min-width: 90px !important;
-                min-height: 28px !important;
+                min-width: 88px !important;
+                min-height: 30px !important;
+                letter-spacing: 0.3px !important;
             }
 
-            /* â”€â”€ Logos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+            /* ── Logos ─────────────────────────────────────────────────── */
             .sidebar-logo-container { display: none !important; }
             .mobile-logo-container  { display: block !important; }
-            
-            /* Disable floating toolbar on mobile, but keep logic for inline editing */
-            #ctx-toolbar { display: none !important; }
+
+            /* ── Sidebar panel tab buttons – bigger touch targets ────────── */
+            .side-navbar #tabs-container button {
+                min-height: 34px !important;
+                padding: 7px 13px !important;
+                font-size: 11px !important;
+                letter-spacing: 0.3px !important;
+            }
+
+            /* ── Touch-friendly sliders ─────────────────────────────────── */
+            .side-navbar input[type="range"] {
+                height: 32px !important;
+                margin: 4px 0 !important;
+                cursor: pointer;
+            }
+
+            /* ── Touch-friendly sidebar buttons ──────────────────────────── */
+            .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]) {
+                min-height: 36px !important;
+                padding: 7px 12px !important;
+            }
+
+            /* ── Sidebar content padding ─────────────────────────────────── */
+            #sidebar-content {
+                padding: 14px 14px 28px !important;
+            }
+
+            /* ── Canvas touch interaction ─────────────────────────────────── */
+            #canvas-root {
+                touch-action: none;
+            }
+
+            /* ── Scale wrapper visual shadow on mobile ────────────────────── */
+            #scale-wrapper {
+                box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 16px 64px rgba(0,0,0,0.7) !important;
+            }
+
+            /* ── Context toolbar: re-enabled on mobile as bottom bar ──────── */
+            /* The display:none is controlled by .visible class specificity     */
+        }
+
+        /* ── Mobile Contextual Toolbar (Bottom Action Bar) ────────────────────────────────── */
+        /* Positioned just above the toggle button strip                                      */
+        @media (max-width: 768px) {
+            /* Override the hidden state – CSS specificity wins (#id.class > #id) */
+            #ctx-toolbar.visible {
+                display: flex !important;
+            }
+
+            /* Reposition to bottom of screen */
+            #ctx-toolbar {
+                position: fixed !important;
+                bottom: calc(52px + env(safe-area-inset-bottom, 0px) + 8px) !important;
+                top: auto !important;
+                left: 8px !important;
+                right: 8px !important;
+                width: auto !important;
+                max-width: calc(100vw - 16px) !important;
+                border-radius: 16px !important;
+                padding: 11px 14px !important;
+                gap: 8px !important;
+                background: rgba(26, 26, 26, 0.98) !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                box-shadow: 0 -4px 24px rgba(0,0,0,0.3), 0 8px 40px rgba(0,0,0,0.6) !important;
+                backdrop-filter: blur(16px) !important;
+                -webkit-backdrop-filter: blur(16px) !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                animation: none !important; /* Cancel desktop fadeIn, use our own */
+            }
+
+            #ctx-toolbar.visible {
+                animation: mobileCtxIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+            }
+
+            /* When sidebar panel is open, push toolbar higher */
+            body.sidebar-open #ctx-toolbar {
+                bottom: calc(60vh + 52px + 8px + env(safe-area-inset-bottom, 0px)) !important;
+                transition: bottom 0.44s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            }
+
+            /* Remove desktop down-arrow; toolbar is now anchored at bottom */
+            #ctx-toolbar::after {
+                display: none !important;
+            }
+
+            /* Larger, thumb-friendly toolbar buttons */
+            #ctx-toolbar .ctx-btn {
+                min-height: 36px !important;
+                padding: 8px 13px !important;
+                font-size: 12px !important;
+                border-radius: 8px !important;
+                white-space: nowrap !important;
+            }
+
+            /* Wider slider on mobile (more drag room) */
+            #ctx-toolbar .ctx-slider {
+                width: 110px !important;
+                height: 20px !important;
+                margin: 0 !important;
+            }
+
+            /* Larger color swatches */
+            #ctx-toolbar .ctx-swatch {
+                width: 26px !important;
+                height: 26px !important;
+            }
+
+            /* Larger value display */
+            #ctx-toolbar .ctx-val {
+                font-size: 11px !important;
+                min-width: 32px !important;
+            }
+
+            /* Larger image replace label */
+            #ctx-toolbar .ctx-img-label {
+                min-height: 36px !important;
+                padding: 8px 13px !important;
+                font-size: 12px !important;
+                border-radius: 8px !important;
+            }
+
+            /* Scrollbar hidden */
+            #ctx-toolbar::-webkit-scrollbar {
+                display: none !important;
+            }
+        }
+
+        /* Slide-up animation for mobile ctx-toolbar */
+        @keyframes mobileCtxIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         /* Desktop: Hide mobile toggle button */
@@ -567,7 +720,7 @@
 
         @media (max-width: 768px) {
             .active-cont {
-                margin-left: 0;
+                margin-left: 0 !important;
             }
         }
 
@@ -2120,7 +2273,7 @@
 
         #welcome-popup-overlay .card {
             align-items: center;
-            background-color: #282828;
+            background-color: #1e1e1e;
             border-radius: 20px;
             box-shadow: 0 0.4px 3.6px rgba(0, 0, 0, 0.004),
                 0 1px 8.5px rgba(0, 0, 0, 0.01), 0 1.9px 15.7px rgba(0, 0, 0, 0.019),
@@ -2131,7 +2284,7 @@
             position: relative;
             width: 353px;
             padding-top: 24px;
-            border: none; /* Override Bootstrap */
+            border: 1px solid rgba(255,255,255,0.07);
         }
 
         #welcome-popup-overlay .text {
@@ -2309,5 +2462,218 @@
         #welcome-popup-overlay .button-primary:hover {
             filter: brightness(1.1);
             background: linear-gradient(to right, #d53478, #b334a0);
+        }
+
+        /* ──────────────────────────────────────────────────────────────────────── */
+        /* MOBILE-SPECIFIC POLISH                                                   */
+        /* ──────────────────────────────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+
+            /* Welcome popup – full-width card */
+            #welcome-popup-overlay .card {
+                width: calc(100vw - 32px) !important;
+                max-width: 380px !important;
+            }
+
+            /* Welcome popup buttons – taller touch targets */
+            #welcome-popup-overlay .button {
+                height: 52px !important;
+                border-radius: 12px !important;
+                font-size: 15px !important;
+            }
+
+            /* Top navbar: slightly taller, better spacing */
+            .top-navbar {
+                min-height: 48px !important;
+            }
+
+            /* Mobile logo sizing */
+            .mobile-logo-container img {
+                height: 28px !important;
+            }
+
+            /* Sidebar panel – inner container height correction */
+            .side-navbar > div {
+                display: flex !important;
+                flex-direction: column !important;
+                height: 60vh !important;
+                overflow: hidden !important;
+            }
+
+            /* Panel content area: use all remaining space */
+            .side-navbar > div > div:nth-child(3) {
+                flex: 1 !important;
+                min-height: 0 !important;
+            }
+
+            /* Panel section headers: more breathing room */
+            .side-navbar label,
+            .side-navbar .text-gray-500,
+            .side-navbar .text-gray-400,
+            .side-navbar .text-gray-600 {
+                font-size: 10px !important;
+                letter-spacing: 0.6px !important;
+            }
+
+            /* Panel input fields: bigger text on mobile */
+            .side-navbar input[type="text"],
+            .side-navbar input[type="number"],
+            .side-navbar textarea,
+            .side-navbar select {
+                font-size: 14px !important;
+                padding: 10px 12px !important;
+                min-height: 40px !important;
+            }
+
+            /* Better checkbox tap target */
+            .side-navbar input[type="checkbox"] {
+                width: 20px !important;
+                height: 20px !important;
+                min-width: 20px !important;
+            }
+
+            /* Color picker buttons – taller */
+            .side-navbar button[aria-label*="color picker" i] {
+                min-height: 38px !important;
+            }
+
+            /* Export/Save panel buttons – full-width on mobile */
+            #save-btn-panel,
+            #export-btn {
+                min-height: 38px !important;
+                font-size: 11px !important;
+                padding: 8px 14px !important;
+            }
+
+            /* Panel tab strip – horizontally scrollable if overflow */
+            #tabs-container {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+                flex-wrap: nowrap !important;
+                padding-bottom: 2px;
+            }
+            #tabs-container::-webkit-scrollbar { display: none !important; }
+
+            /* Canvas root: prevent text-selection on touch */
+            #canvas-root, #canvas-root * {
+                -webkit-user-select: none !important;
+                user-select: none !important;
+            }
+
+            /* Re-enable text selection only when inline editing */
+            #canvas-root [contenteditable="true"],
+            #canvas-root [contenteditable="true"] * {
+                -webkit-user-select: text !important;
+                user-select: text !important;
+            }
+
+            /* Preview container dot-grid background – subtler on mobile */
+            #preview-container > .absolute.inset-0 {
+                opacity: 0.015 !important;
+            }
+
+            /* Scale wrapper: remove any conflicting p-1 padding from parent */
+            .my-container.p-1 {
+                padding: 0 !important;
+            }
+
+            /* Side nav background consistency */
+            .side-navbar {
+                background: #1e1e1e !important;
+            }
+
+            /* Ensure panel footer stays at bottom */
+            .side-navbar > div > div:last-child {
+                flex-shrink: 0 !important;
+                border-top: 1px solid rgba(255,255,255,0.06) !important;
+            }
+
+            /* Smooth panel scrolling */
+            .side-navbar > div > div:nth-child(3) {
+                -webkit-overflow-scrolling: touch !important;
+                scroll-behavior: smooth !important;
+            }
+
+            /* Panel cards – slightly more compact on mobile */
+            .side-navbar .p-2\.5,
+            .side-navbar .p-4 {
+                padding: 12px !important;
+            }
+
+            /* Loading overlay on mobile */
+            #loading-overlay {
+                border-radius: 0 !important;
+            }
+
+            /* Contextual toolbar text input – full width on mobile */
+            #ctx-toolbar .ctx-text-input {
+                width: 140px !important;
+                font-size: 13px !important;
+            }
+            #ctx-toolbar .ctx-text-input.wide {
+                width: 180px !important;
+            }
+
+            /* Ctx-toolbar label text */
+            #ctx-toolbar .ctx-label {
+                font-size: 10px !important;
+                letter-spacing: 0.4px !important;
+            }
+
+            /* Separator line in toolbar */
+            #ctx-toolbar .ctx-sep {
+                height: 24px !important;
+                margin: 0 4px !important;
+            }
+
+            /* Mode buttons container – pill style */
+            .mode-buttons-container {
+                border-radius: 8px !important;
+                padding: 2px !important;
+            }
+        }
+
+        /* Very small phones (< 375px) */
+        @media (max-width: 374px) {
+            #mode-post-btn, #mode-highlight-btn {
+                min-width: 72px !important;
+                font-size: 9px !important;
+                padding: 6px 8px !important;
+            }
+            .mobile-logo-container img {
+                height: 24px !important;
+            }
+            .side-navbar {
+                height: 62vh !important;
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .side-navbar {
+                height: 70vh !important;
+                margin-bottom: -70vh !important;
+            }
+            .side-navbar > div {
+                height: 70vh !important;
+            }
+            body.sidebar-open .mobile-toggle-button {
+                bottom: 70vh !important;
+            }
+            body.sidebar-open #ctx-toolbar {
+                bottom: calc(70vh + 52px + 8px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+            .my-container {
+                height: calc(100dvh - 52px) !important;
+                min-height: calc(100dvh - 52px) !important;
+                max-height: calc(100dvh - 52px) !important;
+            }
+            .my-container.active-cont {
+                height: calc(30dvh - 52px) !important;
+                min-height: calc(30dvh - 52px) !important;
+                max-height: calc(30dvh - 52px) !important;
+            }
         }
     </style>

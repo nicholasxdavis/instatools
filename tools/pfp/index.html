@@ -1,0 +1,1620 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#131314" />
+    <title>Profile Previewer — Instatools</title>
+
+    <link rel="icon" type="image/png" href="../../favicon.png" />
+    <link rel="apple-touch-icon" href="../../favicon.png" />
+
+    <!-- Same stack as main app -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+
+    <!-- Inherit ALL main-app styles (sidebar, buttons, inputs, etc.) -->
+    <link rel="stylesheet" href="../../css/styles.css" />
+
+    <style>
+      /* ── Preview scroll ─────────────────────────────────────── */
+      #preview-container {
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.12) transparent;
+      }
+      #preview-container::-webkit-scrollbar { width: 6px; }
+      #preview-container::-webkit-scrollbar-track { background: transparent; }
+      #preview-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 6px; }
+
+      /* ── Dot-grid bg for preview ────────────────────────────── */
+      #preview-container > .dot-grid-inner {
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        background-image: radial-gradient(#000 1px, transparent 1px);
+        background-size: 20px 20px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── No scrollbar for highlights ────────────────────────── */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+      /* ── Section divider (border-t between panel sections) ──── */
+      .section-divider {
+        border-top: 1px solid rgba(255,255,255,0.07);
+        padding-top: 20px;
+        margin-top: 20px;
+      }
+
+      /* ── Section label – matches main app's 10px uppercase ──── */
+      .section-label {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        color: #9ca3af !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin-bottom: 12px !important;
+      }
+
+      /* ── Sub-label (9px, like range-slider labels) ──────────── */
+      .sub-label {
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #9ca3af;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      /* ── Inner sub-card (bg-gray-50 → #2c2c2c after override) ── */
+      .inner-card {
+        background: #2c2c2c;
+        border: 1px solid #3e3e3e;
+        border-radius: 8px;
+        padding: 14px;
+      }
+
+      /* ── Checkbox matching sidebar style ────────────────────── */
+      .panel-checkbox {
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        width: 18px !important; height: 18px !important;
+        min-width: 18px !important;
+        flex-shrink: 0 !important;
+        border-radius: 4px !important;
+        background: #2c2c2c !important;
+        border: 2px solid #3e3e3e !important;
+        padding: 0 !important; margin: 0 !important;
+        cursor: pointer !important;
+        position: relative !important;
+        transition: all 0.15s !important;
+        box-shadow: none !important;
+      }
+      .panel-checkbox:hover { border-color: #4e4e4e !important; background: #323232 !important; }
+      .panel-checkbox:checked {
+        background: linear-gradient(135deg, #d53478 0%, #b334a0 100%) !important;
+        border-color: #d53478 !important;
+      }
+      .panel-checkbox:checked::after {
+        content: '' !important;
+        position: absolute !important;
+        left: 50% !important; top: 50% !important;
+        transform: translate(-50%, -60%) rotate(45deg) !important;
+        width: 4px !important; height: 8px !important;
+        border: solid white !important; border-width: 0 2px 2px 0 !important;
+      }
+      .panel-checkbox:focus { outline: none !important; box-shadow: none !important; }
+
+      /* ── Menu-btn chevron rotates when panel is open ─────── */
+      #menu-btn i.bx { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); display: inline-block; }
+      .my-container.active-cont #menu-btn i.bx { transform: rotate(180deg); }
+
+      /* ── Logo always centered in header ──────────────────── */
+      .top-navbar .sidebar-logo-container {
+        position: absolute !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        pointer-events: none !important;
+        z-index: 1 !important;
+      }
+
+      /* ── Mobile header elements ─────────────────────────── */
+      @media (max-width: 768px) {
+        .mobile-logo-container {
+          display: block !important;
+          flex-shrink: 0;
+        }
+        .top-navbar .sidebar-logo-container {
+          display: none !important;
+        }
+        /* Hide desktop menu button on mobile */
+        .top-navbar #menu-btn {
+          display: none !important;
+        }
+        /* Ensure POST GENERATOR button is visible on mobile */
+        .top-navbar .export-header-btn {
+          display: inline-flex !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+        }
+      }
+
+      /* ── Upload image button — matches app's small dark btns ─ */
+      #upload-btn {
+        background: #2a2a2a !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: rgba(255,255,255,0.55) !important;
+        border-radius: 6px !important;
+        padding: 5px 11px !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.15s !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        font-family: inherit !important;
+        letter-spacing: 0.3px !important;
+        text-transform: uppercase !important;
+        box-shadow: none !important;
+      }
+      #upload-btn:hover {
+        background: #333 !important;
+        border-color: rgba(255,255,255,0.2) !important;
+        color: rgba(255,255,255,0.85) !important;
+      }
+
+      /* ── PFP thumbnail ring in editor card ───────────────── */
+      .pfp-thumb-ring {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ec7258, #d53478, #b334a0);
+        padding: 2px;
+        flex-shrink: 0;
+      }
+      .pfp-thumb-ring-inner {
+        width: 100%; height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #1e1e1e;
+      }
+
+      /* ── Section label icon tint ─────────────────────────── */
+      .section-label i[data-lucide] { opacity: 0.5; }
+
+      /* ── Preview mobile responsive padding ───────────────── */
+      @media (max-width: 640px) {
+        #preview-container { padding: 16px 14px 48px !important; }
+
+        /* ── Profile header row: pfp left + username/stats right ── */
+        #profile-header-row {
+          gap: 16px !important;
+          margin-bottom: 0 !important;
+          align-items: flex-start !important;
+          flex-wrap: nowrap !important;
+        }
+
+        /* ── PFP column: 77px, no left padding ── */
+        #pfp-col {
+          padding-left: 0 !important;
+          justify-content: flex-start !important;
+          align-items: flex-start !important;
+        }
+        #pfp-col > button {
+          width: 77px !important;
+          height: 77px !important;
+        }
+
+        /* ── Info column: fills remaining width, no min-width constraint ── */
+        #profile-info-col {
+          flex: 1 1 0 !important;
+          min-width: 0 !important;
+          overflow: visible !important;
+        }
+
+        /* ── Username row: left-aligned, tight bottom spacing ── */
+        #profile-info-col > div:first-child {
+          justify-content: flex-start !important;
+          margin-bottom: 8px !important;
+          flex-wrap: nowrap !important;
+        }
+        #prev-username {
+          font-size: 15px !important;
+          font-weight: 400 !important;
+        }
+
+        /* ── Mobile stats: show as flex row, hide desktop stats ── */
+        #desktop-stats { display: none !important; }
+        #mobile-stats {
+          display: flex !important;
+          margin-top: 0 !important;
+          margin-bottom: 0 !important;
+          padding-top: 0 !important;
+          border-top: none !important;
+          width: 100% !important;
+        }
+
+        /* ── Bio block + Action buttons: full-width below PFP row ──
+             Negative-margin trick: pull left past pfp (77px) + gap (16px) = 93px,
+             then extend width to full container width.                         ── */
+        #profile-bio-block {
+          margin-left: -93px !important;
+          width: calc(100% + 93px) !important;
+          margin-top: 12px !important;
+          margin-bottom: 0 !important;
+        }
+        #profile-action-btns {
+          margin-left: -93px !important;
+          width: calc(100% + 93px) !important;
+          margin-top: 8px !important;
+          flex-wrap: nowrap !important;
+          gap: 8px !important;
+        }
+
+        /* ── Bio text styles ── */
+        #prev-name {
+          font-size: 13px !important;
+          font-weight: 600 !important;
+          text-align: left !important;
+          margin-bottom: 3px !important;
+          display: block !important;
+        }
+        #prev-bio {
+          font-size: 14px !important;
+          line-height: 18px !important;
+          text-align: left !important;
+          margin-bottom: 6px !important;
+        }
+        #prev-link-container {
+          justify-content: flex-start !important;
+          margin-bottom: 10px !important;
+        }
+
+        /* ── Action buttons: Follow/Message equal flex, add-user fixed ── */
+        #profile-action-btns > button {
+          flex: 1 !important;
+          max-width: none !important;
+          width: auto !important;
+          min-width: 0 !important;
+        }
+        #profile-action-btns > button:last-child {
+          flex: 0 0 40px !important;
+          width: 40px !important;
+        }
+
+        /* ── Highlights section ── */
+        #highlights-container {
+          padding-left: 0 !important;
+          gap: 16px !important;
+          margin-top: 20px !important;
+        }
+      }
+
+      /* ── Sidebar footer buy-me-a-coffee ──────────────────── */
+      .pfp-footer-link {
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255,255,255,0.38);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+        letter-spacing: 0.2px;
+      }
+      .pfp-footer-link:hover { color: rgba(255,255,255,0.7); text-decoration: none; }
+      .pfp-footer-link .pfp-heart {
+        color: #ec7258 !important;
+        font-size: 13px;
+        line-height: 1;
+      }
+
+      /* ── Panel sidebar scrollbar (matches main post-gen tool) ── */
+      .pfp-sidebar-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.15) transparent;
+      }
+      .pfp-sidebar-scroll::-webkit-scrollbar { width: 5px; }
+      .pfp-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+      .pfp-sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.14);
+        border-radius: 6px;
+      }
+      .pfp-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(255,255,255,0.28);
+      }
+
+      /* ── Emoji toggle – desktop only ────────────────────── */
+      .pfp-emoji-toggle-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        color: rgba(255,255,255,0.45) !important;
+        background: #2a2a2a !important;
+        border: 1px solid rgba(255,255,255,0.12) !important;
+        border-radius: 5px !important;
+        padding: 4px 9px !important;
+        cursor: pointer !important;
+        transition: all 0.15s !important;
+        font-family: inherit !important;
+        line-height: 1 !important;
+        flex-shrink: 0 !important;
+        box-shadow: none !important;
+      }
+      .pfp-emoji-toggle-btn:hover {
+        color: rgba(255,255,255,0.75) !important;
+        border-color: rgba(255,255,255,0.25) !important;
+        background: #323232 !important;
+        box-shadow: none !important;
+      }
+      .pfp-emoji-toggle-btn.active {
+        color: #e0458c !important;
+        border-color: rgba(213,52,120,0.55) !important;
+        background: rgba(213,52,120,0.1) !important;
+        box-shadow: none !important;
+      }
+      /* Hide emoji button AND panel on mobile */
+      @media (max-width: 768px) {
+        .pfp-emoji-toggle-btn,
+        #pfp-emoji-panel {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
+      }
+
+      /* ── Emoji Keyboard ─────────────────────────────────── */
+      .pfp-emoji-kb {
+        width: 100%;
+        height: 268px;
+        background: #1a1a1c;
+        display: flex;
+        flex-direction: column;
+        border-radius: 12px;
+        overflow: hidden;
+        border: none;
+        position: relative;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* Search row — iOS-style clean header */
+      .pfp-search-header {
+        flex-shrink: 0;
+        height: 54px;
+        background: rgba(26, 26, 28, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 0.5px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        z-index: 10;
+      }
+      .pfp-search-bar {
+        display: flex;
+        align-items: center;
+        background: #2c2c2e;
+        border: none;
+        border-radius: 10px;
+        height: 36px;
+        width: 100%;
+        padding: 0 10px;
+        transition: background 0.15s;
+      }
+      .pfp-search-bar:focus-within {
+        background: #3a3a3c;
+      }
+      .pfp-search-bar svg {
+        color: #8e8e93;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
+      .pfp-search-bar input {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 17px;
+        width: 100%;
+        outline: none;
+        margin-left: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .pfp-search-bar input::placeholder {
+        color: #8e8e93;
+      }
+      /* Scroll area – hide scrollbar visually */
+      .pfp-scroll-view {
+        flex: 1;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        background: #1a1a1c;
+      }
+      .pfp-scroll-view::-webkit-scrollbar { display: none; }
+      /* Category section */
+      .pfp-category-section {
+        padding: 0 12px 10px 12px;
+        content-visibility: auto;
+        contain-intrinsic-size: 250px;
+      }
+      .pfp-category-title {
+        color: #8e8e93;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 12px 4px 6px 4px;
+        position: sticky;
+        top: 0;
+        background: #1a1a1c;
+        z-index: 5;
+      }
+      /* Emoji grid */
+      .pfp-emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 12px 0;
+        justify-items: center;
+      }
+      .pfp-emoji-item {
+        font-size: 32px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+        transition: background 0.1s, transform 0.1s;
+        position: relative;
+      }
+      .pfp-emoji-item img { width: 32px; height: 32px; pointer-events: none; -webkit-user-drag: none; }
+      .pfp-emoji-item:hover, .pfp-emoji-item:active, .pfp-emoji-item.pfp-popover-active {
+        background: rgba(0,0,0,0.1);
+        transform: scale(1.1);
+      }
+      /* Bottom category bar — iOS-style clean minimal */
+      .pfp-bottom-bar {
+        flex-shrink: 0;
+        height: 45px;
+        background: #1f1f21;
+        border-top: 0.5px solid rgba(255,255,255,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 12px;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        z-index: 10;
+      }
+      /* ABC text button — iOS style */
+      .pfp-btn-text {
+        background: none !important;
+        border: none !important;
+        color: #8e8e93 !important;
+        cursor: pointer !important;
+        padding: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 0 !important;
+        transition: color 0.2s !important;
+        flex-shrink: 0 !important;
+        box-shadow: none !important;
+        letter-spacing: 0 !important;
+        text-transform: none !important;
+        font-weight: 400 !important;
+        font-size: 16px !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 0 !important;
+        gap: 0 !important;
+      }
+      .pfp-btn-text:hover {
+        color: #ffffff !important;
+        background: none !important;
+      }
+      .pfp-icon-group {
+        display: flex;
+        justify-content: space-between;
+        flex: 1;
+        margin: 0 10px;
+      }
+      /* Clean minimal category icons — iOS style */
+      .pfp-cat-icon {
+        background: none !important;
+        border: none !important;
+        color: #5c5c5f !important;
+        cursor: pointer !important;
+        padding: 4px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        transition: color 0.2s !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        letter-spacing: 0 !important;
+        text-transform: none !important;
+        font-weight: normal !important;
+        min-width: 0 !important;
+        gap: 0 !important;
+        width: 44px !important;
+        height: 44px !important;
+      }
+      .pfp-cat-icon:hover {
+        color: #8a8a8e !important;
+        background: none !important;
+      }
+      .pfp-cat-icon.active {
+        color: #ffffff !important;
+        background: none !important;
+      }
+      .pfp-cat-icon svg {
+        width: 22px !important;
+        height: 22px !important;
+      }
+      /* Backspace button — iOS style */
+      .pfp-btn-icon {
+        background: none !important;
+        border: none !important;
+        color: #5c5c5f !important;
+        cursor: pointer !important;
+        padding: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 0 !important;
+        transition: color 0.2s !important;
+        flex-shrink: 0 !important;
+        box-shadow: none !important;
+        min-width: 0 !important;
+        gap: 0 !important;
+        width: 44px !important;
+        height: 44px !important;
+      }
+      .pfp-btn-icon:hover {
+        color: #8a8a8e !important;
+        background: none !important;
+      }
+      .pfp-btn-icon svg {
+        width: 24px !important;
+        height: 24px !important;
+      }
+      /* Skin-tone popover — iOS style */
+      .pfp-popover-overlay { position: absolute; inset: 0; z-index: 100; display: none; }
+      .pfp-skin-tone-popover {
+        position: absolute;
+        background: #3a3a3c;
+        border: none;
+        border-radius: 30px;
+        display: flex;
+        padding: 6px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        transform: translateX(-50%);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s, transform 0.2s;
+        z-index: 101;
+      }
+      .pfp-skin-tone-popover.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .pfp-skin-tone-popover::after {
+        content: '';
+        position: absolute;
+        bottom: -8px; left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px 8px 0;
+        border-style: solid;
+        border-color: #3a3a3c transparent transparent transparent;
+      }
+      .pfp-popover-emoji {
+        font-size: 34px;
+        padding: 0 4px;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+      }
+      .pfp-popover-emoji img {
+        width: 32px;
+        height: 32px;
+        pointer-events: none;
+      }
+      .pfp-popover-emoji:active {
+        transform: scale(1.2);
+      }
+    </style>
+  </head>
+
+  <body class="bg-[#131314] text-gray-900 font-sans flex flex-col h-screen overflow-hidden selection:bg-black selection:text-white">
+
+    <!-- Initial Loader -->
+    <div id="initial-loader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- ── Mobile Handle Bar ──────────────────────────────────── -->
+    <button id="mobile-toggle-btn" class="mobile-toggle-button" onclick="toggleMobileSidebar()" aria-label="Toggle panel">
+      <span class="toggle-handle-label" id="mobile-toggle-label">
+        <i class="bx bx-slider-alt"></i>
+        <span id="mobile-toggle-text">Edit</span>
+      </span>
+            </button>
+
+    <!-- ── Sidebar (identical structure to main app) ─────────── -->
+    <div class="side-navbar" id="sidebar">
+      <div style="display:flex;flex-direction:column;height:100vh;overflow:hidden;">
+
+        <!-- Mobile drag handle -->
+        <div class="mobile-drag-handle" onclick="toggleMobileSidebar()">
+          </div>
+
+        <!-- Logo header — exact copy of main app -->
+        <div style="flex-shrink:0;padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,0.07);" class="sidebar-logo-container">
+          <img src="../../src/ui/logo.png" alt="Instatools" style="max-width:100%;height:auto;display:block;margin-left:-3px;" />
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="pfp-sidebar-scroll" style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;">
+          <div id="sidebar-content" class="tab-content" style="padding:14px;padding-bottom:24px;">
+
+            <!-- ── Profile Picture ─────────────────────────────── -->
+            <div class="space-y-3 animate-fade-in">
+              <label class="section-label">
+                <i data-lucide="image" style="width:11px;height:11px;"></i>
+                Profile Picture
+              </label>
+
+              <div class="inner-card" style="display:flex;align-items:center;gap:12px;">
+                <div class="pfp-thumb-ring">
+                  <div class="pfp-thumb-ring-inner">
+                    <img id="editor-pfp" src="" alt="Preview" class="pfp-image" style="width:100%;height:100%;object-fit:cover;" />
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0;">
+                  <button id="upload-btn">
+                    <i data-lucide="upload" style="width:10px;height:10px;"></i>
+                    Upload Image
+              </button>
+                  <span style="font-size:9px;color:rgba(255,255,255,0.22);font-weight:500;letter-spacing:0.2px;">or paste a URL below</span>
+                </div>
+                <input type="file" id="file-input" accept="image/*" style="display:none;" />
+            </div>
+
+              <div>
+                <label class="sub-label">Or use an Image URL</label>
+                <input type="text" data-key="pfpUrl" class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs w-full transition-all-200" placeholder="https://example.com/image.jpg" />
+              </div>
+            </div>
+
+            <!-- ── Identity ──────────────────────────────────────── -->
+            <div class="section-divider space-y-3 animate-fade-in">
+              <label class="section-label">
+                <i data-lucide="type" style="width:11px;height:11px;"></i>
+                Identity
+              </label>
+              <div>
+                <label class="sub-label">Display Name</label>
+                <input type="text" data-key="name" class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs w-full transition-all-200" placeholder="e.g. John Doe 🐝" />
+              </div>
+              <div>
+                <label class="sub-label">Username</label>
+                <input type="text" data-key="username" class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs w-full transition-all-200 lowercase" placeholder="username" />
+              </div>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:2px;">
+                <input type="checkbox" data-key="isVerified" class="panel-checkbox" />
+                <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;display:flex;align-items:center;gap:5px;">
+                  Verified Badge
+                  <svg width="11" height="11" viewBox="0 0 40 40" fill="#0095f6"><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"/></svg>
+                </span>
+              </label>
+            </div>
+
+            <!-- ── Bio ───────────────────────────────────────────── -->
+            <div class="section-divider space-y-3 animate-fade-in">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <label class="section-label" style="margin-bottom:0!important;">
+                  <i data-lucide="align-left" style="width:11px;height:11px;"></i>
+                  Bio
+                </label>
+                <button class="pfp-emoji-toggle-btn" id="pfp-emoji-toggle-btn" type="button" onclick="pfpToggleEmojiPicker()">
+                  <img src="../../src/ui/emojilol.png" style="width:15px;height:15px;object-fit:contain;display:block;flex-shrink:0;" alt="" />Emoji
+                </button>
+              </div>
+              <textarea data-key="bio" id="pfp-bio-textarea" rows="4" class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs w-full transition-all-200 resize-none" placeholder="Write your bio here..."></textarea>
+
+              <!-- ── Embedded Emoji Keyboard ──────────────────── -->
+              <div id="pfp-emoji-panel" style="display:none;">
+                <div class="pfp-emoji-kb">
+
+                  <!-- Search -->
+                  <div class="pfp-search-header">
+                    <div class="pfp-search-bar">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      <input type="text" id="pfp-search-input" placeholder="Search Emoji" autocomplete="off" autocorrect="off" />
+              </div>
+              </div>
+
+                  <!-- Scroll area -->
+                  <div class="pfp-scroll-view" id="pfp-scroll-view">
+                    <div id="pfp-search-results" style="display:none;">
+                      <div class="pfp-category-section">
+                        <div class="pfp-category-title">Search Results</div>
+                        <div class="pfp-emoji-grid" id="pfp-search-grid"></div>
+                      </div>
+                    </div>
+                    <div id="pfp-normal-categories"></div>
+            </div>
+
+                  <!-- Bottom bar -->
+                  <div class="pfp-bottom-bar">
+                    <button class="pfp-btn-text">ABC</button>
+                    <div class="pfp-icon-group">
+                      <button class="pfp-cat-icon active" data-pfp-target="pfp-cat-FREQUENTLY USED" title="Frequently Used">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+              </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-SMILEYS & PEOPLE" title="Smileys">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M8 9h.01M16 9h.01" stroke-width="2.5" stroke-linecap="round"/><path d="M8 14c2 2.5 6 2.5 8 0" stroke-linecap="round"/></svg>
+              </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-ANIMALS & NATURE" title="Animals">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 7a2 2 0 10-4 0c0 1.5 2 3 2 3s2-1.5 2-3zm12 0a2 2 0 10-4 0c0 1.5 2 3 2 3s2-1.5 2-3z" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r="5"/><path d="M10.5 13h3M12 13v2" stroke-linecap="round"/></svg>
+                      </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-FOOD & DRINK" title="Food">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8v10a3 3 0 003 3h6a3 3 0 003-3V8M4 8h16M15 4l-1 4M10 4l-1 4" stroke-linecap="round"/></svg>
+                      </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-ACTIVITY" title="Activity">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7l3 4h-6zM7 12l2 4 3-2M17 12l-2 4-3-2" stroke-linejoin="round"/></svg>
+                      </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-TRAVEL & PLACES" title="Travel">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12l2-4h12l2 4v5H4z"/><path d="M7 17v2a1 1 0 002 0v-2M15 17v2a1 1 0 002 0v-2" fill="currentColor" stroke="none"/><circle cx="8" cy="14" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="14" r="1.5" fill="currentColor" stroke="none"/></svg>
+                      </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-OBJECTS" title="Objects">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 19h6M10 22h4M12 14v5M12 4a5 5 0 00-5 5c0 2 1.5 3 2 5h6c.5-2 2-3 2-5a5 5 0 00-5-5z" stroke-linecap="round"/></svg>
+                      </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-SYMBOLS" title="Symbols">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><text x="12" y="17" font-size="10" text-anchor="middle" fill="currentColor" stroke="none" font-weight="700" font-family="system-ui,sans-serif">&amp;%</text></svg>
+                      </button>
+                      <button class="pfp-cat-icon" data-pfp-target="pfp-cat-FLAGS" title="Flags">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 21V5h9l1 2h6v10h-7l-1-2H7v6z" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+                    <button class="pfp-btn-icon" id="pfp-backspace-btn" title="Delete">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 5H10l-7 7 7 7h11a2 2 0 002-2V7a2 2 0 00-2-2z"/><path d="M14 9l6 6m0-6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                  </div>
+
+                  <!-- Skin-tone popover -->
+                  <div class="pfp-popover-overlay" id="pfp-popover-overlay"></div>
+                  <div class="pfp-skin-tone-popover" id="pfp-skin-tone-popover"></div>
+                </div>
+          </div>
+        </div>
+
+            <!-- ── Links ─────────────────────────────────────────── -->
+            <div class="section-divider space-y-3 animate-fade-in">
+              <label class="section-label">
+                <i data-lucide="link" style="width:11px;height:11px;"></i>
+                Links
+              </label>
+              <div>
+                <label class="sub-label">Display Link</label>
+                <input type="text" data-key="links" class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs w-full transition-all-200" placeholder="e.g. yourmusic.link" />
+        </div>
+              <div>
+                <label class="sub-label">Number of other links</label>
+                <input type="number" data-key="otherLinks" min="0" class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs w-full transition-all-200" />
+      </div>
+    </div>
+
+            <!-- ── Stats ─────────────────────────────────────────── -->
+            <div class="section-divider animate-fade-in">
+              <label class="section-label" style="margin-bottom:14px;">
+                <i data-lucide="bar-chart-2" style="width:11px;height:11px;"></i>
+                Profile Stats
+              </label>
+              <div class="inner-card grid grid-cols-3 gap-3">
+                <div>
+                  <label class="sub-label" style="text-align:center;">Posts</label>
+                  <input type="text" data-key="posts" class="bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs w-full text-center" />
+                </div>
+                <div>
+                  <label class="sub-label" style="text-align:center;">Followers</label>
+                  <input type="text" data-key="followers" class="bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs w-full text-center" />
+                </div>
+                <div>
+                  <label class="sub-label" style="text-align:center;">Following</label>
+                  <input type="text" data-key="following" class="bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs w-full text-center" />
+                </div>
+              </div>
+      </div>
+
+            <!-- ── Highlights ─────────────────────────────────────────── -->
+            <div class="section-divider animate-fade-in">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <label class="section-label" style="margin-bottom:0!important;">
+                  <i data-lucide="bookmark" style="width:11px;height:11px;"></i>
+                  Highlights
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                  <input type="checkbox" id="highlights-enabled" class="panel-checkbox" checked />
+                  <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;">Enable</span>
+                </label>
+              </div>
+              <div id="highlights-editor" style="display:flex;flex-direction:column;gap:10px;">
+                <!-- Highlights will be dynamically added here -->
+              </div>
+              <button id="add-highlight-btn" style="background:#2a2a2a;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border-radius:6px;padding:6px 12px;font-size:10px;font-weight:600;cursor:pointer;margin-top:8px;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.15s;" onmouseover="this.style.background='#333';this.style.color='#f5f5f5';this.style.borderColor='rgba(255,255,255,0.25)';" onmouseout="this.style.background='#2a2a2a';this.style.color='rgba(255,255,255,0.6)';this.style.borderColor='rgba(255,255,255,0.1)';">
+                <i data-lucide="plus" style="width:10px;height:10px;display:inline-block;margin-right:4px;"></i>
+                Add Highlight
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="flex-shrink:0;padding:10px 16px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;">
+          <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="pfp-footer-link">
+            Buy Me A Coffee
+            <span class="pfp-heart bx bx-heart"></span>
+          </a>
+            </div>
+
+      </div>
+          </div>
+
+    <!-- ── Main Wrapper ───────────────────────────────────────── -->
+    <div class="my-container flex-1 flex flex-col h-full overflow-hidden">
+
+      <!-- Top Navbar — exact structure from main app -->
+      <nav class="navbar top-navbar navbar-light bg-[#131314] px-5 flex-shrink-0 border-b border-neutral-800">
+        <div class="flex items-center justify-between w-full">
+
+          <!-- Left side: Mobile Logo + Desktop Menu Button -->
+          <div class="flex items-center gap-3">
+            <!-- Mobile Logo (Left side) -->
+            <div class="mobile-logo-container" style="display: none;">
+              <img src="../../src/ui/logo.png" alt="Instatools" style="height: 32px; width: auto; display: block;">
+          </div>
+            <!-- Desktop Menu Button -->
+            <a class="btn border-0" id="menu-btn" title="Toggle Sidebar">
+              <i class="bx bx-chevron-right"></i>
+            </a>
+        </div>
+
+          <!-- Center: logo (hidden on desktop, shown on mobile) -->
+          <div class="sidebar-logo-container" style="position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;display:none;">
+            <img src="../../src/ui/logo.png" alt="Instatools" style="height:28px;width:auto;display:block;" />
+          </div>
+
+          <!-- Right: OTHER TOOLS button -->
+          <div class="flex items-center gap-3">
+            <a href="../../index.html" class="export-header-btn" style="text-decoration:none;display:inline-flex;">
+              OTHER TOOLS
+            </a>
+          </div>
+
+        </div>
+      </nav>
+
+      <!-- Preview area -->
+      <div id="preview-container" class="flex-1 bg-[#131314] overflow-y-auto overflow-x-hidden relative" style="padding:32px 32px 64px;">
+        <div class="dot-grid-inner"></div>
+        <div style="max-width:935px;margin:0 auto;position:relative;z-index:1;">
+
+          <!-- Profile Header -->
+          <div id="profile-header-row" style="display:flex;gap:48px;flex-wrap:wrap;margin-bottom:44px;">
+
+            <!-- PFP -->
+            <div id="pfp-col" style="flex-shrink:0;display:flex;justify-content:center;align-items:flex-start;padding-left:8px;">
+              <button style="width:150px;height:150px;border-radius:50%;background:linear-gradient(to top right,#ec7258,#d53478,#b334a0);padding:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;flex-shrink:0;">
+                <div style="width:100%;height:100%;border-radius:50%;border:4px solid #131314;overflow:hidden;background:#1e1e1e;">
+                  <img id="prev-pfp" src="" alt="Profile" class="pfp-image" style="width:100%;height:100%;object-fit:cover;" />
+          </div>
+              </button>
+        </div>
+
+            <!-- Profile Info -->
+            <div id="profile-info-col" style="flex:1;min-width:220px;display:flex;flex-direction:column;">
+
+              <!-- Username Row -->
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+                <span id="prev-username" style="font-size:20px;font-weight:300;color:#fff;font-family:inherit;"></span>
+                <svg id="prev-verified" aria-label="Verified" fill="#0095f6" height="18" role="img" viewBox="0 0 40 40" width="18" style="display:none;margin-top:2px;flex-shrink:0;">
+                  <title>Verified</title>
+                  <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path>
+              </svg>
+                <button style="background:none;border:none;cursor:pointer;color:#fff;padding:0;display:flex;align-items:center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                  </svg>
+                </button>
+        </div>
+
+              <!-- Mobile Stats -->
+              <div id="mobile-stats" style="display:none;margin-top:0;margin-bottom:0;flex-direction:row;gap:0;justify-content:space-between;">
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;cursor:default;">
+                  <span id="prev-mob-posts" style="color:#fff;font-size:15px;font-weight:600;line-height:1.2;"></span>
+                  <span style="color:#fff;font-size:13px;font-weight:400;line-height:1.4;">posts</span>
+            </div>
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;cursor:pointer;">
+                  <span id="prev-mob-followers" style="color:#fff;font-size:15px;font-weight:600;line-height:1.2;"></span>
+                  <span style="color:#fff;font-size:13px;font-weight:400;line-height:1.4;">followers</span>
+            </div>
+                <div style="display:flex;flex-direction:column;align-items:center;flex:1;cursor:pointer;">
+                  <span id="prev-mob-following" style="color:#fff;font-size:15px;font-weight:600;line-height:1.2;"></span>
+                  <span style="color:#fff;font-size:13px;font-weight:400;line-height:1.4;">following</span>
+            </div>
+          </div>
+
+              <!-- Desktop Stats -->
+              <div id="desktop-stats" style="display:flex;gap:40px;margin-bottom:20px;">
+                <span style="color:#fff;font-size:14px;"><span id="prev-posts" style="font-weight:600;"></span> posts</span>
+                <span style="color:#fff;font-size:14px;cursor:pointer;"><span id="prev-followers" style="font-weight:600;"></span> followers</span>
+                <span style="color:#fff;font-size:14px;cursor:pointer;"><span id="prev-following" style="font-weight:600;"></span> following</span>
+        </div>
+
+              <!-- Bio Block -->
+              <div id="profile-bio-block" style="font-size:14px;line-height:18px;color:#fff;">
+                <span id="prev-name" style="font-weight:600;display:block;margin-bottom:4px;"></span>
+                <div id="prev-bio" style="white-space:pre-wrap;margin-bottom:8px;word-break:break-word;"></div>
+                <div id="prev-link-container" style="display:none;align-items:center;gap:6px;margin-bottom:14px;font-weight:600;color:#E0F1FF;cursor:pointer;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(45deg);flex-shrink:0;">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                  <span id="prev-links-text"></span>
+                  <span id="prev-other-links" style="font-weight:400;color:#fff;display:none;"></span>
+      </div>
+            </div>
+
+              <!-- Action Buttons -->
+              <div id="profile-action-btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;">
+                <button style="background:#d53478;color:#fff;font-weight:600;border-radius:10px;padding:5px 0;font-size:14px;border:none;cursor:pointer;width:148px;transition:background 0.2s;" onmouseover="this.style.background='#b334a0'" onmouseout="this.style.background='#d53478'">Follow</button>
+                <button style="background:#1e1e1e;color:#fff;font-weight:600;border-radius:10px;padding:5px 0;font-size:14px;border:none;cursor:pointer;width:148px;transition:background 0.2s;" onmouseover="this.style.background='#282828'" onmouseout="this.style.background='#1e1e1e'">Message</button>
+                <button style="background:#1e1e1e;color:#fff;border-radius:10px;padding:5px 10px;font-size:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='#282828'" onmouseout="this.style.background='#1e1e1e'">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+                  </svg>
+                </button>
+          </div>
+
+      </div>
+          </div>
+
+          <!-- Highlights Row -->
+          <div id="highlights-container" class="no-scrollbar" style="display:flex;gap:24px;overflow-x:hidden;padding-bottom:16px;align-items:flex-start;padding-left:4px;flex-wrap:wrap;"></div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      // ── State ────────────────────────────────────────────────────
+      const profile = {
+        username:   "6ixbuzztv",
+        isVerified: true,
+        name:       "6ixBuzz TV 6 \uD83D\uDC1D",
+        posts:      "22,696",
+        followers:  "2.6M",
+        following:  "590",
+        bio:        "#1 In CA Lifestyle & Culture\nDM us to be featured \uD83D\uDCEC\nInfo@6ix.buzz for inquiries \uD83D\uDCE7",
+        links:      "6ix.buzz",
+        otherLinks: 1,
+        pfpUrl:     "ui/pfp.jpg",
+      };
+
+      const highlightsData = [
+        { name: "Buzz'd",          imgUrl: "ui/highlights/h1.jpg", enabled: true },
+        { name: "Spark",           imgUrl: "ui/highlights/h2.jpg", enabled: true },
+        { name: "STC",             imgUrl: "ui/highlights/h3.jpg", enabled: true },
+        { name: "Originals",       imgUrl: "ui/highlights/h4.jpg", enabled: true },
+        { name: "BigX Tour",       imgUrl: "ui/highlights/h5.jpg", enabled: true },
+        { name: "Takeovers",       imgUrl: "ui/highlights/h6.jpg", enabled: true },
+        { name: "Buzz Foundat...", imgUrl: "ui/highlights/h7.jpg", enabled: true },
+      ];
+
+      let highlightsEnabled = true;
+
+      // ── Render Highlights Editor ────────────────────────────────────
+      function renderHighlightsEditor() {
+        const editor = document.getElementById("highlights-editor");
+        if (!editor) return;
+        
+        editor.innerHTML = highlightsData.map((h, i) => `
+          <div class="inner-card" style="display:flex;align-items:center;gap:12px;" data-highlight-index="${i}">
+            <div style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);background:#1e1e1e;padding:2px;flex-shrink:0;overflow:hidden;">
+              <img src="${h.imgUrl}" alt="${h.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;">
+              <input type="text" class="bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs w-full" value="${h.name}" placeholder="Highlight name" data-highlight-name="${i}" />
+              <input type="text" class="bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs w-full" value="${h.imgUrl}" placeholder="Image URL" data-highlight-img="${i}" />
+            </div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;flex-shrink:0;">
+              <input type="checkbox" class="panel-checkbox" ${h.enabled ? 'checked' : ''} data-highlight-enabled="${i}" />
+              <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;">Show</span>
+            </label>
+            <button onclick="removeHighlight(${i})" style="background:#2a2a2a;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border-radius:6px;padding:6px;font-size:10px;cursor:pointer;flex-shrink:0;transition:all 0.15s;" onmouseover="this.style.background='#3a3a3a';this.style.color='#f5f5f5';" onmouseout="this.style.background='#2a2a2a';this.style.color='rgba(255,255,255,0.6)';" title="Remove">
+              <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+            </button>
+          </div>
+        `).join('');
+        
+        // Re-init Lucide icons
+        if (typeof lucide !== "undefined") lucide.createIcons();
+        
+        // Attach event listeners
+        editor.querySelectorAll('[data-highlight-name]').forEach(input => {
+          input.addEventListener('input', (e) => {
+            const idx = parseInt(e.target.dataset.highlightName);
+            highlightsData[idx].name = e.target.value;
+            renderHighlights();
+          });
+        });
+        
+        editor.querySelectorAll('[data-highlight-img]').forEach(input => {
+          input.addEventListener('input', (e) => {
+            const idx = parseInt(e.target.dataset.highlightImg);
+            highlightsData[idx].imgUrl = e.target.value;
+            renderHighlights();
+          });
+        });
+        
+        editor.querySelectorAll('[data-highlight-enabled]').forEach(checkbox => {
+          checkbox.addEventListener('change', (e) => {
+            const idx = parseInt(e.target.dataset.highlightEnabled);
+            highlightsData[idx].enabled = e.target.checked;
+            renderHighlights();
+          });
+        });
+      }
+
+      // ── Remove Highlight ─────────────────────────────────────────────
+      function removeHighlight(index) {
+        if (confirm('Remove this highlight?')) {
+          highlightsData.splice(index, 1);
+          renderHighlightsEditor();
+          renderHighlights();
+        }
+      }
+
+      // ── Add Highlight ───────────────────────────────────────────────
+      function addHighlight() {
+        highlightsData.push({
+          name: "New Highlight",
+          imgUrl: "ui/highlights/h1.jpg",
+          enabled: true
+        });
+        renderHighlightsEditor();
+        renderHighlights();
+      }
+
+      // ── Render Highlights ────────────────────────────────────────────
+      function renderHighlights() {
+        const hlContainer = document.getElementById("highlights-container");
+        if (!hlContainer) return;
+        
+        const enabledHighlights = highlightsEnabled ? highlightsData.filter(h => h.enabled) : [];
+        
+        if (enabledHighlights.length === 0) {
+          hlContainer.innerHTML = '';
+          return;
+        }
+        
+        // On mobile (<=640px), only show first 4 highlights
+        const isMobile = window.innerWidth <= 640;
+        const highlightsToShow = isMobile ? enabledHighlights.slice(0, 4) : enabledHighlights;
+        
+        hlContainer.innerHTML = highlightsToShow.map((h, i) => `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;flex-shrink:0;">
+            <div style="width:77px;height:77px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:#1e1e1e;padding:4px;position:relative;">
+              <div style="width:100%;height:100%;border-radius:50%;overflow:hidden;">
+                <img src="${h.imgUrl}" alt="${h.name}" style="width:100%;height:100%;object-fit:cover;" />
+            </div>
+            </div>
+            <span style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);width:74px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${h.name}</span>
+          </div>
+        `).join('');
+      }
+
+      // ── Update Preview ───────────────────────────────────────────
+      function updatePreview() {
+        document.getElementById("prev-username").textContent   = profile.username;
+        document.getElementById("prev-name").textContent       = profile.name;
+        document.getElementById("prev-posts").textContent      = profile.posts;
+        document.getElementById("prev-followers").textContent  = profile.followers;
+        document.getElementById("prev-following").textContent  = profile.following;
+        document.getElementById("prev-bio").textContent        = profile.bio;
+        document.getElementById("prev-mob-posts").textContent     = profile.posts;
+        document.getElementById("prev-mob-followers").textContent = profile.followers;
+        document.getElementById("prev-mob-following").textContent = profile.following;
+
+        document.getElementById("prev-verified").style.display = profile.isVerified ? "block" : "none";
+
+        const linkContainer = document.getElementById("prev-link-container");
+        if (profile.links) {
+          linkContainer.style.display = "flex";
+          document.getElementById("prev-links-text").textContent = profile.links;
+          const otherEl = document.getElementById("prev-other-links");
+          if (profile.otherLinks > 0) {
+            otherEl.textContent = ` and ${profile.otherLinks} others`;
+            otherEl.style.display = "inline";
+          } else {
+            otherEl.style.display = "none";
+          }
+        } else {
+          linkContainer.style.display = "none";
+        }
+
+        document.querySelectorAll(".pfp-image").forEach(img => {
+          if (profile.pfpUrl) { img.src = profile.pfpUrl; img.style.display = "block"; }
+          else img.style.display = "none";
+        });
+
+        // Sync inputs
+        document.querySelectorAll("[data-key]").forEach(input => {
+          const key = input.getAttribute("data-key");
+          if (input.type === "checkbox") input.checked = !!profile[key];
+          else input.value = profile[key] ?? "";
+        });
+      }
+
+      // ── Input Listeners ──────────────────────────────────────────
+      document.querySelectorAll("[data-key]").forEach(input => {
+        input.addEventListener("input", e => {
+          const key = e.target.getAttribute("data-key");
+          if (!key) return;
+          profile[key] = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+          updatePreview();
+        });
+      });
+
+      // ── File Upload ──────────────────────────────────────────────
+      const fileInput = document.getElementById("file-input");
+      document.getElementById("upload-btn").addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (!file) return;
+          const reader = new FileReader();
+        reader.onload = ev => { profile.pfpUrl = ev.target.result; updatePreview(); };
+          reader.readAsDataURL(file);
+      });
+
+      // ── Sidebar toggle — exact copy of main app logic ────────────
+      function toggleMobileSidebar() {
+        const sidebar   = document.getElementById("sidebar");
+        const container = document.querySelector(".my-container");
+        const isOpen    = sidebar.classList.contains("active-nav");
+        sidebar.classList.toggle("active-nav", !isOpen);
+        if (container) container.classList.toggle("active-cont", !isOpen);
+        document.body.classList.toggle("sidebar-open", !isOpen);
+        const label = document.getElementById("mobile-toggle-text");
+        if (label) label.textContent = isOpen ? "Edit" : "Close";
+      }
+      window.toggleMobileSidebar = toggleMobileSidebar;
+
+      // ── Desktop menu-btn toggle ──────────────────────────────────
+      document.addEventListener("DOMContentLoaded", () => {
+        const menuBtn   = document.getElementById("menu-btn");
+        const sidebar   = document.getElementById("sidebar");
+        const container = document.querySelector(".my-container");
+
+        // Open panel by default on desktop
+        if (window.innerWidth > 768 && sidebar && container) {
+          sidebar.classList.add("active-nav");
+          container.classList.add("active-cont");
+        }
+
+        if (menuBtn && sidebar && container) {
+          menuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active-nav");
+            container.classList.toggle("active-cont");
+            if (window.innerWidth <= 768) {
+              document.body.classList.toggle("sidebar-open", sidebar.classList.contains("active-nav"));
+            }
+          });
+        }
+
+        // Resize handler
+        window.addEventListener("resize", () => {
+          if (window.innerWidth <= 768) {
+            if (sidebar && !sidebar.classList.contains("active-nav") && container) {
+              container.classList.remove("active-cont");
+            }
+            document.body.classList.remove("sidebar-open");
+          }
+          // Responsive stats
+          const mobile = window.innerWidth <= 640;
+          const ds = document.getElementById("desktop-stats");
+          const ms = document.getElementById("mobile-stats");
+          if (ds) ds.style.display = mobile ? "none" : "flex";
+          if (ms) ms.style.display = mobile ? "flex" : "none";
+          // Re-render highlights on resize (to show/hide based on mobile/desktop)
+          renderHighlights();
+        });
+
+        // Responsive stats init
+        const mobile = window.innerWidth <= 640;
+        const ds = document.getElementById("desktop-stats");
+        const ms = document.getElementById("mobile-stats");
+        if (ds) ds.style.display = mobile ? "none" : "flex";
+        if (ms) ms.style.display = mobile ? "flex" : "none";
+
+        // Init Lucide icons
+        if (typeof lucide !== "undefined") lucide.createIcons();
+
+        // ── Highlights Controls ────────────────────────────────────────
+        // Highlights enabled toggle
+        const highlightsEnabledCheckbox = document.getElementById("highlights-enabled");
+        if (highlightsEnabledCheckbox) {
+          highlightsEnabledCheckbox.checked = highlightsEnabled;
+          highlightsEnabledCheckbox.addEventListener("change", (e) => {
+            highlightsEnabled = e.target.checked;
+            renderHighlights();
+          });
+        }
+
+        // Add highlight button
+        const addHighlightBtn = document.getElementById("add-highlight-btn");
+        if (addHighlightBtn) {
+          addHighlightBtn.addEventListener("click", addHighlight);
+        }
+
+        // Initialize highlights editor and render
+        renderHighlightsEditor();
+        renderHighlights();
+
+        // Make functions globally accessible
+        window.removeHighlight = removeHighlight;
+        window.addHighlight = addHighlight;
+
+      updatePreview();
+      });
+    </script>
+
+    <!-- ── Emoji Picker Logic ──────────────────────────────── -->
+    <script>
+    (function () {
+      'use strict';
+
+      const pfpIsApple = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
+      /* ── Emoji data ─────────────────────────────────────── */
+      const PFP_EMOJIS = {
+        "SMILEYS & PEOPLE": ["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","😉","😊","😇","🥰","😍","🤩","😘","😗","☺️","😚","😙","🥲","😋","😛","😜","🤪","😝","🤑","🤗","🤭","🤫","🤔","🤐","🤨","😐","😑","😶","😏","😒","🙄","😬","🤥","😌","😔","😪","🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶","🥴","😵","🤯","🤠","🥳","🥸","😎","🤓","🧐","😕","😟","🙁","☹️","😮","😯","😲","😳","🥺","😦","😧","😨","😰","😥","😢","😭","😱","😖","😣","😞","😓","😩","😫","🥱","😤","😡","😠","🤬","😈","👿","💀","☠️","💩","🤡","👹","👺","👻","👽","👾","🤖","😺","😸","😹","😻","😼","😽","🙀","😿","😾","💋","💌","💘","💝","💖","💗","💓","💞","💕","💟","❣️","💔","❤️","🧡","💛","💚","💙","💜","🤎","🖤","🤍","💯","💢","💥","💫","💦","💨","💬","💭","💤","👋","🤚","🖐️","✋","🖖","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","🦵","🦶","👂","🦻","👃","🧠","👀","👅","👄","👶","🧒","👦","👧","🧑","👱","👨","🧔","👩","🧓","👴","👵","🙍","🙎","🙅","🙆","💁","🙋","🧏","🙇","🤦","🤷","👮","🕵️","💂","🥷","👷","🤴","👸","👳","👲","🧕","🤵","👰","🤰","🤱","👼","🎅","🤶","🦸","🦹","🧙","🧚","🧛","🧜","🧝","🧞","🧟","💆","💇","🚶","🧍","🧎","🏃","💃","🕺","👯","🧖","🧗","🤺","🏇","⛷️","🏂","🏌️","🏄","🚣","🏊","⛹️","🏋️","🚴","🚵","🤸","🤼","🤽","🤾","🤹","🧘","🛀","🛌","👭","👫","👬","💏","💑","👪","👤","👥","🫂"],
+        "ANIMALS & NATURE": ["🐵","🐒","🦍","🦧","🐶","🐕","🦮","🐕‍🦺","🐩","🐺","🦊","🦝","🐱","🐈","🐈‍⬛","🦁","🐯","🐅","🐆","🐴","🐎","🦄","🦓","🦌","🦬","🐮","🐂","🐃","🐄","🐷","🐖","🐗","🐽","🐏","🐑","🐐","🐪","🐫","🦙","🦒","🐘","🦣","🦏","🦛","🐭","🐁","🐀","🐹","🐰","🐇","🐿️","🦫","🦔","🦇","🐻","🐻‍❄️","🐨","🐼","🦥","🦦","🦨","🦘","🦡","🐾","🦃","🐔","🐓","🐣","🐤","🐥","🐦","🐧","🕊️","🦅","🦆","🦢","🦉","🦤","🪶","🦩","🦚","🦜","🐸","🐊","🐢","🦎","🐍","🐲","🐉","🦕","🦖","🐳","🐋","🐬","🦭","🐟","🐠","🐡","🦈","🐙","🐚","🐌","🦋","🐛","🐜","🐝","🪲","🐞","🦗","🪳","🕷️","🕸️","🦂","🦟","🪰","🪱","🦠","💐","🌸","💮","🏵️","🌹","🥀","🌺","🌻","🌼","🌷","🌱","🪴","🌲","🌳","🌴","🌵","🌾","🌿","☘️","🍀","🍁","🍂","🍃"],
+        "FOOD & DRINK": ["🍇","🍈","🍉","🍊","🍋","🍌","🍍","🥭","🍎","🍏","🍐","🍑","🍒","🍓","🫐","🥝","🍅","🫒","🥥","🥑","🍆","🥔","🥕","🌽","🌶️","🫑","🥒","🥬","🥦","🧄","🧅","🍄","🥜","🌰","🍞","🥐","🥖","🫓","🥨","🥯","🥞","🧇","🧀","🍖","🍗","🥩","🥓","🍔","🍟","🍕","🌭","🥪","🌮","🌯","🫔","🥙","🧆","🥚","🍳","🥘","🍲","🫕","🥣","🥗","🍿","🧈","🧂","🥫","🍱","🍘","🍙","🍚","🍛","🍜","🍝","🍠","🍢","🍣","🍤","🍥","🥮","🍡","🥟","🥠","🥡","🦪","🍦","🍧","🍨","🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🍼","🥛","☕","🫖","🍵","🍶","🍾","🍷","🍸","🍹","🍺","🍻","🥂","🥃","🥤","🧋","🧃","🧉","🧊","🍽️","🍴","🥄","🔪","🏺"],
+        "ACTIVITY": ["🎃","🎄","🎆","🎇","🧨","✨","🎈","🎉","🎊","🎋","🎍","🎎","🎏","🎐","🎑","🧧","🎀","🎁","🎗️","🎟️","🎫","🎖️","🏆","🏅","🥇","🥈","🥉","⚽","⚾","🥎","🏀","🏐","🏈","🏉","🎾","🥏","🎳","🏏","🏑","🏒","🥍","🏓","🏸","🥊","🥋","🥅","⛳","⛸️","🎣","🤿","🎽","🎿","🛷","🥌","🎯","🪀","🪁","🎱","🔮","🪄","🧿","🎮","🕹️","🎰","🎲","🧩","🧸","🪅","🪆","♠️","♥️","♦️","♣️","♟️","🃏","🀄","🎴","🎭","🖼️","🎨","🧵","🪡","🧶","🪢"],
+        "TRAVEL & PLACES": ["🌍","🌎","🌏","🌐","🗺️","🗾","🧭","🏔️","⛰️","🌋","🗻","🏕️","🏖️","🏜️","🏝️","🏞️","🏟️","🏛️","🏗️","🧱","🪨","🪵","🛖","🏘️","🏚️","🏠","🏡","🏢","🏣","🏤","🏥","🏦","🏨","🏪","🏫","🏬","🏭","🏯","🏰","💒","🗼","🗽","⛪","🕌","🛕","🕍","⛩️","🕋","⛲","⛺","🌁","🌃","🏙️","🌄","🌅","🌆","🌇","🌉","♨️","🎠","🎡","🎢","💈","🎪","🚂","🚃","🚄","🚅","🚆","🚇","🚈","🚉","🚊","🚝","🚞","🚋","🚌","🚍","🚎","🚐","🚑","🚒","🚓","🚔","🚕","🚖","🚗","🚘","🚙","🛻","🚚","🚛","🚜","🏎️","🏍️","🛵","🛺","🚲","🛴","🛹","🛼","🚏","🛣️","🛤️","⛽","🚨","🚥","🚦","🛑","🚧","⚓","⛵","🛶","🚤","🛳️","⛴️","🛥️","🚢","✈️","🛩️","🛫","🛬","🪂","💺","🚁","🚟","🚠","🚡","🛰️","🚀","🛸","🛎️","🧳","⌛","⏳","⌚","⏰","⏱️","⏲️","🕰️","🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘","🌙","🌚","🌛","🌜","🌡️","☀️","🌝","🌞","🪐","⭐","🌟","🌠","🌌","☁️","⛅","⛈️","🌤️","🌥️","🌦️","🌧️","🌨️","🌩️","🌪️","🌫️","🌬️","🌀","🌈","🌂","☂️","☔","⛱️","⚡","❄️","☃️","⛄","☄️","🔥","💧","🌊"],
+        "OBJECTS": ["👓","🕶️","🥽","🥼","🦺","👔","👕","👖","🧣","🧤","🧥","🧦","👗","👘","🥻","🩱","🩲","🩳","👙","👚","👛","👜","👝","🎒","🩴","👞","👟","🥾","🥿","👠","👡","🩰","👢","👑","👒","🎩","🎓","🧢","🪖","⛑️","📿","💄","💍","💎","🔇","🔈","🔉","🔊","📢","📣","📯","🔔","🔕","🎼","🎵","🎶","🎙️","🎚️","🎛️","🎤","🎧","📻","🎷","🪗","🎸","🎹","🎺","🎻","🪕","🥁","🪘","📱","📲","☎️","📞","📟","📠","🔋","🔌","💻","🖥️","🖨️","⌨️","🖱️","🖲️","💾","💿","📀","🧮","🎥","🎞️","📽️","🎬","📺","📷","📸","📹","📼","🔍","🔎","🕯️","💡","🔦","🏮","🪔","📔","📕","📖","📗","📘","📙","📚","📓","📒","📃","📜","📄","📰","🗞️","📑","🔖","🏷️","💰","🪙","💸","💳","🧾","✉️","📧","📨","📩","📤","📥","📦","📫","📪","📬","📭","📮","🗳️","✏️","✒️","🖋️","🖊️","🖌️","🖍️","📝","💼","📁","📂","🗂️","📅","📆","🗒️","🗓️","📇","📈","📉","📊","📋","📌","📍","📎","🖇️","📏","📐","✂️","🗃️","🗄️","🗑️","🔒","🔓","🔏","🔐","🔑","🗝️","🔨","🪓","⛏️","⚒️","🛠️","🗡️","⚔️","🔫","🪃","🏹","🛡️","🪚","🔧","🪛","🔩","⚙️","🗜️","⚖️","🦯","🔗","⛓️","🪝","🧰","🧲","🪜","⚗️","🧪","🧫","🧬","🔬","🔭","📡","💉","🩸","💊","🩹","🩺","🚪","🛗","🪞","🪟","🛏️","🛋️","🪑","🚽","🪠","🚿","🛁","🪤","🪒","🧴","🧷","🧹","🧺","🧻","🧽","🧯","🛒","🚬","⚰️","🪦","⚱️","🗿","🪧"],
+        "SYMBOLS": ["🏧","🚮","🚰","♿","🚹","🚺","🚻","🚼","🚾","🛂","🛃","🛄","🛅","⚠️","🚸","⛔","🚫","🚳","🚭","🚯","🚱","🚷","📵","🔞","☢️","☣️","⬆️","↗️","➡️","↘️","⬇️","↙️","⬅️","↖️","↕️","↔️","↩️","↪️","⤴️","⤵️","🔃","🔄","🔙","🔚","🔛","🔜","🔝","🛐","⚛️","🕉️","✡️","☸️","☯️","✝️","☦️","☪️","☮️","🕎","🔯","♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓","⛎","🔀","🔁","🔂","▶️","⏩","⏭️","⏯️","◀️","⏪","⏮️","🔼","⏫","🔽","⏬","⏸️","⏹️","⏺️","⏏️","🎦","🔅","🔆","📶","📳","📴","♀️","♂️","⚧","✖️","➕","➖","➗","♾️","‼️","⁉️","❓","❔","❕","❗","〰️","💱","💲","♻️","⚜️","🔱","📛","🔰","⭕","✅","☑️","✔️","❌","❎","➰","➿","〽️","✳️","✴️","❇️","©️","®️","™️","#️⃣","*️⃣","0️⃣","1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","🔠","🔡","🔢","🔣","🔤","🅰️","🆎","🅱️","🆑","🆒","🆓","ℹ️","🆔","Ⓜ️","🆕","🆖","🅾️","🆗","🅿️","🆘","🆙","🆚","🔴","🟠","🟡","🟢","🔵","🟣","🟤","⚫","⚪","🟥","🟧","🟨","🟩","🟦","🟪","🟫","⬛","⬜","◼️","◻️","◾","◽","▪️","▫️","🔶","🔷","🔸","🔹","🔺","🔻","💠","🔘","🔳","🔲"],
+        "FLAGS": ["🏁","🚩","🎌","🏴","🏳️","🏳️‍🌈","🏳️‍⚧️","🏴‍☠️","🇦🇫","🇦🇱","🇩🇿","🇦🇩","🇦🇴","🇦🇬","🇦🇷","🇦🇲","🇦🇼","🇦🇺","🇦🇹","🇦🇿","🇧🇸","🇧🇭","🇧🇩","🇧🇧","🇧🇾","🇧🇪","🇧🇿","🇧🇯","🇧🇲","🇧🇹","🇧🇴","🇧🇦","🇧🇼","🇧🇷","🇧🇳","🇧🇬","🇧🇫","🇧🇮","🇰🇭","🇨🇲","🇨🇦","🇨🇻","🇨🇫","🇹🇩","🇨🇱","🇨🇳","🇨🇴","🇰🇲","🇨🇬","🇨🇩","🇨🇰","🇨🇷","🇨🇮","🇭🇷","🇨🇺","🇨🇼","🇨🇾","🇨🇿","🇩🇰","🇩🇯","🇩🇲","🇩🇴","🇪🇨","🇪🇬","🇸🇻","🇬🇶","🇪🇷","🇪🇪","🇪🇹","🇪🇺","🇫🇰","🇫🇴","🇫🇯","🇫🇮","🇫🇷","🇬🇦","🇬🇲","🇬🇪","🇩🇪","🇬🇭","🇬🇮","🇬🇷","🇬🇱","🇬🇩","🇬🇵","🇬🇺","🇬🇹","🇬🇬","🇬🇳","🇬🇼","🇬🇾","🇭🇹","🇭🇳","🇭🇰","🇭🇺","🇮🇸","🇮🇳","🇮🇩","🇮🇷","🇮🇶","🇮🇪","🇮🇲","🇮🇱","🇮🇹","🇯🇲","🇯🇵","🇯🇪","🇯🇴","🇰🇿","🇰🇪","🇰🇮","🇽🇰","🇰🇼","🇰🇬","🇱🇦","🇱🇻","🇱🇸","🇱🇷","🇱🇾","🇱🇮","🇱🇹","🇱🇺","🇲🇴","🇲🇰","🇲🇬","🇲🇼","🇲🇾","🇲🇻","🇲🇱","🇲🇹","🇲🇭","🇲🇶","🇲🇷","🇲🇺","🇾🇹","🇲🇽","🇫🇲","🇲🇩","🇲🇨","🇲🇳","🇲🇪","🇲🇸","🇲🇦","🇲🇿","🇲🇲","🇳🇦","🇳🇷","🇳🇵","🇳🇱","🇳🇨","🇳🇿","🇳🇮","🇳🇪","🇳🇬","🇳🇺","🇳🇫","🇰🇵","🇲🇵","🇳🇴","🇴🇲","🇵🇰","🇵🇼","🇵🇸","🇵🇦","🇵🇬","🇵🇾","🇵🇪","🇵🇭","🇵🇳","🇵🇱","🇵🇹","🇵🇷","🇶🇦","🇷🇪","🇷🇴","🇷🇺","🇷🇼","🇼🇸","🇸🇲","🇸🇹","🇸🇦","🇸🇳","🇷🇸","🇸🇨","🇸🇱","🇸🇬","🇸🇽","🇸🇰","🇸🇮","🇬🇸","🇸🇧","🇸🇴","🇿🇦","🇰🇷","🇸🇸","🇪🇸","🇱🇰","🇸🇭","🇰🇳","🇱🇨","🇵🇲","🇻🇨","🇸🇩","🇸🇷","🇸🇿","🇸🇪","🇨🇭","🇸🇾","🇹🇼","🇹🇯","🇹🇿","🇹🇭","🇹🇱","🇹🇬","🇹🇰","🇹🇴","🇹🇹","🇹🇳","🇹🇷","🇹🇲","🇹🇨","🇹🇻","🇻🇮","🇺🇬","🇺🇦","🇦🇪","🇬🇧","🏴󠁧󠁢󠁥󠁮󠁧󠁿","🏴󠁧󠁢󠁳󠁣󠁴󠁿","🏴󠁧󠁢󠁷󠁬󠁳󠁿","🇺🇸","🇺🇾","🇺🇿","🇻🇺","🇻🇦","🇻🇪","🇻🇳","🇼🇫","🇪🇭","🇾🇪","🇿🇲","🇿🇼"]
+      };
+
+      const PFP_CATS = ["FREQUENTLY USED","SMILEYS & PEOPLE","ANIMALS & NATURE","FOOD & DRINK","ACTIVITY","TRAVEL & PLACES","OBJECTS","SYMBOLS","FLAGS"];
+      const PFP_SKIN = ['🏻','🏼','🏽','🏾','🏿'];
+      let pfpSearchDict = {};
+
+      /* ── Frequently used ─────────────────────────── */
+      function pfpGetFreq() {
+        try { const s = localStorage.getItem('pfp_freq_emojis'); if (s) return JSON.parse(s); } catch(e){}
+        return ["😂","❤️","🔥","✨","😍","🥰","😭","🙏","💯","😎","🎉","👏","😊","💀","🤣","👍","💪","🥺","😘","🤩","💅","😜","🫶","💕","🤦"];
+      }
+      function pfpSaveFreq(char) {
+        let f = pfpGetFreq().filter(e => e !== char);
+        f.unshift(char);
+        if (f.length > 32) f.pop();
+        localStorage.setItem('pfp_freq_emojis', JSON.stringify(f));
+        pfpRenderFreq();
+      }
+
+      /* ── Apple emoji CDN URL ─────────────────────── */
+      function pfpEmojiUrl(char) {
+        let hex = Array.from(char).map(c => c.codePointAt(0).toString(16)).join('-').replace(/-fe0f/g,'');
+        return `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/img/apple/64/${hex}.png`;
+      }
+
+      /* ── Create emoji node ───────────────────────── */
+      function pfpMakeNode(char) {
+        const el = document.createElement('div');
+        el.className = 'pfp-emoji-item';
+        el.dataset.emoji = char;
+        if (pfpIsApple) {
+          el.textContent = char;
+        } else {
+          const img = document.createElement('img');
+          img.src = pfpEmojiUrl(char);
+          img.loading = 'lazy';
+          img.alt = char;
+          img.onerror = () => { el.innerHTML = ''; el.textContent = char; };
+          el.appendChild(img);
+        }
+        return el;
+      }
+
+      /* ── Build a category section ────────────────── */
+      function pfpMakeSection(title, list) {
+        const sec = document.createElement('div');
+        sec.className = 'pfp-category-section';
+        sec.id = `pfp-cat-${title}`;
+        const h = document.createElement('div');
+        h.className = 'pfp-category-title';
+        h.textContent = title;
+        sec.appendChild(h);
+        const grid = document.createElement('div');
+        grid.className = 'pfp-emoji-grid';
+        list.forEach(c => grid.appendChild(pfpMakeNode(c)));
+        sec.appendChild(grid);
+        return sec;
+      }
+
+      /* ── Render frequently used ──────────────────── */
+      function pfpRenderFreq() {
+        const wrap = document.getElementById('pfp-normal-categories');
+        if (!wrap) return;
+        const old = document.getElementById('pfp-cat-FREQUENTLY USED');
+        if (old) old.remove();
+        wrap.insertBefore(pfpMakeSection('FREQUENTLY USED', pfpGetFreq()), wrap.firstChild);
+      }
+
+      /* ── Render all categories ───────────────────── */
+      function pfpRenderAll() {
+        const wrap = document.getElementById('pfp-normal-categories');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        PFP_CATS.forEach(cat => {
+          if (cat === 'FREQUENTLY USED') pfpRenderFreq();
+          else if (PFP_EMOJIS[cat]) wrap.appendChild(pfpMakeSection(cat, PFP_EMOJIS[cat]));
+        });
+      }
+
+      /* ── Insert emoji into bio textarea ─────────── */
+      function pfpInsert(char) {
+        const ta = document.getElementById('pfp-bio-textarea');
+        if (!ta) return;
+        const s = ta.selectionStart, e = ta.selectionEnd;
+        ta.value = ta.value.substring(0, s) + char + ta.value.substring(e);
+        ta.selectionStart = ta.selectionEnd = s + Array.from(char).length;
+        ta.dispatchEvent(new Event('input'));
+        ta.focus();
+        pfpSaveFreq(char);
+      }
+
+      /* ── Toggle picker visibility ────────────────── */
+      window.pfpToggleEmojiPicker = function () {
+        const panel = document.getElementById('pfp-emoji-panel');
+        const btn   = document.getElementById('pfp-emoji-toggle-btn');
+        if (!panel) return;
+        const open = panel.style.display === 'none' || panel.style.display === '';
+        panel.style.display = open ? 'block' : 'none';
+        if (btn) btn.classList.toggle('active', open);
+        if (open) {
+          // Lazy init – only render when first opened
+          const wrap = document.getElementById('pfp-normal-categories');
+          if (wrap && wrap.children.length === 0) pfpRenderAll();
+        }
+      };
+
+      /* ── Skin-tone popover ───────────────────────── */
+      const pfpPopover  = document.getElementById('pfp-skin-tone-popover');
+      const pfpOverlay  = document.getElementById('pfp-popover-overlay');
+      let pfpActiveEl   = null, pfpPressTimer, pfpIsPressing = false, pfpStart = {x:0,y:0};
+
+      function pfpOpenPopover(el) {
+        const base = el.dataset.emoji;
+        pfpPopover.innerHTML = '';
+        [base, ...PFP_SKIN.map(m => base + m)].forEach(c => {
+          const d = document.createElement('div');
+          d.className = 'pfp-popover-emoji';
+          if (pfpIsApple) { d.textContent = c; }
+          else {
+            const img = document.createElement('img');
+            img.src = pfpEmojiUrl(c);
+            img.onerror = () => { d.innerHTML = ''; d.textContent = c; };
+            d.appendChild(img);
+          }
+          d.onclick = ev => { ev.stopPropagation(); pfpInsert(c); pfpClosePopover(); };
+          pfpPopover.appendChild(d);
+        });
+        const kb    = document.querySelector('.pfp-emoji-kb');
+        if (!kb) return;
+        const rect  = el.getBoundingClientRect();
+        const kbR   = kb.getBoundingClientRect();
+        let left    = rect.left - kbR.left + rect.width / 2;
+        const pw    = 6 * 40;
+        if (left - pw/2 < 8) left = pw/2 + 8;
+        if (left + pw/2 > kbR.width - 8) left = kbR.width - pw/2 - 8;
+        pfpPopover.style.left   = left + 'px';
+        pfpPopover.style.bottom = (kbR.height - (rect.top - kbR.top) + 10) + 'px';
+        pfpOverlay.style.display = 'block';
+        pfpPopover.classList.add('visible');
+        el.classList.add('pfp-popover-active');
+      }
+
+      function pfpClosePopover() {
+        pfpPopover.classList.remove('visible');
+        pfpOverlay.style.display = 'none';
+        if (pfpActiveEl) pfpActiveEl.classList.remove('pfp-popover-active');
+        pfpActiveEl = null;
+      }
+
+      if (pfpOverlay) {
+        pfpOverlay.addEventListener('touchstart', pfpClosePopover, {passive:true});
+        pfpOverlay.addEventListener('mousedown', pfpClosePopover);
+      }
+
+      /* ── Pointer events ──────────────────────────── */
+      function pfpDown(e, x, y) {
+        const t = e.target.closest('.pfp-emoji-item');
+        if (!t) return;
+        pfpActiveEl = t; pfpIsPressing = true; pfpStart = {x, y};
+        pfpPressTimer = setTimeout(() => { if (pfpIsPressing) pfpOpenPopover(pfpActiveEl); }, 380);
+      }
+      function pfpMove(x, y) {
+        if (!pfpIsPressing) return;
+        if (Math.abs(x - pfpStart.x) > 10 || Math.abs(y - pfpStart.y) > 10) {
+          clearTimeout(pfpPressTimer); pfpIsPressing = false;
+        }
+      }
+      function pfpUp() {
+        clearTimeout(pfpPressTimer);
+        if (pfpIsPressing && pfpActiveEl && !pfpPopover.classList.contains('visible'))
+          pfpInsert(pfpActiveEl.dataset.emoji);
+        pfpIsPressing = false;
+      }
+
+      const sv = document.getElementById('pfp-scroll-view');
+      if (sv) {
+        sv.addEventListener('touchstart', e => pfpDown(e, e.touches[0].clientX, e.touches[0].clientY), {passive:true});
+        sv.addEventListener('touchmove',  e => pfpMove(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
+        sv.addEventListener('touchend',   pfpUp);
+        sv.addEventListener('mousedown',  e => pfpDown(e, e.clientX, e.clientY));
+        sv.addEventListener('mousemove',  e => pfpMove(e.clientX, e.clientY));
+        sv.addEventListener('mouseup',    pfpUp);
+
+        /* ── Scroll → update active category icon ── */
+        let pfpScrollRaf;
+        sv.addEventListener('scroll', () => {
+          if (pfpScrollRaf) cancelAnimationFrame(pfpScrollRaf);
+          pfpScrollRaf = requestAnimationFrame(() => {
+            const svR = sv.getBoundingClientRect();
+            let activeId = null;
+            document.querySelectorAll('.pfp-category-section').forEach(sec => {
+              const r = sec.getBoundingClientRect();
+              if (r.top - svR.top <= 60 && r.bottom - svR.top > 60) activeId = sec.id;
+            });
+            if (activeId) {
+              document.querySelectorAll('.pfp-cat-icon').forEach(b => b.classList.remove('active'));
+              const btn = document.querySelector(`.pfp-cat-icon[data-pfp-target="${activeId}"]`);
+              if (btn) btn.classList.add('active');
+            }
+          });
+        }, {passive:true});
+      }
+
+      /* ── Category nav buttons ────────────────────── */
+      document.querySelectorAll('.pfp-cat-icon').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          const id  = e.currentTarget.dataset.pfpTarget;
+          const sec = document.getElementById(id);
+          if (sec) {
+            sec.scrollIntoView({behavior:'smooth'});
+            document.querySelectorAll('.pfp-cat-icon').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+          }
+        });
+      });
+
+      /* ── Backspace button ────────────────────────── */
+      const bsBtn = document.getElementById('pfp-backspace-btn');
+      if (bsBtn) {
+        bsBtn.addEventListener('click', () => {
+          const ta = document.getElementById('pfp-bio-textarea');
+          if (!ta) return;
+          const s = ta.selectionStart, e = ta.selectionEnd;
+          if (s !== e) {
+            ta.value = ta.value.substring(0, s) + ta.value.substring(e);
+            ta.selectionStart = ta.selectionEnd = s;
+          } else if (s > 0) {
+            // Handle multi-codepoint emoji deletion properly
+            const before = Array.from(ta.value.substring(0, s));
+            before.pop();
+            const newBefore = before.join('');
+            ta.value = newBefore + ta.value.substring(s);
+            ta.selectionStart = ta.selectionEnd = newBefore.length;
+          }
+          ta.dispatchEvent(new Event('input'));
+          ta.focus();
+        });
+      }
+
+      /* ── Search ──────────────────────────────────── */
+      const pfpSearchInput   = document.getElementById('pfp-search-input');
+      const pfpSearchResults = document.getElementById('pfp-search-results');
+      const pfpNormalCats    = document.getElementById('pfp-normal-categories');
+      const pfpSearchGrid    = document.getElementById('pfp-search-grid');
+
+      fetch('https://cdn.jsdelivr.net/npm/emojilib@3.0.11/dist/emoji-en-US.json')
+        .then(r => r.json())
+        .then(d => { pfpSearchDict = d; })
+        .catch(() => {});
+
+      if (pfpSearchInput) {
+        pfpSearchInput.addEventListener('input', e => {
+          const q = e.target.value.toLowerCase().trim();
+          if (!q) {
+            pfpSearchResults.style.display = 'none';
+            pfpNormalCats.style.display    = 'block';
+            return;
+          }
+          pfpNormalCats.style.display    = 'none';
+          pfpSearchResults.style.display = 'block';
+          pfpSearchGrid.innerHTML = '';
+          let n = 0;
+          if (Object.keys(pfpSearchDict).length > 0) {
+            for (const [ch, kws] of Object.entries(pfpSearchDict)) {
+              if (kws.some(k => k.includes(q))) {
+                pfpSearchGrid.appendChild(pfpMakeNode(ch));
+                if (++n >= 64) break;
+              }
+            }
+          } else {
+            PFP_CATS.forEach(cat => {
+              (PFP_EMOJIS[cat] || []).forEach(ch => {
+                if (n < 64) { pfpSearchGrid.appendChild(pfpMakeNode(ch)); n++; }
+              });
+            });
+          }
+        });
+      }
+
+    })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+    <!-- Initial Loader Logic -->
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                var loader = document.getElementById('initial-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    setTimeout(function() {
+                        loader.remove();
+                    }, 500);
+                }
+            }, 3000);
+        });
+    </script>
+  </body>
+</html>

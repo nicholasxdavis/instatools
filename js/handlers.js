@@ -248,6 +248,16 @@ function updatePostOverlayUrl(val) {
     }
 }
 
+function updateHighlightBgUrl(val) {
+    if (!window.state) return;
+    if (val && val.trim()) { 
+        window.state.highlight.bgImage = val.trim(); 
+        if (window.debouncedRenderCanvas) {
+            window.debouncedRenderCanvas();
+        }
+    }
+}
+
 function updateHighlightState(key, value) {
     if (!window.state) return;
     window.state.highlight[key] = value;
@@ -367,6 +377,14 @@ function handleFileUpload(event, type) {
             } else if (type === 'highlightIcon') {
                 window.state.highlight.customIconUrl = res;
                 window.state.highlight.iconType = 'custom';
+                if (window.renderSidebarContent) {
+                    window.renderSidebarContent();
+                }
+                if (window.debouncedRenderCanvas) {
+                    window.debouncedRenderCanvas();
+                }
+            } else if (type === 'highlightBg') {
+                window.state.highlight.bgImage = res;
                 if (window.renderSidebarContent) {
                     window.renderSidebarContent();
                 }
@@ -741,9 +759,18 @@ function toggleMobileSidebar() {
         // Prevent body scroll when sidebar is open
         if (sidebar.classList.contains("active-nav")) {
             document.body.classList.add("sidebar-open");
+            // Update toggle label to show the active tab name
+            setTimeout(function() {
+                if (window.updateMobileToggleLabel) window.updateMobileToggleLabel();
+            }, 60);
         } else {
             document.body.classList.remove("sidebar-open");
         }
+        
+        // Recalculate canvas scale after panel animation finishes
+        setTimeout(function() {
+            if (window.handleResize) window.handleResize();
+        }, 460);
     }
 }
 
@@ -784,6 +811,7 @@ if (typeof window !== 'undefined') {
     window.toggleOverlayGlow = toggleOverlayGlow;
     window.updatePostOverlayUrl = updatePostOverlayUrl;
     window.updateHighlightState = updateHighlightState;
+    window.updateHighlightBgUrl = updateHighlightBgUrl;
     window.handleFileUpload = handleFileUpload;
     window.savePreset = savePreset;
     window.loadPreset = loadPreset;

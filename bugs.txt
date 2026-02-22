@@ -5,3 +5,4 @@ CRITICAL BUGS///
 
 NON CRITICAL BUGS///
 
+watermark TR/CR/BR/BL/BC/BR positions + X-slider shrink bug // FIXED

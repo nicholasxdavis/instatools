@@ -1,4 +1,4 @@
-﻿window.focusSidebarControl = function(id) {
+window.focusSidebarControl = function(id) {
             const el = document.getElementById(id);
             if (el) {
                 // Ensure sidebar is open (both mobile and desktop)
@@ -147,25 +147,42 @@ positionToolbar(anchorEl);
 toolbar.classList.add('visible');
     }
 
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ────────────────────────────────────────────────────────────────────
     //  POSITIONING
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ────────────────────────────────────────────────────────────────────
     function positionToolbar(anchorEl) {
+
+        // ── Mobile: CSS handles bottom-bar positioning ───────────────────
+        // Clear any stale inline styles from a previous desktop session and
+        // let the CSS @media rules take over. Visibility is made explicit so
+        // the element isn't hidden while the .visible class is being added.
+        if (window.innerWidth <= 768) {
+            toolbar.style.top        = '';
+            toolbar.style.left       = '';
+            toolbar.style.right      = '';
+            toolbar.style.width      = '';
+            toolbar.style.bottom     = '';
+            toolbar.style.maxWidth   = '';
+            toolbar.style.visibility = 'visible';
+            return;
+        }
+
+        // ── Desktop: float near the anchor element ───────────────────────
 const anchorRect = anchorEl.getBoundingClientRect();
 const GAP = 10;
 const SCREEN_PAD = 12;
 
-// Toolbar is position:fixed at body level â€” use raw viewport coords
+// Toolbar is position:fixed at body level – use raw viewport coords
 const anchorCenterX = anchorRect.left + anchorRect.width / 2;
 
-// Temporarily make invisible (not display:none â€“ we need it laid out to measure)
+// Temporarily make invisible (not display:none – we need it laid out to measure)
 toolbar.style.visibility = 'hidden';
 toolbar.classList.add('visible'); // adds display:flex via CSS
 
 requestAnimationFrame(() => {
     const tbRect = toolbar.getBoundingClientRect();
 
-    // â”€â”€ Horizontal clamping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Horizontal clamping ──────────────────────────────────────────
     const minX = SCREEN_PAD + tbRect.width / 2;
     const maxX = window.innerWidth - SCREEN_PAD - tbRect.width / 2;
     const clampedX = Math.max(minX, Math.min(maxX, anchorCenterX));
@@ -174,17 +191,17 @@ requestAnimationFrame(() => {
     // Actually we set left directly and remove the CSS transform for fixed elements
     const finalLeft = clampedX - tbRect.width / 2;
 
-    // â”€â”€ Vertical: prefer above, flip below if needed â”€
+    // ── Vertical: prefer above, flip below if needed ─────────────────
     let finalTop = anchorRect.top - tbRect.height - GAP;
     if (finalTop < SCREEN_PAD) {
-finalTop = anchorRect.bottom + GAP;
+        finalTop = anchorRect.bottom + GAP;
     }
     // Keep bottom edge on screen too
     const maxTop = window.innerHeight - tbRect.height - SCREEN_PAD;
     finalTop = Math.min(finalTop, maxTop);
 
     toolbar.style.left       = finalLeft + 'px';
-    toolbar.style.top= finalTop  + 'px';
+    toolbar.style.top        = finalTop  + 'px';
     toolbar.style.visibility = 'visible';
 });
     }

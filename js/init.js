@@ -76,20 +76,40 @@ function handleResize() {
     const container = document.getElementById('preview-container');
     const wrapper = document.getElementById('scale-wrapper');
     if (container && wrapper) {
+        const isMobile = window.innerWidth <= 768;
         const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
         const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
-        let scale = Math.min((container.offsetWidth - 40) / targetW, (container.offsetHeight - 40) / targetH);
         
-        // On mobile, reduce Highlight Creator scale by 20%
-        if (window.innerWidth <= 768 && window.state.mode === 'highlight') {
-            scale *= 0.8;
+        // Mobile: use tighter padding to give more room for the canvas
+        const pad = isMobile ? 28 : 40;
+        let scale = Math.min((container.offsetWidth - pad) / targetW, (container.offsetHeight - pad) / targetH);
+        
+        // On mobile, reduce Highlight Creator scale slightly (it's square, post is portrait)
+        if (isMobile && window.state.mode === 'highlight') {
+            scale *= 0.82;
         }
+        
+        // Clamp scale to reasonable bounds
+        scale = Math.max(0.05, Math.min(scale, 4));
 
         wrapper.style.transform = `scale(${scale})`;
         wrapper.style.width = `${targetW}px`;
         wrapper.style.height = `${targetH}px`;
     }
 }
+
+// ── Mobile: Update toggle button label to show current tab ─────────────────
+function updateMobileToggleLabel() {
+    if (window.innerWidth > 768) return;
+    const tabEl = document.querySelector('#tabs-container button[aria-selected="true"]');
+    const textEl = document.getElementById('mobile-toggle-text');
+    if (textEl && tabEl) {
+        // Get text content, strip icon characters
+        const text = tabEl.textContent.trim().replace(/[\u{1F300}-\u{1FFFF}]/gu, '').trim();
+        textEl.textContent = text || 'Edit';
+    }
+}
+window.updateMobileToggleLabel = updateMobileToggleLabel;
 
 // Initial Loader Logic
 window.addEventListener('load', function() {
@@ -114,6 +134,57 @@ window.addEventListener('load', function() {
         }
     }, 3000); // Show for 3 seconds
 });
+
+// ── Mobile: Swipe-down gesture on the panel to dismiss it ──────────────────
+function initMobileSwipeGesture() {
+    if (window.innerWidth > 768) return;
+
+    const sidebar = document.querySelector('#sidebar');
+    if (!sidebar) return;
+
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let isDragging = false;
+
+    sidebar.addEventListener('touchstart', e => {
+        // Only initiate drag if touching near the top of the panel (drag handle area)
+        const touch = e.touches[0];
+        const panelTop = sidebar.getBoundingClientRect().top;
+        const touchY = touch.clientY;
+
+        if (touchY - panelTop < 60) { // within 60px of panel top
+            touchStartY = touchY;
+            touchStartTime = Date.now();
+            isDragging = true;
+        }
+    }, { passive: true });
+
+    sidebar.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        const deltaY = e.touches[0].clientY - touchStartY;
+        // Visual drag feedback (light displacement)
+        if (deltaY > 0 && deltaY < 120) {
+            sidebar.style.transform = `translateY(${deltaY * 0.4}px)`;
+        }
+    }, { passive: true });
+
+    sidebar.addEventListener('touchend', e => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+        const elapsed = Date.now() - touchStartTime;
+        const velocity = deltaY / elapsed; // px/ms
+
+        sidebar.style.transform = '';
+        sidebar.style.transition = '';
+
+        // Dismiss on fast swipe down or large drag
+        if (velocity > 0.5 || deltaY > 80) {
+            window.toggleMobileSidebar();
+        }
+    }, { passive: true });
+}
 
 // --- INIT ---
 window.addEventListener('DOMContentLoaded', () => {
@@ -171,10 +242,16 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Mobile swipe-down to dismiss panel
+    initMobileSwipeGesture();
+    
     // Check welcome popup
     if (window.checkWelcomePopup) {
         window.checkWelcomePopup();
     }
+    
+    // Initial resize to set canvas scale correctly
+    setTimeout(handleResize, 100);
 });
 
 // Make globally available
@@ -182,4 +259,5 @@ if (typeof window !== 'undefined') {
     window.loadPresets = loadPresets;
     window.initializeIcons = initializeIcons;
     window.handleResize = handleResize;
+    window.updateMobileToggleLabel = updateMobileToggleLabel;
 }
