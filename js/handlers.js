@@ -31,6 +31,30 @@ function updateT3State(key, value) {
     }
 }
 
+function updateT4State(key, value) {
+    if (!window.state) return;
+    window.state.post.t4[key] = value;
+    if (window.debouncedRenderCanvas) {
+        window.debouncedRenderCanvas();
+    }
+}
+
+function updateT5State(key, value) {
+    if (!window.state) return;
+    window.state.post.t5[key] = value;
+    if (window.debouncedRenderCanvas) {
+        window.debouncedRenderCanvas();
+    }
+}
+
+function updateT6State(key, value) {
+    if (!window.state) return;
+    window.state.post.t6[key] = value;
+    if (window.debouncedRenderCanvas) {
+        window.debouncedRenderCanvas();
+    }
+}
+
 // Helper function to update style and display value in real-time
 function updatePostStyleWithDisplay(key, value, displayId, format = 'number') {
     if (!window.state) return;
@@ -315,6 +339,31 @@ function handleFileUpload(event, type) {
                 if (window.debouncedRenderCanvas) {
                     window.debouncedRenderCanvas();
                 }
+            } else if (type === 't4Bg') {
+                window.state.post.t4.bgImage = res;
+                if (window.debouncedRenderCanvas) {
+                    window.debouncedRenderCanvas();
+                }
+            } else if (type === 't5Left') {
+                window.state.post.t5.imageLeft = res;
+                if (window.debouncedRenderCanvas) {
+                    window.debouncedRenderCanvas();
+                }
+            } else if (type === 't5Right') {
+                window.state.post.t5.imageRight = res;
+                if (window.debouncedRenderCanvas) {
+                    window.debouncedRenderCanvas();
+                }
+            } else if (type === 't6Bg') {
+                window.state.post.t6.bgImage = res;
+                if (window.debouncedRenderCanvas) {
+                    window.debouncedRenderCanvas();
+                }
+            } else if (type === 't6Circle') {
+                window.state.post.t6.circleImage = res;
+                if (window.debouncedRenderCanvas) {
+                    window.debouncedRenderCanvas();
+                }
             } else if (type === 'highlightIcon') {
                 window.state.highlight.customIconUrl = res;
                 window.state.highlight.iconType = 'custom';
@@ -375,30 +424,51 @@ function handleFileUpload(event, type) {
                     window.state.presets = [];
                 }
                 
-                // Merge — skip exact ID duplicates
-                const existingIds = new Set(window.state.presets.map(p => p && p.id).filter(id => id != null));
-                const newPresets  = validPresets.filter(p => !existingIds.has(p.id));
-                const duplicates  = validPresets.length - newPresets.length;
-                
-                window.state.presets = [...window.state.presets, ...newPresets];
-                
-                // Persist
-                if (window.PRESETS_KEY) {
-                    try {
-                        localStorage.setItem(window.PRESETS_KEY, JSON.stringify(window.state.presets));
-                    } catch (storageError) {
-                        console.error('LocalStorage error:', storageError);
-                        window.showNotification('Presets loaded but storage is full — export to back up!', 'error');
+                // Merge — skip exact ID duplicates, update by name if IDs differ
+                const existingIds   = new Set(window.state.presets.map(p => p && p.id).filter(id => id != null));
+                const existingNames = new Map(window.state.presets.map(p => [p && p.name && p.name.toLowerCase(), p && p.id]));
+                let skippedDupes = 0;
+                let updatedByName = 0;
+                const toAdd = [];
+
+                for (const p of validPresets) {
+                    if (existingIds.has(p.id)) {
+                        // Exact ID match — skip (already have this exact preset version)
+                        skippedDupes++;
+                    } else if (existingNames.has(p.name.toLowerCase())) {
+                        // Same name, different ID (e.g. saved on another device) — replace
+                        const oldId = existingNames.get(p.name.toLowerCase());
+                        window.state.presets = window.state.presets.filter(x => x.id !== oldId);
+                        toAdd.push(p);
+                        updatedByName++;
+                    } else {
+                        toAdd.push(p);
                     }
                 }
-                
+
+                window.state.presets = [...window.state.presets, ...toAdd];
+
+                // Persist — strip base64 to prevent localStorage overflow
+                let storageOk = true;
+                if (window.PRESETS_KEY) {
+                    try {
+                        localStorage.setItem(window.PRESETS_KEY, JSON.stringify(_presetsForStorage(window.state.presets)));
+                    } catch (storageError) {
+                        console.error('LocalStorage error during import:', storageError);
+                        storageOk = false;
+                    }
+                }
+
                 if (window.renderSidebarContent) {
                     window.renderSidebarContent();
                 }
-                
-                let message = `Imported ${newPresets.length} preset(s)!`;
-                if (duplicates > 0) message += ` (${duplicates} duplicate${duplicates > 1 ? 's' : ''} skipped)`;
-                window.showNotification(message, 'success');
+
+                const added = toAdd.length;
+                let message = `Imported ${added} preset${added !== 1 ? 's' : ''}!`;
+                if (skippedDupes > 0)  message += ` (${skippedDupes} duplicate${skippedDupes > 1 ? 's' : ''} skipped)`;
+                if (updatedByName > 0) message += ` (${updatedByName} updated by name)`;
+                if (!storageOk)        message += ' — storage full, export JSON to keep them!';
+                window.showNotification(message, storageOk ? 'success' : 'error');
             }
         } catch (e) {
             console.error('File upload error:', e);
@@ -415,6 +485,29 @@ function handleFileUpload(event, type) {
     } else {
         reader.readAsDataURL(file);
     }
+}
+
+/**
+ * Returns a version of the presets array safe for localStorage.
+ * Base64 data-URLs (data:...) are stripped to prevent exceeding the ~5 MB
+ * storage limit. Full image data is kept in window.state.presets (in-memory)
+ * and is always included when the user exports to a JSON file.
+ */
+function _presetsForStorage(presets) {
+    function walk(v) {
+        if (v === null || v === undefined) return v;
+        if (typeof v === 'string') return v.startsWith('data:') ? '' : v;
+        if (Array.isArray(v))      return v.map(walk);
+        if (typeof v === 'object') {
+            var out = {};
+            for (var k in v) {
+                if (Object.prototype.hasOwnProperty.call(v, k)) out[k] = walk(v[k]);
+            }
+            return out;
+        }
+        return v;
+    }
+    return walk(presets); // presets is an array → returns a stripped array
 }
 
 async function savePreset() {
@@ -464,6 +557,9 @@ async function savePreset() {
             style:    JSON.parse(JSON.stringify(postSnap.style)),
             t2:       JSON.parse(JSON.stringify(postSnap.t2)),
             t3:       JSON.parse(JSON.stringify(postSnap.t3)),
+            t4:       JSON.parse(JSON.stringify(postSnap.t4)),
+            t5:       JSON.parse(JSON.stringify(postSnap.t5)),
+            t6:       JSON.parse(JSON.stringify(postSnap.t6)),
         },
 
         // Full highlight snapshot
@@ -475,18 +571,26 @@ async function savePreset() {
     
     window.state.presets.push(preset);
 
+    // Strip base64 data-URLs before writing to localStorage to avoid the ~5 MB limit.
+    // Full image data remains in window.state.presets (in-memory) and in JSON exports.
+    let storageOk = true;
     try {
-        localStorage.setItem(window.PRESETS_KEY, JSON.stringify(window.state.presets));
+        localStorage.setItem(window.PRESETS_KEY, JSON.stringify(_presetsForStorage(window.state.presets)));
     } catch (storageError) {
         console.error('LocalStorage error (possibly full):', storageError);
-        window.showNotification('Saved in memory — storage full! Export to back up.', 'error');
+        storageOk = false;
     }
 
     input.value = '';
     if (window.renderSidebarContent) {
         window.renderSidebarContent();
     }
-    window.showNotification(`"${name}" saved!`, 'success');
+
+    if (storageOk) {
+        window.showNotification(`"${name}" saved!`, 'success');
+    } else {
+        window.showNotification(`"${name}" saved this session — storage full, export JSON to keep it!`, 'error');
+    }
 }
 
 async function loadPreset(id) {
@@ -496,35 +600,41 @@ async function loadPreset(id) {
         window.showNotification('Preset not found', 'error');
         return;
     }
-    
-    // Accept either new format (p.post.style) or old format (p.style)
+
+    // Accept new format (p.post.style) or legacy format (p.style only)
     const hasNewFormat = p.post && p.post.style && typeof p.post.style === 'object';
     const hasOldFormat = p.style && typeof p.style === 'object';
     if (!hasNewFormat && !hasOldFormat) {
-        window.showNotification('Invalid preset: missing style data', 'error');
+        window.showNotification('Invalid preset — missing style data', 'error');
         return;
     }
-    
+
     try {
         if (hasNewFormat) {
-            // ── New full-state format ──────────────────────────────────
+            // ── Full-state format (current) ───────────────────────────
             const sp = p.post;
 
+            // template is always a non-empty string ('template1'/'template2'/'template3')
             if (sp.template) {
                 window.state.post.template = sp.template;
             }
+            // headline / caption can legitimately be '' — use undefined check only
             if (sp.headline !== undefined && sp.headline !== null) {
                 window.state.post.headline = sp.headline;
             }
             if (sp.caption !== undefined && sp.caption !== null) {
                 window.state.post.caption = sp.caption;
             }
-            if (sp.bgImage) {
+            // bgImage can be '' (user cleared it) — MUST use undefined check, not truthy
+            if (sp.bgImage !== undefined) {
                 window.state.post.bgImage = sp.bgImage;
             }
             if (sp.sources && typeof sp.sources === 'object') {
+                // Full replace of sources (merge would silently keep stale source labels)
                 window.state.post.sources = { ...window.state.post.sources, ...sp.sources };
             }
+            // style / t2 / t3: overlay preset values on top of current defaults so that
+            // fields added AFTER the preset was saved still get sensible default values.
             if (sp.style && typeof sp.style === 'object') {
                 window.state.post.style = { ...window.state.post.style, ...sp.style };
             }
@@ -534,38 +644,35 @@ async function loadPreset(id) {
             if (sp.t3 && typeof sp.t3 === 'object') {
                 window.state.post.t3 = { ...window.state.post.t3, ...sp.t3 };
             }
+            if (sp.t4 && typeof sp.t4 === 'object') {
+                window.state.post.t4 = { ...window.state.post.t4, ...sp.t4 };
+            }
+            if (sp.t5 && typeof sp.t5 === 'object') {
+                window.state.post.t5 = { ...window.state.post.t5, ...sp.t5 };
+            }
+            if (sp.t6 && typeof sp.t6 === 'object') {
+                window.state.post.t6 = { ...window.state.post.t6, ...sp.t6 };
+            }
         } else {
-            // ── Old format fallback: only top-level style ──────────────
+            // ── Legacy format: top-level style only ───────────────────
             window.state.post.style = { ...window.state.post.style, ...p.style };
         }
 
-        // Restore highlight state (new format only)
+        // Restore highlight state
         if (p.highlight && typeof p.highlight === 'object') {
             window.state.highlight = { ...window.state.highlight, ...p.highlight };
         }
-        
-        // If preset has a mode, optionally switch to it
-        if (p.mode && p.mode !== window.state.mode) {
-            const confirmed = await window.showConfirmPopup(
-                'Switch Mode',
-                `This preset was created in ${p.mode} mode. Switch to ${p.mode} mode?`,
-                'Switch',
-                'Keep Current'
-            );
-            if (confirmed && window.setMode) {
-                window.setMode(p.mode);
-            }
+
+        // Silently switch mode if the preset was saved in a different one.
+        // No confirmation popup — the user clicked "Load", they want the preset applied.
+        if (p.mode && p.mode !== window.state.mode && window.setMode) {
+            window.setMode(p.mode);
         }
-        
-        if (window.renderCanvas) {
-            window.renderCanvas();
-        }
-        if (window.renderSidebarContent) {
-            window.renderSidebarContent();
-        }
-        if (typeof lucide !== 'undefined' && lucide.createIcons) {
-            lucide.createIcons();
-        }
+
+        if (window.renderCanvas)        window.renderCanvas();
+        if (window.renderSidebarContent) window.renderSidebarContent();
+        if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+
         window.showNotification(`"${p.name}" loaded!`, 'success');
     } catch (e) {
         console.error('Load preset error:', e);
@@ -584,7 +691,9 @@ async function deletePreset(id) {
     if (!confirmed) return;
     
     window.state.presets = window.state.presets.filter(x => x.id !== id);
-    localStorage.setItem(window.PRESETS_KEY, JSON.stringify(window.state.presets));
+    try {
+        localStorage.setItem(window.PRESETS_KEY, JSON.stringify(_presetsForStorage(window.state.presets)));
+    } catch (e) { /* deleted in memory regardless */ }
     if (window.renderSidebarContent) {
         window.renderSidebarContent();
     }
@@ -660,9 +769,13 @@ function closeWelcomePopup() {
 
 // Make globally available
 if (typeof window !== 'undefined') {
+    window._presetsForStorage = _presetsForStorage;
     window.updatePostStyle = updatePostStyle;
     window.updateT2State = updateT2State;
     window.updateT3State = updateT3State;
+    window.updateT4State = updateT4State;
+    window.updateT5State = updateT5State;
+    window.updateT6State = updateT6State;
     window.updatePostStyleWithDisplay = updatePostStyleWithDisplay;
     window.updateHighlightStateWithDisplay = updateHighlightStateWithDisplay;
     window.setWatermarkPosition = setWatermarkPosition;

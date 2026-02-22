@@ -79,8 +79,18 @@ function setActiveTab(tab) {
 function renderTabs() {
     const container = document.getElementById('tabs-container');
             if (!container) return;
-            
-    const tabs = window.state.mode === 'post' ? ['editor', 'design', 'templates'] : ['editor', 'templates'];
+
+    // Determine which tabs are available for the current mode/template
+    let tabs;
+    if (window.state.mode === 'post') {
+        const tmpl = window.state.post ? window.state.post.template : null;
+        const isT2orT3 = tmpl === 'template2' || tmpl === 'template3' || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6';
+        // T2/T3/T4/T5/T6 have no separate Design tab — everything is in the Editor tab
+        tabs = isT2orT3 ? ['editor', 'templates'] : ['editor', 'design', 'templates'];
+    } else {
+        // Highlight mode: only Editor tab — no Templates tab needed
+        tabs = ['editor'];
+    }
             
             container.innerHTML = tabs.map(tab => `
                 <button
@@ -98,20 +108,32 @@ function renderSidebarContent() {
             if (!container) return;
             
             if (window.state.mode === 'post') {
+                const tmpl = window.state.post.template;
+                const isT2orT3 = tmpl === 'template2' || tmpl === 'template3';
+                const isNoDesignTab = isT2orT3 || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6';
+
+                // Guard: T2/T3/T4/T5 have no Design tab — silently fall back to Editor
+                if (isNoDesignTab && window.state.activeTab === 'design') {
+                    window.state.activeTab = 'editor';
+                }
+
                 if (window.state.activeTab === 'editor') {
-                    if (window.state.post.template === 'template2') window.renderTemplate2Editor(container);
-                    else if (window.state.post.template === 'template3') window.renderTemplate3Editor(container);
+                    if (tmpl === 'template2') window.renderTemplate2Editor(container);
+                    else if (tmpl === 'template3') window.renderTemplate3Editor(container);
+                    else if (tmpl === 'template4') window.renderTemplate4Editor(container);
+                    else if (tmpl === 'template5') window.renderTemplate5Editor(container);
+                    else if (tmpl === 'template6') window.renderTemplate6Editor(container);
                     else window.renderPostEditor(container);
                 }
                 else if (window.state.activeTab === 'templates') window.renderPostTemplates(container);
                 else if (window.state.activeTab === 'design') {
-                    if (window.state.post.template === 'template2') window.renderTemplate2Editor(container);
-                    else if (window.state.post.template === 'template3') window.renderTemplate3Editor(container);
-                    else window.renderPostDesign(container);
+                    // Only reachable for template1
+                    window.renderPostDesign(container);
                 }
             } else {
-                if (window.state.activeTab === 'editor') window.renderHighlightEditor(container);
-                else if (window.state.activeTab === 'templates') window.renderLibrary(container);
+                // Highlight mode: only Editor tab exists — always show editor
+                window.state.activeTab = 'editor';
+                window.renderHighlightEditor(container);
             }
             
             // Initialize Lucide icons after rendering content - target the container specifically
@@ -263,7 +285,348 @@ function renderCanvas() {
                     return; // Done â€” skip template1 rendering below
                 }
 
-                // â”€â”€ TEMPLATE 3 CANVAS (Wealth Split: image top, brand divider, bold colored text bottom) â”€â”€
+                // ── TEMPLATE 5 CANVAS (Dual Image: two side-by-side photos + colored headline + arrow + dots) ──
+                // ── TEMPLATE 6 CANVAS (Sports / Hurdels: full-bleed bg + cinematic gradient + circle inset + brand text + headline + >>> SWIPE >>> + dots) ──
+                if (window.state.post.template === 'template6') {
+            const t6 = window.state.post.t6;
+            const safeBg = window.escapeHtml(window.getCorsProxyUrl(t6.bgImage));
+            const safeCircle = t6.circleImage ? window.escapeHtml(window.getCorsProxyUrl(t6.circleImage)) : '';
+
+            // ── Cinematic multi-stop gradient ──
+            // Darkening starts at gradientStart%, smoothly reaches gradientStrength opacity by 100%
+            const gs  = t6.gradientStart;      // e.g. 22
+            const str = t6.gradientStrength;   // e.g. 0.96
+            const p2  = (gs + (100 - gs) * 0.20).toFixed(1);
+            const p3  = (gs + (100 - gs) * 0.46).toFixed(1);
+            const p4  = (gs + (100 - gs) * 0.70).toFixed(1);
+            const gradientCSS = [
+                `transparent 0%`,
+                `transparent ${gs}%`,
+                `rgba(0,0,0,${(str * 0.08).toFixed(2)}) ${p2}%`,
+                `rgba(0,0,0,${(str * 0.42).toFixed(2)}) ${p3}%`,
+                `rgba(0,0,0,${(str * 0.80).toFixed(2)}) ${p4}%`,
+                `rgba(0,0,0,${str}) 100%`,
+            ].join(', ');
+
+            // ── Headline HTML (plain = headlineColor, [word] = highlightColor) ──
+            const t6Parts = t6.headline.split(/(\[.*?\])/);
+            const t6HeadlineHTML = t6Parts.map(part => {
+                if (part.startsWith('[') && part.endsWith(']')) {
+                    return `<span style="color:${t6.highlightColor}">${window.escapeHtml(part.slice(1, -1))}</span>`;
+                }
+                return `<span style="color:${t6.headlineColor}">${window.escapeHtml(part)}</span>`;
+            }).join('');
+
+            // ── Dots HTML ──
+            const t6Count  = Math.max(1, Math.min(10, t6.dotCount  || 4));
+            const t6Active = Math.max(0, Math.min(t6Count - 1, t6.activeDot || 0));
+            let t6DotsInner = '';
+            for (let i = 0; i < t6Count; i++) {
+                const isAct = i === t6Active;
+                t6DotsInner += `<div style="width:${isAct ? 20 : 7}px;height:7px;border-radius:9999px;background:${t6.dotColor};opacity:${isAct ? 1 : 0.45};"></div>`;
+            }
+            const t6DotsHtml = t6.showDots
+                ? `<div style="display:flex;align-items:center;justify-content:center;gap:5px;">${t6DotsInner}</div>`
+                : '';
+
+            // ── >>> SWIPE >>> ──
+            // Decorative right-pointing chevrons (›) flank the swipe word
+            const decoSize   = Math.round(t6.swipeFontSize * 0.52);
+            const swipeBlock = t6.showSwipe ? `
+                <div
+                    data-ctx="swipe"
+                    title="Click to edit swipe text"
+                    ondblclick="window.focusSidebarControl('t6-swipe-text')"
+                    style="display:flex;align-items:center;gap:13px;cursor:pointer;pointer-events:auto;"
+                >
+                    <span style="color:${t6.swipeColor};opacity:0.45;font-size:${decoSize}px;letter-spacing:5px;font-family:sans-serif;line-height:1;">›&nbsp;›&nbsp;›</span>
+                    <span style="font-family:'${t6.swipeFontFamily}',sans-serif;color:${t6.swipeColor};font-size:${t6.swipeFontSize}px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;line-height:1;">${window.escapeHtml(t6.swipeText)}</span>
+                    <span style="color:${t6.swipeColor};opacity:0.45;font-size:${decoSize}px;letter-spacing:5px;font-family:sans-serif;line-height:1;">›&nbsp;›&nbsp;›</span>
+                </div>` : '';
+
+                    root.innerHTML = `
+                        <div style="position:absolute;inset:0;overflow:hidden;background:#000;">
+
+                            <!-- ① Background image -->
+                            <div
+                                data-ctx="background"
+                                title="Click to edit background"
+                                style="position:absolute;inset:0;cursor:pointer;"
+                            >
+                                <img
+                                    src="${safeBg}"
+                                    style="width:100%;height:100%;object-fit:cover;object-position:${t6.imagePosX}% ${t6.imagePosY}%;transform:scale(${t6.imageScale / 100});transform-origin:center center;opacity:${t6.bgOpacity};"
+                                    onerror="this.style.display='none'"
+                                    alt="Background"
+                                >
+                            </div>
+
+                            <!-- ② Flat dim overlay (subtle, optional) -->
+                            <div style="position:absolute;inset:0;pointer-events:none;background:${t6.overlayColor};opacity:${t6.overlayOpacity};"></div>
+
+                            <!-- ③ Cinematic multi-stop gradient (bottom-heavy) -->
+                            <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,${gradientCSS});"></div>
+
+                            <!-- ④ Circle inset image (top-right area) -->
+                            ${t6.showCircle ? `
+                            <div
+                                data-ctx="circle-inset"
+                                title="Click to replace circle image"
+                                style="position:absolute;left:${t6.circlePosX}%;top:${t6.circlePosY}%;transform:translate(-50%,-50%);width:${t6.circleSize}px;height:${t6.circleSize}px;border-radius:50%;overflow:hidden;border:${t6.circleBorderWidth}px solid ${t6.circleBorderColor};cursor:pointer;z-index:20;box-shadow:0 6px 28px rgba(0,0,0,0.5);background:#1a1a1a;flex-shrink:0;"
+                            >
+                                ${safeCircle
+                                    ? `<img src="${safeCircle}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" alt="Circle inset">`
+                                    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:13px;font-family:sans-serif;text-align:center;padding:20px;line-height:1.4;">Tap to<br>add photo</div>`
+                                }
+                            </div>
+                            ` : ''}
+
+                            <!-- ⑤ Brand text (top-left) -->
+                            ${t6.showBrand ? `
+                            <div
+                                data-ctx="brand"
+                                title="Click to edit brand text"
+                                ondblclick="window.focusSidebarControl('t6-brand-text')"
+                                style="position:absolute;top:40px;left:44px;z-index:30;cursor:pointer;"
+                            >
+                                <span style="font-family:'${t6.brandFontFamily}',sans-serif;font-size:${t6.brandFontSize}px;font-weight:900;font-style:${t6.brandItalic ? 'italic' : 'normal'};color:${t6.brandColor};letter-spacing:0.03em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,0.6);">${window.escapeHtml(t6.brandText)}</span>
+                            </div>
+                            ` : ''}
+
+                            <!-- ⑥ Headline (fills bottom area, left-aligned) -->
+                            <div style="position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none;padding:0 ${t6.paddingH}px ${t6.paddingBottom}px ${t6.paddingH}px;">
+                                <h1
+                                    data-ctx="headline"
+                                    title="Click to edit headline"
+                                    ondblclick="window.focusSidebarControl('t6-headline')"
+                                    style="margin:0;padding:0;font-family:'${t6.customFontFamily || t6.fontFamily}',sans-serif;font-size:${t6.fontSize}px;font-weight:${t6.fontWeight};line-height:${t6.lineHeight};letter-spacing:${t6.letterSpacing}em;text-transform:uppercase;text-align:left;word-break:break-word;cursor:pointer;pointer-events:auto;"
+                                >${t6HeadlineHTML}</h1>
+                            </div>
+
+                            <!-- ⑦ Bottom navigation: >>> SWIPE >>> + dots -->
+                            <div style="position:absolute;bottom:0;left:0;right:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:26px;gap:10px;pointer-events:none;">
+                                ${swipeBlock}
+                                ${t6DotsHtml}
+                            </div>
+
+                        </div>
+                    `;
+                    return; // Done — skip template1 rendering below
+                }
+
+                // ── TEMPLATE 5 CANVAS (Dual Image: two side-by-side photos + colored headline + arrow + dots) ──
+                if (window.state.post.template === 'template5') {
+            const t5 = window.state.post.t5;
+            const safeLeft  = window.escapeHtml(window.getCorsProxyUrl(t5.imageLeft));
+            const safeRight = window.escapeHtml(window.getCorsProxyUrl(t5.imageRight));
+            const imgHeightPx = Math.round((t5.imageSplit / 100) * window.CONSTANTS.POST_HEIGHT);
+
+            // Parse headline: [word] = highlightColor, plain = headlineColor
+            const t5Parts = t5.headline.split(/(\[.*?\])/);
+            const t5HeadlineHTML = t5Parts.map(part => {
+                if (part.startsWith('[') && part.endsWith(']')) {
+                    return `<span style="color:${t5.highlightColor}">${window.escapeHtml(part.slice(1, -1))}</span>`;
+                }
+                return `<span style="color:${t5.headlineColor}">${window.escapeHtml(part)}</span>`;
+            }).join('');
+
+            // Dots HTML
+            const t5DotsHtml = t5.showDots ? (() => {
+                const count = Math.max(1, Math.min(10, t5.dotCount || 4));
+                const active = Math.max(0, Math.min(count - 1, t5.activeDot || 0));
+                let dots = '';
+                for (let i = 0; i < count; i++) {
+                    const isActive = i === active;
+                    dots += `<div style="width:${isActive ? 18 : 7}px;height:7px;border-radius:9999px;background:${t5.dotColor};opacity:${isActive ? 1 : 0.4};"></div>`;
+                }
+                return `<div style="display:flex;align-items:center;justify-content:center;gap:5px;">${dots}</div>`;
+            })() : '';
+
+            // Arrow HTML (left-pointing arrow, thin with arrowhead)
+            const arrowSvg = t5.showArrow ? `<svg width="70" height="20" viewBox="0 0 70 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;"><line x1="68" y1="10" x2="2" y2="10" stroke="${t5.arrowColor}" stroke-width="2"/><polyline points="14,2 2,10 14,18" fill="none" stroke="${t5.arrowColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>` : '';
+
+            // Separator between images
+            const sepStyle = t5.imageSeparator ? `border-left:${t5.separatorWidth}px solid ${t5.separatorColor};` : '';
+
+                    root.innerHTML = `
+                        <div style="position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;">
+
+                            <!-- TOP: two images side by side -->
+                            <div style="height:${imgHeightPx}px;display:flex;flex-direction:row;flex-shrink:0;overflow:hidden;">
+
+                                <!-- LEFT IMAGE -->
+                                <div
+                                    data-ctx="background-left"
+                                    title="Click to edit left image"
+                                    ondblclick="window.focusSidebarControl('t5-left-url')"
+                                    style="flex:1;overflow:hidden;cursor:pointer;position:relative;"
+                                >
+                                    <img
+                                        src="${safeLeft}"
+                                        style="width:100%;height:100%;object-fit:cover;object-position:${t5.leftPosX}% ${t5.leftPosY}%;transform:scale(${t5.leftScale/100});transform-origin:center center;"
+                                        onerror="this.style.display='none'"
+                                        alt="Left image"
+                                    >
+                                </div>
+
+                                <!-- RIGHT IMAGE -->
+                                <div
+                                    data-ctx="background-right"
+                                    title="Click to edit right image"
+                                    ondblclick="window.focusSidebarControl('t5-right-url')"
+                                    style="flex:1;overflow:hidden;cursor:pointer;position:relative;${sepStyle}"
+                                >
+                                    <img
+                                        src="${safeRight}"
+                                        style="width:100%;height:100%;object-fit:cover;object-position:${t5.rightPosX}% ${t5.rightPosY}%;transform:scale(${t5.rightScale/100});transform-origin:center center;"
+                                        onerror="this.style.display='none'"
+                                        alt="Right image"
+                                    >
+                                </div>
+
+                            </div>
+
+                            <!-- BOTTOM: text block -->
+                            <div style="flex:1;background:${t5.bgColor};display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:${t5.paddingV}px ${t5.paddingH}px ${Math.round(t5.paddingV * 0.7)}px;position:relative;overflow:hidden;">
+
+                                <!-- HEADLINE -->
+                                <h1
+                                    data-ctx="headline"
+                                    title="Click to edit headline"
+                                    ondblclick="window.focusSidebarControl('t5-headline')"
+                                    style="margin:0;font-family:'${t5.customFontFamily || t5.fontFamily}',sans-serif;font-size:${t5.fontSize}px;font-weight:${t5.fontWeight};text-transform:uppercase;text-align:${t5.textAlign};line-height:${t5.lineHeight};letter-spacing:${t5.letterSpacing}em;word-break:break-word;width:100%;cursor:pointer;"
+                                >${t5HeadlineHTML}</h1>
+
+                                <!-- ARROW + DOTS -->
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                                    ${arrowSvg}
+                                    ${t5DotsHtml}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- BRAND BADGE: absolutely positioned top-left corner -->
+                        ${t5.showBrand ? `
+                        <div
+                            data-ctx="brand"
+                            title="Click to edit brand"
+                            ondblclick="window.focusSidebarControl('t5-brand-text')"
+                            style="position:absolute;top:28px;left:28px;z-index:30;cursor:pointer;display:flex;align-items:center;gap:0;"
+                        >
+                            <div style="width:${t5.brandFontSize * 2.2}px;height:${t5.brandFontSize * 2.2}px;border-radius:50%;background:${t5.brandBgColor};border:2px solid ${t5.brandBorderColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <span style="font-family:'Archivo Black',sans-serif;font-size:${t5.brandFontSize}px;font-weight:900;color:${t5.brandTextColor};letter-spacing:-0.02em;line-height:1;">${window.escapeHtml(t5.brandText)}</span>
+                            </div>
+                        </div>
+                        ` : ''}
+                    `;
+                    return; // Done — skip template1 rendering below
+                }
+
+                // ── TEMPLATE 4 CANVAS (Magazine Cover: XXL-style, full bleed + brand badge + swipe + dots) ──
+                if (window.state.post.template === 'template4') {
+            const t4 = window.state.post.t4;
+            const safeT4Img = window.escapeHtml(window.getCorsProxyUrl(t4.bgImage));
+            const safeT4Headline = window.escapeHtml(t4.headline);
+            const safeT4Badge = window.escapeHtml(t4.badgeText);
+            const safeT4Brand = window.escapeHtml(t4.brandText);
+            const safeT4Swipe = window.escapeHtml(t4.swipeText);
+
+            // Build pagination dots HTML
+            const dotsHtml = t4.showDots ? (() => {
+                const count = Math.max(1, Math.min(10, t4.dotCount || 3));
+                const active = Math.max(0, Math.min(count - 1, t4.activeDot || 0));
+                let dots = '';
+                for (let i = 0; i < count; i++) {
+                    const isActive = i === active;
+                    dots += `<div style="width:${isActive ? 20 : 8}px;height:8px;border-radius:9999px;background:${t4.dotColor};opacity:${isActive ? 1 : 0.45};transition:all 0.2s;"></div>`;
+                }
+                return `<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;">${dots}</div>`;
+            })() : '';
+
+                    root.innerHTML = `
+                        <div style="position:absolute;inset:0;background:#000;overflow:hidden;">
+
+                            <!-- BACKGROUND IMAGE -->
+                            <div
+                                data-ctx="background"
+                                title="Click to edit image"
+                                ondblclick="window.focusSidebarControl('t4-bg-url')"
+                                style="position:absolute;inset:0;overflow:hidden;cursor:pointer;"
+                            >
+                                <img
+                                    src="${safeT4Img}"
+                                    style="width:100%;height:100%;object-fit:cover;object-position:${t4.imagePosX}% ${t4.imagePosY}%;transform:scale(${t4.imageScale/100});transform-origin:center center;"
+                                    onerror="this.style.display='none'"
+                                    alt="Background"
+                                >
+                            </div>
+
+                            <!-- DARK GRADIENT OVERLAY (bottom-heavy) -->
+                            <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom, transparent 0%, transparent ${100 - t4.gradientStrength}%, rgba(0,0,0,0.92) 100%);"></div>
+                            <!-- Flat colour overlay for overall dimming -->
+                            <div style="position:absolute;inset:0;pointer-events:none;background-color:${t4.overlayColor};opacity:${t4.overlayOpacity};"></div>
+
+                            <!-- TOP-LEFT: BRAND BADGE (e.g. XXL red box) -->
+                            ${t4.showBrand ? `
+                            <div
+                                data-ctx="brand"
+                                title="Click to edit brand"
+                                ondblclick="window.focusSidebarControl('t4-brand-text')"
+                                style="position:absolute;top:40px;left:40px;z-index:30;cursor:pointer;"
+                            >
+                                <div style="background:${t4.brandBgColor};padding:8px 14px;display:inline-block;">
+                                    <span style="font-family:'Archivo Black',sans-serif;font-size:${t4.brandFontSize}px;font-weight:900;color:${t4.brandTextColor};letter-spacing:-0.01em;line-height:1;display:block;">${safeT4Brand}</span>
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            <!-- BOTTOM CONTENT: Badge + Headline + Divider + Swipe + Dots -->
+                            <div style="position:absolute;left:0;right:0;bottom:0;z-index:20;padding:0 60px 52px 60px;display:flex;flex-direction:column;align-items:flex-start;">
+
+                                <!-- NEWS BADGE -->
+                                ${t4.showBadge ? `
+                                <div
+                                    data-ctx="badge"
+                                    title="Click to edit badge"
+                                    ondblclick="window.focusSidebarControl('t4-badge-text')"
+                                    style="background:#fff;padding:5px 16px;margin-bottom:22px;cursor:pointer;"
+                                >
+                                    <span style="font-family:'Archivo Black',sans-serif;font-size:22px;font-weight:900;color:#000;letter-spacing:0.08em;text-transform:uppercase;line-height:1.2;display:block;">${safeT4Badge}</span>
+                                </div>
+                                ` : ''}
+
+                                <!-- HEADLINE -->
+                                <h1
+                                    data-ctx="headline"
+                                    title="Click to edit headline"
+                                    ondblclick="window.focusSidebarControl('t4-headline')"
+                                    style="margin:0 0 36px 0;font-family:'${t4.customFontFamily || t4.fontFamily}',sans-serif;font-size:${t4.fontSize}px;font-weight:${t4.fontWeight};color:${t4.headlineColor};text-transform:uppercase;line-height:${t4.lineHeight};letter-spacing:${t4.letterSpacing}em;word-break:break-word;cursor:pointer;width:100%;"
+                                >${safeT4Headline}</h1>
+
+                                <!-- DIVIDER + SWIPE + DOTS (full-width, centered) -->
+                                <div style="width:100%;display:flex;flex-direction:column;align-items:center;">
+                                    ${t4.showDivider ? `<div style="width:100%;height:1.5px;background:${t4.dividerColor};opacity:0.6;margin-bottom:22px;"></div>` : ''}
+                                    ${t4.showSwipe ? `
+                                    <div
+                                        data-ctx="swipe"
+                                        title="Click to edit swipe text"
+                                        ondblclick="window.focusSidebarControl('t4-swipe-text')"
+                                        style="font-family:'Archivo Black',sans-serif;font-size:${t4.swipeFontSize}px;font-weight:700;color:${t4.swipeColor};letter-spacing:0.18em;text-transform:uppercase;opacity:0.75;cursor:pointer;"
+                                    >${safeT4Swipe}</div>
+                                    ` : ''}
+                                    ${dotsHtml}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+                    return; // Done — skip template1 rendering below
+                }
+
+                // ── TEMPLATE 3 CANVAS (Wealth Split: image top, brand divider, bold colored text bottom) ──
                 if (window.state.post.template === 'template3') {
             const t3 = window.state.post.t3;
             const safeT3Img = window.escapeHtml(window.getCorsProxyUrl(t3.bgImage));

@@ -116,18 +116,22 @@ currentCtx = ctxType;
 currentAnchorEl = anchorEl;
 
 const builders = {
-    'background':      buildBackgroundToolbar,
-    'circle-overlay':  buildCircleOverlayToolbar,
-    'watermark':       buildWatermarkToolbar,
-    'logo':    buildLogoToolbar,
-    'headline':buildHeadlineToolbar,
-    'caption': buildCaptionToolbar,
-    'badge':   buildBadgeToolbar,
-    'swipe-left':      buildSwipeLeftToolbar,
-    'source':  buildSourceToolbar,
-    'highlight-ring':  buildHighlightRingToolbar,
-    'highlight-icon':  buildHighlightIconToolbar,
-    'brand':   buildBrandToolbar,
+    'background':        buildBackgroundToolbar,
+    'background-left':   buildBackgroundLeftToolbar,
+    'background-right':  buildBackgroundRightToolbar,
+    'circle-overlay':    buildCircleOverlayToolbar,
+    'watermark':         buildWatermarkToolbar,
+    'logo':              buildLogoToolbar,
+    'headline':          buildHeadlineToolbar,
+    'caption':           buildCaptionToolbar,
+    'badge':             buildBadgeToolbar,
+    'swipe-left':        buildSwipeLeftToolbar,
+    'swipe':             buildT4SwipeToolbar,
+    'source':            buildSourceToolbar,
+    'highlight-ring':    buildHighlightRingToolbar,
+    'highlight-icon':    buildHighlightIconToolbar,
+    'brand':             buildBrandToolbar,
+    'circle-inset':      buildCircleInsetToolbar,
 };
 
 if (!builders[ctxType]) return;
@@ -429,6 +433,27 @@ if (tmpl === 'template3') {
     return;
 }
 
+if (tmpl === 'template4') {
+    const t4 = window.state.post.t4;
+    addImageReplace(dataUrl => { t4.bgImage = dataUrl; window.debouncedRenderCanvas(); reanchor(); });
+    addSep();
+    addSlider('Zoom', 100, 250, 5, t4.imageScale, '%', v => window.updateT4State('imageScale', v));
+    addSlider('Pos X', 0, 100, 1, t4.imagePosX, '%', v => window.updateT4State('imagePosX', v));
+    addSlider('Pos Y', 0, 100, 1, t4.imagePosY, '%', v => window.updateT4State('imagePosY', v));
+    return;
+}
+
+if (tmpl === 'template6') {
+    const t6 = window.state.post.t6;
+    addLabel('Background');
+    addImageReplace(dataUrl => { t6.bgImage = dataUrl; window.debouncedRenderCanvas(); reanchor(); });
+    addSep();
+    addSlider('Zoom', 100, 250, 5, t6.imageScale, '%', v => window.updateT6State('imageScale', v));
+    addSlider('Pos X', 0, 100, 1, t6.imagePosX, '%', v => window.updateT6State('imagePosX', v));
+    addSlider('Pos Y', 0, 100, 1, t6.imagePosY, '%', v => window.updateT6State('imagePosY', v));
+    return;
+}
+
 // template1 default
 const s = window.state.post.style;
 addImageReplace(dataUrl => {
@@ -440,6 +465,69 @@ addSep();
 addSlider('Opacity', 0, 1, 0.05, s.bgOpacity, '%01', v => window.updatePostStyle('bgOpacity', v));
 addSep();
 addSlider('Zoom', 100, 250, 5, s.imageScale, '%', v => window.updatePostStyle('imageScale', v));
+    }
+
+    // Left image (Template 5)
+    function buildBackgroundLeftToolbar() {
+const t5 = window.state.post.t5;
+addLabel('Left Img');
+addImageReplace(dataUrl => { t5.imageLeft = dataUrl; window.debouncedRenderCanvas(); reanchor(); });
+addSep();
+addSlider('Zoom', 100, 250, 5, t5.leftScale, '%', v => window.updateT5State('leftScale', v));
+addSlider('Pos X', 0, 100, 1, t5.leftPosX, '%', v => window.updateT5State('leftPosX', v));
+addSlider('Pos Y', 0, 100, 1, t5.leftPosY, '%', v => window.updateT5State('leftPosY', v));
+    }
+
+    // Right image (Template 5)
+    function buildBackgroundRightToolbar() {
+const t5 = window.state.post.t5;
+addLabel('Right Img');
+addImageReplace(dataUrl => { t5.imageRight = dataUrl; window.debouncedRenderCanvas(); reanchor(); });
+addSep();
+addSlider('Zoom', 100, 250, 5, t5.rightScale, '%', v => window.updateT5State('rightScale', v));
+addSlider('Pos X', 0, 100, 1, t5.rightPosX, '%', v => window.updateT5State('rightPosX', v));
+addSlider('Pos Y', 0, 100, 1, t5.rightPosY, '%', v => window.updateT5State('rightPosY', v));
+    }
+
+    // Circle inset (Template 6) — Replace photo | Border color | Size | Border width | Position | Hide
+    function buildCircleInsetToolbar() {
+const t6 = window.state.post.t6;
+addLabel('Circle Photo');
+addImageReplace(dataUrl => { t6.circleImage = dataUrl; window.debouncedRenderCanvas(); reanchor(); });
+addSep();
+addLabel('Border');
+addColorPicker(t6.circleBorderColor, c => window.updateT6State('circleBorderColor', c));
+addSep();
+addSlider('Size',   80, 400, 10, t6.circleSize,         'px', v => { window.updateT6State('circleSize', v);         reanchor(); });
+addSlider('Border', 0,  20,   1, t6.circleBorderWidth,  'px', v => { window.updateT6State('circleBorderWidth', v);  reanchor(); });
+addSep();
+addSlider('Pos X', 30,  90,  1, t6.circlePosX, '%', v => { window.updateT6State('circlePosX', v); reanchor(); });
+addSlider('Pos Y',  5,  55,  1, t6.circlePosY, '%', v => { window.updateT6State('circlePosY', v); reanchor(); });
+addSep();
+addBtn('<i class="bx bx-hide"></i> Hide', () => { window.updateT6State('showCircle', false); reanchor(); });
+    }
+
+    // T4 / T6 swipe text toolbar
+    function buildT4SwipeToolbar() {
+const tmpl = window.state.post.template;
+if (tmpl === 'template6') {
+    const t6 = window.state.post.t6;
+    activateInlineEdit(currentAnchorEl, t6.swipeText, v => { t6.swipeText = v; });
+    addSep();
+    addLabel('Color');
+    addColorPicker(t6.swipeColor, c => window.updateT6State('swipeColor', c));
+    addSep();
+    addSlider('Size', 12, 60, 1, t6.swipeFontSize, 'px', v => window.updateT6State('swipeFontSize', v));
+    return;
+}
+// T4 default
+const t4 = window.state.post.t4;
+activateInlineEdit(currentAnchorEl, t4.swipeText, v => { t4.swipeText = v; });
+addSep();
+addLabel('Color');
+addColorPicker(t4.swipeColor, c => window.updateT4State('swipeColor', c));
+addSep();
+addSlider('Size', 12, 48, 1, t4.swipeFontSize, 'px', v => window.updateT4State('swipeFontSize', v));
     }
 
     // Circle overlay â†’ Replace | Border color | Border px | Size | Hide
@@ -578,6 +666,45 @@ if (tmpl === 'template3') {
     addColorPicker(t3.headlineColor, c => window.updateT3State('headlineColor', c));
     addSep();
     addSlider('Size', 30, 160, 2, t3.fontSize, 'px', v => window.updateT3State('fontSize', v));
+    return;
+}
+
+if (tmpl === 'template4') {
+    const t4 = window.state.post.t4;
+    activateInlineEdit(currentAnchorEl, t4.headline, v => { t4.headline = v; });
+    addSep();
+    addLabel('Color');
+    addColorPicker(t4.headlineColor, c => window.updateT4State('headlineColor', c));
+    addSep();
+    addSlider('Size', 30, 160, 2, t4.fontSize, 'px', v => window.updateT4State('fontSize', v));
+    return;
+}
+
+if (tmpl === 'template5') {
+    const t5 = window.state.post.t5;
+    activateInlineEdit(currentAnchorEl, t5.headline, v => { t5.headline = v; });
+    addSep();
+    addLabel('Text');
+    addColorPicker(t5.headlineColor, c => window.updateT5State('headlineColor', c));
+    addSep();
+    addLabel('[ ] Color');
+    addColorPicker(t5.highlightColor, c => window.updateT5State('highlightColor', c));
+    addSep();
+    addSlider('Size', 40, 180, 2, t5.fontSize, 'px', v => window.updateT5State('fontSize', v));
+    return;
+}
+
+if (tmpl === 'template6') {
+    const t6 = window.state.post.t6;
+    activateInlineEdit(currentAnchorEl, t6.headline, v => { t6.headline = v; });
+    addSep();
+    addLabel('Text');
+    addColorPicker(t6.headlineColor, c => window.updateT6State('headlineColor', c));
+    addSep();
+    addLabel('[ ]');
+    addColorPicker(t6.highlightColor, c => window.updateT6State('highlightColor', c));
+    addSep();
+    addSlider('Size', 40, 180, 2, t6.fontSize, 'px', v => window.updateT6State('fontSize', v));
     return;
 }
 
@@ -797,6 +924,60 @@ addBtn(!s.showSource ? '<i class="bx bx-show"></i> Show' : '<i class="bx bx-hide
 
     // Brand divider (template3) â†’ Color | Size | Show/Hide letter
     function buildBrandToolbar() {
+const tmpl = window.state.post.template;
+
+if (tmpl === 'template4') {
+    const t4 = window.state.post.t4;
+    addLabel('Badge BG');
+    addColorPicker(t4.brandBgColor, c => window.updateT4State('brandBgColor', c));
+    addSep();
+    addLabel('Text');
+    addColorPicker(t4.brandTextColor, c => window.updateT4State('brandTextColor', c));
+    addSep();
+    addSlider('Size', 18, 72, 1, t4.brandFontSize, 'px', v => window.updateT4State('brandFontSize', v));
+    addSep();
+    addBtn(!t4.showBrand ? '<i class="bx bx-show"></i> Show' : '<i class="bx bx-hide"></i> Hide', () => {
+        window.updateT4State('showBrand', !t4.showBrand); reanchor();
+    });
+    return;
+}
+
+if (tmpl === 'template5') {
+    const t5 = window.state.post.t5;
+    addLabel('Badge BG');
+    addColorPicker(t5.brandBgColor, c => window.updateT5State('brandBgColor', c));
+    addSep();
+    addLabel('Text');
+    addColorPicker(t5.brandTextColor, c => window.updateT5State('brandTextColor', c));
+    addSep();
+    addSlider('Size', 12, 40, 1, t5.brandFontSize, 'px', v => window.updateT5State('brandFontSize', v));
+    addSep();
+    addBtn(!t5.showBrand ? '<i class="bx bx-show"></i> Show' : '<i class="bx bx-hide"></i> Hide', () => {
+        window.updateT5State('showBrand', !t5.showBrand); reanchor();
+    });
+    return;
+}
+
+if (tmpl === 'template6') {
+    const t6 = window.state.post.t6;
+    activateInlineEdit(currentAnchorEl, t6.brandText, v => { t6.brandText = v; });
+    addSep();
+    addLabel('Color');
+    addColorPicker(t6.brandColor, c => window.updateT6State('brandColor', c));
+    addSep();
+    addSlider('Size', 14, 60, 1, t6.brandFontSize, 'px', v => window.updateT6State('brandFontSize', v));
+    addSep();
+    addBtn(t6.brandItalic ? '<i class="bx bx-italic"></i> Normal' : '<i class="bx bx-italic"></i> Italic', () => {
+        window.updateT6State('brandItalic', !t6.brandItalic); reanchor();
+    });
+    addSep();
+    addBtn(!t6.showBrand ? '<i class="bx bx-show"></i> Show' : '<i class="bx bx-hide"></i> Hide', () => {
+        window.updateT6State('showBrand', !t6.showBrand); reanchor();
+    });
+    return;
+}
+
+// Template 3 default: brand divider
 const t3 = window.state.post.t3;
 addLabel('Brand');
 addColorPicker(t3.brandColor, c => window.updateT3State('brandColor', c));

@@ -4,15 +4,15 @@
 function buildPresetsHtml() {
     var presets = (window.state && window.state.presets) ? window.state.presets : [];
 
-    // Filter to valid presets: must have id, non-empty name, and some style data
+    // Filter to presets that can actually be loaded: must have id, name, and style data.
+    // Presets without style data are silently excluded — they would just show an error on click.
     var valid = presets.filter(function(p) {
         if (!p || typeof p !== 'object') return false;
         if (p.id == null) return false;
         if (typeof p.name !== 'string' || !p.name.trim()) return false;
         var hasTopStyle  = p.style && typeof p.style === 'object';
         var hasPostStyle = p.post && p.post.style && typeof p.post.style === 'object';
-        // Accept presets with name+id even if style data is missing (graceful fallback)
-        return true;
+        return hasTopStyle || hasPostStyle;
     });
 
     if (valid.length === 0) {
@@ -1343,34 +1343,7 @@ function renderTemplate3Editor(container) {
 
                     <!-- Text Color -->
                     <div class="space-y-2 pt-4 border-t border-gray-100">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase">Headline Color</label>
-                        <div class="flex flex-wrap gap-2">
-                            ${[
-                              "#FFD800",
-                              "#FF5500",
-                              "#FFFFFF",
-                              "#FF0000",
-                              "#00FF88",
-                              "#00CFFF",
-                              "#FF00FF",
-                              "#000000",
-                            ]
-                              .map(
-                                (c) => `
-                                <button
-                                    onclick="window.state.post.t3.headlineColor='${c}'; window.debouncedRenderCanvas(); window.renderSidebarContent()"
-                                    class="w-8 h-8 rounded-lg transition-all-200 ${t3.headlineColor === c ? "scale-110 shadow-md" : "hover:scale-105"}"
-                                    style="background-color:${c} !important; border: 2px solid ${t3.headlineColor === c ? "#000" : c === "#FFFFFF" ? "#ccc" : "transparent"}; box-shadow: 0 0 0 ${t3.headlineColor === c ? "2px rgba(0,0,0,0.4)" : "0px transparent"};"
-                                    title="${c}"
-                                ></button>
-                            `,
-                              )
-                              .join("")}
-                            <label class="w-8 h-8 rounded-lg border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer hover:border-white transition-all-200" title="Custom color" style="background-color:${["#FFD800", "#FF5500", "#FFFFFF", "#FF0000", "#00FF88", "#00CFFF", "#FF00FF", "#000000"].includes(t3.headlineColor) ? "transparent" : t3.headlineColor} !important;">
-                                <i data-lucide="pipette" class="w-3 h-3" style="color:${["#FFD800", "#FF5500", "#FFFFFF", "#FF0000", "#00FF88", "#00CFFF", "#FF00FF", "#000000"].includes(t3.headlineColor) ? "#9ca3af" : "#fff"}"></i>
-                                <input type="color" hidden value="${t3.headlineColor}" oninput="window.state.post.t3.headlineColor=this.value; window.debouncedRenderCanvas(); window.renderSidebarContent()">
-                            </label>
-                        </div>
+                        ${renderColorPicker('Headline Color', t3.headlineColor, "window.updateT3State('headlineColor', '$VAL')")}
                     </div>
 
                     <!-- Font -->
@@ -1546,15 +1519,8 @@ function renderTemplate3Editor(container) {
                             </div>
                             ${
                               t3.showBgColor !== false
-                                ? `
-                            <div class="flex items-center gap-2 pt-1">
-                                <input type="color" value="${t3.bgColor}"
-                                    oninput="window.updateT3State('bgColor',  this.value; window.debouncedRenderCanvas()"
-                                    class="w-10 h-8 rounded cursor-pointer border border-gray-200" aria-label="Background color">
-                                <span class="text-xs text-gray-500 font-mono">${t3.bgColor}</span>
-                            </div>
-                            `
-                                : `<p class="text-[9px] text-gray-400 pt-1">Disabled â€” image fills full canvas. Use Bottom Fade for darkening.</p>`
+                                ? renderColorPicker('Background Color', t3.bgColor, "window.updateT3State('bgColor', '$VAL')")
+                                : `<p class="text-[9px] text-gray-400 pt-1">Disabled — image fills full canvas. Use Bottom Fade for darkening.</p>`
                             }
                         </div>
 
@@ -1576,37 +1542,7 @@ function renderTemplate3Editor(container) {
                                 ? `
                             <div class="space-y-3">
                                 <div>
-                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Fade Color</label>
-                                    <div class="flex flex-wrap gap-1.5 mb-2">
-                                        ${[
-                                          "#000000",
-                                          "#111111",
-                                          "#1a0a00",
-                                          "#0a0010",
-                                          "#001018",
-                                          "#0a1800",
-                                          "#1a0008",
-                                        ]
-                                          .map(
-                                            (c) => `
-                                            <button onclick="window.state.post.t3.bottomFadeColor='${c}'; window.debouncedRenderCanvas(); window.renderSidebarContent()"
-                                                class="w-7 h-7 rounded border-2 transition-all-200 ${t3.bottomFadeColor === c ? "border-black scale-110 shadow-md" : "border-transparent hover:scale-105"}"
-                                                style="background:${c};" title="${c}"></button>
-                                        `,
-                                          )
-                                          .join("")}
-                                        <label class="w-7 h-7 rounded border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-500 transition-all-200" title="Custom color">
-                                            <i data-lucide="pipette" class="w-3 h-3 text-gray-400"></i>
-                                            <input type="color" hidden value="${t3.bottomFadeColor}"
-                                                oninput="window.state.post.t3.bottomFadeColor=this.value; window.debouncedRenderCanvas(); window.renderSidebarContent()">
-                                        </label>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <input type="color" value="${t3.bottomFadeColor}"
-                                            oninput="window.updateT3State('bottomFadeColor',  this.value; window.debouncedRenderCanvas()"
-                                            class="w-10 h-8 rounded cursor-pointer border border-gray-200" aria-label="Fade color">
-                                        <span class="text-[9px] text-gray-500 font-mono">${t3.bottomFadeColor}</span>
-                                    </div>
+                                    ${renderColorPicker('Fade Color', t3.bottomFadeColor, "window.updateT3State('bottomFadeColor', '$VAL')")}
                                 </div>
                                 <div>
                                     <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Fade Height</label>
@@ -1702,13 +1638,7 @@ function renderTemplate3Editor(container) {
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Brand Color</label>
-                                <div class="flex items-center gap-2">
-                                    <input type="color" value="${t3.brandColor}"
-                                        oninput="window.updateT3State('brandColor',  this.value; window.debouncedRenderCanvas()"
-                                        class="w-10 h-8 rounded cursor-pointer border border-gray-200" aria-label="Brand color">
-                                    <span class="text-[9px] text-gray-500 font-mono">${t3.brandColor}</span>
-                                </div>
+                                ${renderColorPicker('Brand Color', t3.brandColor, "window.updateT3State('brandColor', '$VAL')")}
                             </div>
                             <div>
                                 <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Brand Size</label>
@@ -1906,6 +1836,1079 @@ function renderLibrary(container) {
             `;
 }
 
+// --- TEMPLATE 4 SIDEBAR EDITOR (Magazine Cover: XXL-style) ---
+function renderTemplate4Editor(container) {
+  const t4 = window.state.post.t4;
+  const safeBgUrl =
+    t4.bgImage && !t4.bgImage.startsWith("data:")
+      ? window.escapeHtml(t4.bgImage)
+      : "";
+
+  container.innerHTML = `
+                <div class="space-y-6 animate-fade-in">
+
+                    <!-- Headline -->
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="type" class="w-3 h-3"></i> Headline
+                        </label>
+                        <textarea
+                            id="t4-headline"
+                            oninput="window.updateT4State('headline', this.value)"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-black focus:bg-white transition-all-200 resize-none"
+                            rows="4"
+                            placeholder="Enter headline text..."
+                            aria-label="Template 4 headline"
+                        >${window.escapeHtml(t4.headline)}</textarea>
+                    </div>
+
+                    <!-- Headline Color -->
+                    <div class="space-y-2 pt-4 border-t border-gray-100">
+                        ${renderColorPicker('Headline Color', t4.headlineColor, "window.updateT4State('headlineColor', '$VAL')")}
+                    </div>
+
+                    <!-- Font -->
+                    <div class="space-y-2 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Font Family</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            ${[
+                              "Archivo Black",
+                              "Anton",
+                              "Bebas Neue",
+                              "Oswald",
+                              "Montserrat",
+                              "Roboto Condensed",
+                              "Teko",
+                              "Inter",
+                            ]
+                              .map(
+                                (font) => `
+                                <button
+                                    onclick="window.updateT4State('fontFamily', '${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                    class="flex items-center justify-between px-4 py-3 rounded-lg border transition-all-200 ${t4.fontFamily === font ? "bg-black border-black text-white shadow-md" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 hover:shadow-sm"}"
+                                    aria-label="${font} font"
+                                >
+                                    <span style="font-family: ${font}" class="text-lg">Aa</span>
+                                    <span class="text-xs uppercase tracking-widest font-bold">${font}</span>
+                                </button>
+                            `,
+                              )
+                              .join("")}
+                        </div>
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Custom Font Family</label>
+                            <input
+                                type="text"
+                                id="input-t4-customFontFamily"
+                                value="${t4.customFontFamily || ""}"
+                                oninput="window.updateT4State('customFontFamily', this.value); window.debouncedRenderCanvas()"
+                                placeholder="e.g., 'Impact', 'Times New Roman'"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:border-black focus:bg-white transition-all-200"
+                                aria-label="Custom font family"
+                            >
+                            <p class="text-[8px] text-gray-400 mt-1">Overrides the selected font above</p>
+                        </div>
+                        <!-- Font Size -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                            <input
+                                type="range" min="40" max="160" value="${t4.fontSize}"
+                                oninput="window.updateT4State('fontSize', parseFloat(this.value)); document.getElementById('t4-fs-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                class="w-full" aria-label="Font size"
+                            >
+                            <div id="t4-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.fontSize}px</div>
+                        </div>
+                        <!-- Font Weight -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Font Weight</label>
+                            <div class="grid grid-cols-5 gap-1">
+                                ${[
+                                  ["400", "Regular"],
+                                  ["500", "Medium"],
+                                  ["600", "Semi"],
+                                  ["700", "Bold"],
+                                  ["900", "Black"],
+                                ]
+                                  .map(
+                                    ([w, label]) => `
+                                    <button
+                                        onclick="window.updateT4State('fontWeight', ${w}); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                        class="py-2 rounded-lg border text-[9px] font-bold transition-all-200 ${String(t4.fontWeight) === w ? "bg-black border-black text-white" : "bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400"}"
+                                        style="font-weight:${w}"
+                                        aria-label="${label} weight"
+                                    >${label}</button>
+                                `,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                        <!-- Line Height -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Line Height</label>
+                            <input
+                                type="range" min="0.7" max="1.5" step="0.01" value="${t4.lineHeight}"
+                                oninput="window.updateT4State('lineHeight', parseFloat(this.value)); document.getElementById('t4-lh-display').textContent = parseFloat(this.value).toFixed(2); window.debouncedRenderCanvas()"
+                                class="w-full" aria-label="Line height"
+                            >
+                            <div id="t4-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.lineHeight}</div>
+                        </div>
+                        <!-- Letter Spacing -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Letter Spacing</label>
+                            <input
+                                type="range" min="-0.05" max="0.2" step="0.005" value="${t4.letterSpacing}"
+                                oninput="window.updateT4State('letterSpacing', parseFloat(this.value)); document.getElementById('t4-ls-display').textContent = parseFloat(this.value).toFixed(3) + 'em'; window.debouncedRenderCanvas()"
+                                class="w-full" aria-label="Letter spacing"
+                            >
+                            <div id="t4-ls-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.letterSpacing}em</div>
+                        </div>
+                    </div>
+
+                    <!-- Background Image -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="image" class="w-3 h-3"></i> Background Image
+                        </label>
+                        <div class="flex gap-2">
+                            <input
+                                type="text" id="t4-bg-url"
+                                class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200 focus:bg-white"
+                                placeholder="Image URL..."
+                                oninput="window.updateT4State('bgImage', this.value)"
+                                value="${safeBgUrl}"
+                                aria-label="Template 4 image URL"
+                            >
+                            <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload image">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't4Bg')">
+                            </label>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Zoom</label>
+                                    <input type="range" min="100" max="250" value="${t4.imageScale}"
+                                        oninput="window.updateT4State('imageScale', parseFloat(this.value)); document.getElementById('t4-zoom-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Image zoom">
+                                    <div id="t4-zoom-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.imageScale}%</div>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                                    <input type="range" min="0" max="100" value="${t4.imagePosX}"
+                                        oninput="window.updateT4State('imagePosX', parseFloat(this.value)); document.getElementById('t4-posx-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Image X position">
+                                    <div id="t4-posx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.imagePosX}%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                                <input type="range" min="0" max="100" value="${t4.imagePosY}"
+                                    oninput="window.updateT4State('imagePosY', parseFloat(this.value)); document.getElementById('t4-posy-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Image Y position">
+                                <div id="t4-posy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.imagePosY}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overlay / Gradient -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="layers" class="w-3 h-3"></i> Overlay &amp; Gradient
+                        </label>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Overlay Opacity</label>
+                                <input type="range" min="0" max="0.8" step="0.01" value="${t4.overlayOpacity}"
+                                    oninput="window.updateT4State('overlayOpacity', parseFloat(this.value)); document.getElementById('t4-ov-op-display').textContent = Math.round(this.value*100) + '%'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Overlay opacity">
+                                <div id="t4-ov-op-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t4.overlayOpacity * 100)}%</div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Gradient Strength <span class="normal-case font-normal">(bottom darkness)</span></label>
+                                <input type="range" min="20" max="100" value="${t4.gradientStrength}"
+                                    oninput="window.updateT4State('gradientStrength', parseFloat(this.value)); document.getElementById('t4-grad-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Gradient strength">
+                                <div id="t4-grad-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.gradientStrength}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brand Badge (top-left) -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                <i data-lucide="tag" class="w-3 h-3"></i> Brand Badge (Top-Left)
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="text-[9px] text-gray-400">Show</span>
+                                <input type="checkbox" ${t4.showBrand ? "checked" : ""}
+                                    onchange="window.updateT4State('showBrand', this.checked); window.debouncedRenderCanvas()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle brand badge">
+                            </label>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Brand Text</label>
+                                <input type="text" id="t4-brand-text"
+                                    value="${window.escapeHtml(t4.brandText)}"
+                                    oninput="window.updateT4State('brandText', this.value)"
+                                    class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200"
+                                    placeholder="e.g. XXL, CNN, TMZ..."
+                                    aria-label="Brand text">
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                                <input type="range" min="18" max="72" value="${t4.brandFontSize}"
+                                    oninput="window.updateT4State('brandFontSize', parseFloat(this.value)); document.getElementById('t4-brand-fs-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Brand font size">
+                                <div id="t4-brand-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.brandFontSize}px</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    ${renderColorPicker('Background', t4.brandBgColor, "window.updateT4State('brandBgColor', '$VAL')")}
+                                </div>
+                                <div>
+                                    ${renderColorPicker('Text Color', t4.brandTextColor, "window.updateT4State('brandTextColor', '$VAL')")}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- News Badge -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                <i data-lucide="badge-check" class="w-3 h-3"></i> News Badge
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="text-[9px] text-gray-400">Show</span>
+                                <input type="checkbox" ${t4.showBadge ? "checked" : ""}
+                                    onchange="window.updateT4State('showBadge', this.checked); window.debouncedRenderCanvas()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle news badge">
+                            </label>
+                        </div>
+                        <input type="text" id="t4-badge-text"
+                            value="${window.escapeHtml(t4.badgeText)}"
+                            oninput="window.updateT4State('badgeText', this.value)"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200 focus:bg-white"
+                            placeholder="e.g. NEWS, EXCLUSIVE..."
+                            aria-label="Badge text">
+                    </div>
+
+                    <!-- Swipe Text -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                <i data-lucide="chevrons-right" class="w-3 h-3"></i> Swipe Text
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="text-[9px] text-gray-400">Show</span>
+                                <input type="checkbox" ${t4.showSwipe ? "checked" : ""}
+                                    onchange="window.updateT4State('showSwipe', this.checked); window.debouncedRenderCanvas()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle swipe text">
+                            </label>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
+                            <input type="text" id="t4-swipe-text"
+                                value="${window.escapeHtml(t4.swipeText)}"
+                                oninput="window.updateT4State('swipeText', this.value)"
+                                class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200"
+                                placeholder="e.g. Swipe Left..."
+                                aria-label="Swipe text">
+                            <div>
+                                ${renderColorPicker('Text Color', t4.swipeColor, "window.updateT4State('swipeColor', '$VAL')")}
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                                <input type="range" min="12" max="48" value="${t4.swipeFontSize}"
+                                    oninput="window.updateT4State('swipeFontSize', parseFloat(this.value)); document.getElementById('t4-swipe-fs-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Swipe font size">
+                                <div id="t4-swipe-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.swipeFontSize}px</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                <i data-lucide="minus" class="w-3 h-3"></i> Divider Line
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="text-[9px] text-gray-400">Show</span>
+                                <input type="checkbox" ${t4.showDivider ? "checked" : ""}
+                                    onchange="window.updateT4State('showDivider', this.checked); window.debouncedRenderCanvas()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle divider">
+                            </label>
+                        </div>
+                        ${t4.showDivider ? renderColorPicker('Divider Color', t4.dividerColor, "window.updateT4State('dividerColor', '$VAL')") : ''}
+                    </div>
+
+                    <!-- Dots -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                <i data-lucide="more-horizontal" class="w-3 h-3"></i> Pagination Dots
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="text-[9px] text-gray-400">Show</span>
+                                <input type="checkbox" ${t4.showDots ? "checked" : ""}
+                                    onchange="window.updateT4State('showDots', this.checked); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle dots">
+                            </label>
+                        </div>
+                        ${t4.showDots ? `
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Count</label>
+                                <input type="range" min="1" max="8" step="1" value="${t4.dotCount}"
+                                    oninput="window.updateT4State('dotCount', parseInt(this.value)); document.getElementById('t4-dot-count-display').textContent = this.value; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Dot count">
+                                <div id="t4-dot-count-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.dotCount}</div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Active Dot</label>
+                                <input type="range" min="0" max="${t4.dotCount - 1}" step="1" value="${t4.activeDot}"
+                                    oninput="window.updateT4State('activeDot', parseInt(this.value)); document.getElementById('t4-active-dot-display').textContent = parseInt(this.value)+1; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Active dot">
+                                <div id="t4-active-dot-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t4.activeDot + 1}</div>
+                            </div>
+                            <div>
+                                ${renderColorPicker('Dot Color', t4.dotColor, "window.updateT4State('dotColor', '$VAL')")}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                </div>
+            `;
+  setTimeout(() => window.initializeIcons(container), 0);
+}
+
+// --- TEMPLATE 5 SIDEBAR EDITOR (Dual Image: two side-by-side photos) ---
+function renderTemplate5Editor(container) {
+  const t5 = window.state.post.t5;
+  const safeLeftUrl  = t5.imageLeft  && !t5.imageLeft.startsWith("data:")  ? window.escapeHtml(t5.imageLeft)  : "";
+  const safeRightUrl = t5.imageRight && !t5.imageRight.startsWith("data:") ? window.escapeHtml(t5.imageRight) : "";
+
+  container.innerHTML = `
+                <div class="space-y-6 animate-fade-in">
+
+                    <!-- Headline -->
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="type" class="w-3 h-3"></i> Headline
+                        </label>
+                        <textarea
+                            id="t5-headline"
+                            oninput="window.updateT5State('headline', this.value)"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-black focus:bg-white transition-all-200 resize-none"
+                            rows="4"
+                            placeholder="Use [brackets] for highlight color..."
+                            aria-label="Template 5 headline"
+                        >${window.escapeHtml(t5.headline)}</textarea>
+                        <p class="text-[8px] text-gray-400">Wrap words in <strong>[brackets]</strong> to apply the highlight color</p>
+                    </div>
+
+                    <!-- Colors -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="grid grid-cols-1 gap-3">
+                            <div>${renderColorPicker('Base Text Color', t5.headlineColor, "window.updateT5State('headlineColor', '$VAL')")}</div>
+                            <div>${renderColorPicker('[Bracket] Highlight Color', t5.highlightColor, "window.updateT5State('highlightColor', '$VAL')")}</div>
+                            <div>${renderColorPicker('Background Color', t5.bgColor, "window.updateT5State('bgColor', '$VAL')")}</div>
+                        </div>
+                    </div>
+
+                    <!-- Font -->
+                    <div class="space-y-2 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase">Font Family</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            ${[
+                              "Archivo Black",
+                              "Anton",
+                              "Bebas Neue",
+                              "Oswald",
+                              "Montserrat",
+                              "Roboto Condensed",
+                              "Teko",
+                              "Inter",
+                            ]
+                              .map(
+                                (font) => `
+                                <button
+                                    onclick="window.updateT5State('fontFamily', '${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                    class="flex items-center justify-between px-4 py-3 rounded-lg border transition-all-200 ${t5.fontFamily === font ? "bg-black border-black text-white shadow-md" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 hover:shadow-sm"}"
+                                    aria-label="${font} font"
+                                >
+                                    <span style="font-family: ${font}" class="text-lg">Aa</span>
+                                    <span class="text-xs uppercase tracking-widest font-bold">${font}</span>
+                                </button>
+                            `,
+                              )
+                              .join("")}
+                        </div>
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Custom Font Family</label>
+                            <input
+                                type="text"
+                                value="${t5.customFontFamily || ""}"
+                                oninput="window.updateT5State('customFontFamily', this.value); window.debouncedRenderCanvas()"
+                                placeholder="e.g., 'Impact', 'Times New Roman'"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:border-black focus:bg-white transition-all-200"
+                                aria-label="Custom font family"
+                            >
+                        </div>
+                        <!-- Font Size -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                            <input type="range" min="40" max="180" value="${t5.fontSize}"
+                                oninput="window.updateT5State('fontSize', parseFloat(this.value)); document.getElementById('t5-fs-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                class="w-full" aria-label="Font size">
+                            <div id="t5-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.fontSize}px</div>
+                        </div>
+                        <!-- Font Weight -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Font Weight</label>
+                            <div class="grid grid-cols-5 gap-1">
+                                ${[
+                                  ["400", "Regular"],
+                                  ["500", "Medium"],
+                                  ["600", "Semi"],
+                                  ["700", "Bold"],
+                                  ["900", "Black"],
+                                ]
+                                  .map(
+                                    ([w, label]) => `
+                                    <button
+                                        onclick="window.updateT5State('fontWeight', ${w}); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                        class="py-2 rounded-lg border text-[9px] font-bold transition-all-200 ${String(t5.fontWeight) === w ? "bg-black border-black text-white" : "bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400"}"
+                                        style="font-weight:${w}"
+                                        aria-label="${label} weight"
+                                    >${label}</button>
+                                `,
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                        <!-- Line Height -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Line Height</label>
+                            <input type="range" min="0.7" max="1.5" step="0.01" value="${t5.lineHeight}"
+                                oninput="window.updateT5State('lineHeight', parseFloat(this.value)); document.getElementById('t5-lh-display').textContent = parseFloat(this.value).toFixed(2); window.debouncedRenderCanvas()"
+                                class="w-full" aria-label="Line height">
+                            <div id="t5-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.lineHeight}</div>
+                        </div>
+                        <!-- Text Align -->
+                        <div class="pt-2">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Text Align</label>
+                            <div class="grid grid-cols-3 gap-1">
+                                ${["left","center","right"].map(align => `
+                                <button
+                                    onclick="window.updateT5State('textAlign', '${align}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                    class="py-2 rounded-lg border text-[9px] font-bold transition-all-200 ${t5.textAlign === align ? "bg-black border-black text-white" : "bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400"}"
+                                    aria-label="${align} align"
+                                >${align.charAt(0).toUpperCase() + align.slice(1)}</button>
+                                `).join("")}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Left Image -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="image" class="w-3 h-3"></i> Left Image
+                        </label>
+                        <div class="flex gap-2">
+                            <input
+                                type="text" id="t5-left-url"
+                                class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200 focus:bg-white"
+                                placeholder="Image URL..."
+                                oninput="window.updateT5State('imageLeft', this.value)"
+                                value="${safeLeftUrl}"
+                                aria-label="Left image URL"
+                            >
+                            <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload left image">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't5Left')">
+                            </label>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Zoom</label>
+                                    <input type="range" min="100" max="250" value="${t5.leftScale}"
+                                        oninput="window.updateT5State('leftScale', parseFloat(this.value)); document.getElementById('t5-lz-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Left zoom">
+                                    <div id="t5-lz-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.leftScale}%</div>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                                    <input type="range" min="0" max="100" value="${t5.leftPosX}"
+                                        oninput="window.updateT5State('leftPosX', parseFloat(this.value)); document.getElementById('t5-lx-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Left X position">
+                                    <div id="t5-lx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.leftPosX}%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                                <input type="range" min="0" max="100" value="${t5.leftPosY}"
+                                    oninput="window.updateT5State('leftPosY', parseFloat(this.value)); document.getElementById('t5-ly-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Left Y position">
+                                <div id="t5-ly-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.leftPosY}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Image -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="image" class="w-3 h-3"></i> Right Image
+                        </label>
+                        <div class="flex gap-2">
+                            <input
+                                type="text" id="t5-right-url"
+                                class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200 focus:bg-white"
+                                placeholder="Image URL..."
+                                oninput="window.updateT5State('imageRight', this.value)"
+                                value="${safeRightUrl}"
+                                aria-label="Right image URL"
+                            >
+                            <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload right image">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't5Right')">
+                            </label>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Zoom</label>
+                                    <input type="range" min="100" max="250" value="${t5.rightScale}"
+                                        oninput="window.updateT5State('rightScale', parseFloat(this.value)); document.getElementById('t5-rz-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Right zoom">
+                                    <div id="t5-rz-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.rightScale}%</div>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                                    <input type="range" min="0" max="100" value="${t5.rightPosX}"
+                                        oninput="window.updateT5State('rightPosX', parseFloat(this.value)); document.getElementById('t5-rx-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Right X position">
+                                    <div id="t5-rx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.rightPosX}%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                                <input type="range" min="0" max="100" value="${t5.rightPosY}"
+                                    oninput="window.updateT5State('rightPosY', parseFloat(this.value)); document.getElementById('t5-ry-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Right Y position">
+                                <div id="t5-ry-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.rightPosY}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layout -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="layout" class="w-3 h-3"></i> Layout
+                        </label>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Image Height <span class="normal-case font-normal">(% of canvas)</span></label>
+                                <input type="range" min="40" max="80" value="${t5.imageSplit}"
+                                    oninput="window.updateT5State('imageSplit', parseFloat(this.value)); document.getElementById('t5-split-display').textContent = this.value + '%'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Image split">
+                                <div id="t5-split-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.imageSplit}%</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Padding H</label>
+                                    <input type="range" min="10" max="100" value="${t5.paddingH}"
+                                        oninput="window.updateT5State('paddingH', parseFloat(this.value)); document.getElementById('t5-ph-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Horizontal padding">
+                                    <div id="t5-ph-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.paddingH}px</div>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Padding V</label>
+                                    <input type="range" min="10" max="100" value="${t5.paddingV}"
+                                        oninput="window.updateT5State('paddingV', parseFloat(this.value)); document.getElementById('t5-pv-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Vertical padding">
+                                    <div id="t5-pv-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.paddingV}px</div>
+                                </div>
+                            </div>
+                            <!-- Image Separator -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-[9px] uppercase font-bold text-gray-400">Image Separator Line</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <span class="text-[9px] text-gray-400">Show</span>
+                                    <input type="checkbox" ${t5.imageSeparator ? "checked" : ""}
+                                        onchange="window.updateT5State('imageSeparator', this.checked); window.debouncedRenderCanvas()"
+                                        class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle separator">
+                                </label>
+                            </div>
+                            ${t5.imageSeparator ? renderColorPicker('Separator Color', t5.separatorColor, "window.updateT5State('separatorColor', '$VAL')") : ''}
+                        </div>
+                    </div>
+
+                    <!-- Brand Badge -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                <i data-lucide="tag" class="w-3 h-3"></i> Brand Circle (Top-Left)
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <span class="text-[9px] text-gray-400">Show</span>
+                                <input type="checkbox" ${t5.showBrand ? "checked" : ""}
+                                    onchange="window.updateT5State('showBrand', this.checked); window.debouncedRenderCanvas()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle brand badge">
+                            </label>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Brand Text</label>
+                                <input type="text" id="t5-brand-text"
+                                    value="${window.escapeHtml(t5.brandText)}"
+                                    oninput="window.updateT5State('brandText', this.value)"
+                                    class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200"
+                                    placeholder="e.g. CAN, ESPN, TMZ..."
+                                    aria-label="Brand text">
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Circle Size</label>
+                                <input type="range" min="10" max="40" value="${t5.brandFontSize}"
+                                    oninput="window.updateT5State('brandFontSize', parseFloat(this.value)); document.getElementById('t5-brand-fs').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Brand size">
+                                <div id="t5-brand-fs" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.brandFontSize}px</div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>${renderColorPicker('BG Color', t5.brandBgColor, "window.updateT5State('brandBgColor', '$VAL')")}</div>
+                                <div>${renderColorPicker('Text Color', t5.brandTextColor, "window.updateT5State('brandTextColor', '$VAL')")}</div>
+                            </div>
+                            <div>${renderColorPicker('Border Color', t5.brandBorderColor, "window.updateT5State('brandBorderColor', '$VAL')")}</div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow + Dots -->
+                    <div class="space-y-3 pt-4 border-t border-gray-100">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                            <i data-lucide="more-horizontal" class="w-3 h-3"></i> Navigation (Arrow + Dots)
+                        </label>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
+                            <!-- Arrow -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-[9px] uppercase font-bold text-gray-400">Arrow</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <span class="text-[9px] text-gray-400">Show</span>
+                                    <input type="checkbox" ${t5.showArrow ? "checked" : ""}
+                                        onchange="window.updateT5State('showArrow', this.checked); window.debouncedRenderCanvas()"
+                                        class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle arrow">
+                                </label>
+                            </div>
+                            ${t5.showArrow ? renderColorPicker('Arrow Color', t5.arrowColor, "window.updateT5State('arrowColor', '$VAL')") : ''}
+                            <!-- Dots -->
+                            <div class="flex items-center justify-between pt-1">
+                                <label class="text-[9px] uppercase font-bold text-gray-400">Dots</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <span class="text-[9px] text-gray-400">Show</span>
+                                    <input type="checkbox" ${t5.showDots ? "checked" : ""}
+                                        onchange="window.updateT5State('showDots', this.checked); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                        class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle dots">
+                                </label>
+                            </div>
+                            ${t5.showDots ? `
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Count</label>
+                                <input type="range" min="1" max="8" step="1" value="${t5.dotCount}"
+                                    oninput="window.updateT5State('dotCount', parseInt(this.value)); document.getElementById('t5-dot-count').textContent = this.value; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Dot count">
+                                <div id="t5-dot-count" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.dotCount}</div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Active Dot</label>
+                                <input type="range" min="0" max="${t5.dotCount - 1}" step="1" value="${t5.activeDot}"
+                                    oninput="window.updateT5State('activeDot', parseInt(this.value)); document.getElementById('t5-active-dot').textContent = parseInt(this.value)+1; window.debouncedRenderCanvas()"
+                                    class="w-full" aria-label="Active dot">
+                                <div id="t5-active-dot" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.activeDot + 1}</div>
+                            </div>
+                            ${renderColorPicker('Dot Color', t5.dotColor, "window.updateT5State('dotColor', '$VAL')")}
+                            ` : ''}
+                        </div>
+                    </div>
+
+                </div>
+            `;
+  setTimeout(() => window.initializeIcons(container), 0);
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TEMPLATE 6 EDITOR  (Sports / Hurdels style)
+// ─────────────────────────────────────────────────────────────────────────────
+function renderTemplate6Editor(container) {
+    const t6 = window.state.post.t6;
+    const safeBgUrl     = t6.bgImage      && !t6.bgImage.startsWith('data:')      ? window.escapeHtml(t6.bgImage)      : '';
+    const safeCircleUrl = t6.circleImage  && !t6.circleImage.startsWith('data:')  ? window.escapeHtml(t6.circleImage)  : '';
+
+    container.innerHTML = `
+        <div class="space-y-6 animate-fade-in">
+
+            <!-- ── HEADLINE ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="type" class="w-3 h-3"></i> Headline
+                </label>
+                <textarea
+                    id="t6-headline"
+                    oninput="window.updateT6State('headline', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-black focus:bg-white transition-all resize-none"
+                    rows="4"
+                    placeholder="Use [WORD] for highlight color…"
+                >${window.escapeHtml(t6.headline)}</textarea>
+                <p class="text-[9px] text-gray-400">Wrap words in <span class="font-mono font-bold">[brackets]</span> to apply the highlight colour.</p>
+            </div>
+
+            <!-- ── HEADLINE COLORS ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Headline Colors</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>${renderColorPicker('Base Text', t6.headlineColor, "window.updateT6State('headlineColor','$VAL')")}</div>
+                    <div>${renderColorPicker('[Highlight]', t6.highlightColor, "window.updateT6State('highlightColor','$VAL')")}</div>
+                </div>
+            </div>
+
+            <!-- ── FONT ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Font Family</label>
+                <div class="grid grid-cols-1 gap-2">
+                    ${["Archivo Black","Anton","Bebas Neue","Oswald","Montserrat","Roboto Condensed","Teko","Inter"].map(font => `
+                        <button
+                            onclick="window.updateT6State('fontFamily','${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                            class="flex items-center justify-between px-4 py-3 rounded-lg border transition-all ${t6.fontFamily === font ? 'bg-black border-black text-white shadow-md' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300'}"
+                        >
+                            <span style="font-family:${font}" class="text-lg">Aa</span>
+                            <span class="text-xs uppercase tracking-widest font-bold">${font}</span>
+                        </button>`).join('')}
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Custom Font</label>
+                    <input type="text" id="t6-custom-font"
+                        value="${window.escapeHtml(t6.customFontFamily || '')}"
+                        oninput="window.updateT6State('customFontFamily',this.value); window.debouncedRenderCanvas()"
+                        placeholder="e.g. Impact, 'Times New Roman'"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-black focus:bg-white transition-all">
+                    <p class="text-[8px] text-gray-400 mt-1">Overrides selected font above.</p>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                    <input type="range" min="40" max="180" value="${t6.fontSize}"
+                        oninput="window.updateT6State('fontSize',parseFloat(this.value)); document.getElementById('t6-fs-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.fontSize}px</div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Font Weight</label>
+                    <div class="grid grid-cols-3 gap-1">
+                        ${[["300","Light"],["400","Reg"],["500","Med"],["600","Semi"],["700","Bold"],["900","Black"]].map(([w,label]) => `
+                            <button onclick="window.updateT6State('fontWeight',${w}); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                class="py-2 rounded-lg border text-[9px] font-bold transition-all ${String(t6.fontWeight)===w ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400'}"
+                                style="font-weight:${w}">${label}</button>`).join('')}
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Line Height</label>
+                    <input type="range" min="0.7" max="1.5" step="0.01" value="${t6.lineHeight}"
+                        oninput="window.updateT6State('lineHeight',parseFloat(this.value)); document.getElementById('t6-lh-display').textContent=parseFloat(this.value).toFixed(2); window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.lineHeight}</div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Letter Spacing</label>
+                    <input type="range" min="-0.05" max="0.1" step="0.001" value="${t6.letterSpacing}"
+                        oninput="window.updateT6State('letterSpacing',parseFloat(this.value)); document.getElementById('t6-ls-display').textContent=parseFloat(this.value).toFixed(3)+'em'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-ls-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.letterSpacing}em</div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Bottom Padding (headline clearance)</label>
+                    <input type="range" min="60" max="220" value="${t6.paddingBottom}"
+                        oninput="window.updateT6State('paddingBottom',parseFloat(this.value)); document.getElementById('t6-pb-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-pb-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.paddingBottom}px</div>
+                </div>
+            </div>
+
+            <!-- ── BACKGROUND IMAGE ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="image" class="w-3 h-3"></i> Background Image
+                </label>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="t6-bg-url"
+                            class="flex-1 bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="Image URL…"
+                            oninput="window.updateT6State('bgImage',this.value); window.debouncedRenderCanvas()"
+                            value="${safeBgUrl}">
+                        <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload image">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t6Bg')">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Zoom</label>
+                            <input type="range" min="100" max="250" value="${t6.imageScale}"
+                                oninput="window.updateT6State('imageScale',parseFloat(this.value)); document.getElementById('t6-zoom-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t6-zoom-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.imageScale}%</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                            <input type="range" min="0" max="100" value="${t6.imagePosX}"
+                                oninput="window.updateT6State('imagePosX',parseFloat(this.value)); document.getElementById('t6-posx-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t6-posx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.imagePosX}%</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                        <input type="range" min="0" max="100" value="${t6.imagePosY}"
+                            oninput="window.updateT6State('imagePosY',parseFloat(this.value)); document.getElementById('t6-posy-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t6-posy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.imagePosY}%</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Opacity</label>
+                        <input type="range" min="0" max="1" step="0.01" value="${t6.bgOpacity}"
+                            oninput="window.updateT6State('bgOpacity',parseFloat(this.value)); document.getElementById('t6-bgop-display').textContent=Math.round(this.value*100)+'%'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t6-bgop-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t6.bgOpacity*100)}%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── GRADIENT ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="layers" class="w-3 h-3"></i> Cinematic Gradient
+                </label>
+                <p class="text-[9px] text-gray-400 -mt-1">Controls the dark fade from the bottom of the image.</p>
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Fade Starts At</label>
+                    <input type="range" min="0" max="60" value="${t6.gradientStart}"
+                        oninput="window.updateT6State('gradientStart',parseFloat(this.value)); document.getElementById('t6-gs-display').textContent=this.value+'% from top'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-gs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.gradientStart}% from top</div>
+                </div>
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Darkness at Bottom</label>
+                    <input type="range" min="0" max="1" step="0.01" value="${t6.gradientStrength}"
+                        oninput="window.updateT6State('gradientStrength',parseFloat(this.value)); document.getElementById('t6-gstr-display').textContent=Math.round(this.value*100)+'%'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-gstr-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t6.gradientStrength*100)}%</div>
+                </div>
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Flat Dim Overlay</label>
+                    <input type="range" min="0" max="0.6" step="0.01" value="${t6.overlayOpacity}"
+                        oninput="window.updateT6State('overlayOpacity',parseFloat(this.value)); document.getElementById('t6-ov-display').textContent=Math.round(this.value*100)+'%'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t6-ov-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t6.overlayOpacity*100)}%</div>
+                </div>
+            </div>
+
+            <!-- ── BRAND TEXT ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex justify-between items-center">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="at-sign" class="w-3 h-3"></i> Brand Text
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <span class="text-[9px] text-gray-400">Show</span>
+                        <input type="checkbox" ${t6.showBrand ? 'checked' : ''}
+                            onchange="window.updateT6State('showBrand',this.checked); window.debouncedRenderCanvas()"
+                            class="accent-black h-3.5 w-3.5 cursor-pointer">
+                    </label>
+                </div>
+                ${t6.showBrand ? `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Text</label>
+                        <input type="text" id="t6-brand-text" value="${window.escapeHtml(t6.brandText)}"
+                            oninput="window.updateT6State('brandText',this.value); window.debouncedRenderCanvas()"
+                            class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="e.g. HURDELS, ESPN, COMPLEX…">
+                    </div>
+                    <div>${renderColorPicker('Color', t6.brandColor, "window.updateT6State('brandColor','$VAL')")}</div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                        <input type="range" min="14" max="60" value="${t6.brandFontSize}"
+                            oninput="window.updateT6State('brandFontSize',parseFloat(this.value)); document.getElementById('t6-brand-fs').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t6-brand-fs" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.brandFontSize}px</div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] uppercase font-bold text-gray-400">Italic Style</span>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" ${t6.brandItalic ? 'checked' : ''}
+                                onchange="window.updateT6State('brandItalic',this.checked); window.debouncedRenderCanvas()"
+                                class="accent-black h-3.5 w-3.5 cursor-pointer">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Family</label>
+                        <div class="grid grid-cols-1 gap-1">
+                            ${["Archivo Black","Anton","Bebas Neue","Oswald","Inter"].map(font => `
+                                <button onclick="window.updateT6State('brandFontFamily','${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                    class="flex items-center justify-between px-3 py-2 rounded-lg border text-xs transition-all ${t6.brandFontFamily===font ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300'}"
+                                ><span style="font-family:${font}">Aa</span><span class="font-bold">${font}</span></button>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
+            <!-- ── CIRCLE INSET ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex justify-between items-center">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="circle" class="w-3 h-3"></i> Circle Inset Photo
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <span class="text-[9px] text-gray-400">Show</span>
+                        <input type="checkbox" ${t6.showCircle ? 'checked' : ''}
+                            onchange="window.updateT6State('showCircle',this.checked); window.debouncedRenderCanvas()"
+                            class="accent-black h-3.5 w-3.5 cursor-pointer">
+                    </label>
+                </div>
+                ${t6.showCircle ? `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="t6-circle-url"
+                            class="flex-1 bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="Circle image URL…"
+                            oninput="window.updateT6State('circleImage',this.value); window.debouncedRenderCanvas()"
+                            value="${safeCircleUrl}">
+                        <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload circle image">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t6Circle')">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Size</label>
+                            <input type="range" min="80" max="400" value="${t6.circleSize}"
+                                oninput="window.updateT6State('circleSize',parseFloat(this.value)); document.getElementById('t6-csize-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t6-csize-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.circleSize}px</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Border W</label>
+                            <input type="range" min="0" max="20" value="${t6.circleBorderWidth}"
+                                oninput="window.updateT6State('circleBorderWidth',parseFloat(this.value)); document.getElementById('t6-cbw-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t6-cbw-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.circleBorderWidth}px</div>
+                        </div>
+                    </div>
+                    <div>${renderColorPicker('Border Color', t6.circleBorderColor, "window.updateT6State('circleBorderColor','$VAL')")}</div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                            <input type="range" min="30" max="90" value="${t6.circlePosX}"
+                                oninput="window.updateT6State('circlePosX',parseFloat(this.value)); document.getElementById('t6-cpx-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t6-cpx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.circlePosX}%</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                            <input type="range" min="5" max="55" value="${t6.circlePosY}"
+                                oninput="window.updateT6State('circlePosY',parseFloat(this.value)); document.getElementById('t6-cpy-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t6-cpy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.circlePosY}%</div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
+            <!-- ── >>> SWIPE >>> ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex justify-between items-center">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="chevrons-right" class="w-3 h-3"></i> Swipe Indicator
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <span class="text-[9px] text-gray-400">Show</span>
+                        <input type="checkbox" ${t6.showSwipe ? 'checked' : ''}
+                            onchange="window.updateT6State('showSwipe',this.checked); window.debouncedRenderCanvas()"
+                            class="accent-black h-3.5 w-3.5 cursor-pointer">
+                    </label>
+                </div>
+                ${t6.showSwipe ? `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Swipe Text</label>
+                        <input type="text" id="t6-swipe-text" value="${window.escapeHtml(t6.swipeText)}"
+                            oninput="window.updateT6State('swipeText',this.value); window.debouncedRenderCanvas()"
+                            class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="e.g. SWIPE, NEXT, READ MORE…">
+                    </div>
+                    <div>${renderColorPicker('Color', t6.swipeColor, "window.updateT6State('swipeColor','$VAL')")}</div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                        <input type="range" min="14" max="60" value="${t6.swipeFontSize}"
+                            oninput="window.updateT6State('swipeFontSize',parseFloat(this.value)); document.getElementById('t6-swipe-fs').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t6-swipe-fs" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.swipeFontSize}px</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Family</label>
+                        <div class="grid grid-cols-1 gap-1">
+                            ${["Bebas Neue","Oswald","Anton","Archivo Black","Inter"].map(font => `
+                                <button onclick="window.updateT6State('swipeFontFamily','${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                    class="flex items-center justify-between px-3 py-2 rounded-lg border text-xs transition-all ${t6.swipeFontFamily===font ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300'}"
+                                ><span style="font-family:${font}">Aa</span><span class="font-bold">${font}</span></button>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
+            <!-- ── PAGINATION DOTS ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex justify-between items-center">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="ellipsis" class="w-3 h-3"></i> Pagination Dots
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <span class="text-[9px] text-gray-400">Show</span>
+                        <input type="checkbox" ${t6.showDots ? 'checked' : ''}
+                            onchange="window.updateT6State('showDots',this.checked); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                            class="accent-black h-3.5 w-3.5 cursor-pointer">
+                    </label>
+                </div>
+                ${t6.showDots ? `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Number of Dots</label>
+                        <input type="range" min="1" max="8" value="${t6.dotCount}"
+                            oninput="window.updateT6State('dotCount',parseInt(this.value)); document.getElementById('t6-dotcount-display').textContent=this.value; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t6-dotcount-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.dotCount}</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Active Dot</label>
+                        <input type="range" min="0" max="${t6.dotCount - 1}" value="${t6.activeDot}"
+                            oninput="window.updateT6State('activeDot',parseInt(this.value)); document.getElementById('t6-actdot-display').textContent=parseInt(this.value)+1; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t6-actdot-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t6.activeDot + 1}</div>
+                    </div>
+                    <div>${renderColorPicker('Dot Color', t6.dotColor, "window.updateT6State('dotColor','$VAL')")}</div>
+                </div>
+                ` : ''}
+            </div>
+
+        </div>
+    `;
+    setTimeout(() => window.initializeIcons(container), 0);
+}
 // Make globally available
 if (typeof window !== "undefined") {
   window.buildPresetsHtml = buildPresetsHtml;
@@ -1915,6 +2918,9 @@ if (typeof window !== "undefined") {
   window.renderPostDesign = renderPostDesign;
   window.renderTemplate2Editor = renderTemplate2Editor;
   window.renderTemplate3Editor = renderTemplate3Editor;
+  window.renderTemplate4Editor = renderTemplate4Editor;
+  window.renderTemplate5Editor = renderTemplate5Editor;
+  window.renderTemplate6Editor = renderTemplate6Editor;
   window.renderHighlightEditor = renderHighlightEditor;
   window.renderLibrary = renderLibrary;
   window.loadSystemTemplate = loadSystemTemplate;

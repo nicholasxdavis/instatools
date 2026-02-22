@@ -704,6 +704,572 @@ async function exportHighlight(ctx, state, SZ) {
     }
 }
 
+// ─── Shared: draw pill-shaped pagination dots ─────────────────────────────────
+function drawDots(ctx, cx, y, count, active, dotH, activeW, inactiveW, gap, color, activeAlpha, inactiveAlpha) {
+    const widths = Array.from({ length: count }, (_, i) => i === active ? activeW : inactiveW);
+    const totalW = widths.reduce((a, b) => a + b, 0) + gap * (count - 1);
+    let dx = cx - totalW / 2;
+    const r = dotH / 2;
+    for (let i = 0; i < count; i++) {
+        const dW = widths[i];
+        ctx.save();
+        ctx.globalAlpha = i === active ? activeAlpha : inactiveAlpha;
+        ctx.fillStyle   = color;
+        ctx.beginPath();
+        ctx.moveTo(dx + r, y);
+        ctx.lineTo(dx + dW - r, y);
+        ctx.arc(dx + dW - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+        ctx.lineTo(dx + r, y + dotH);
+        ctx.arc(dx + r, y + r, r, Math.PI / 2, -Math.PI / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+        dx += dW + gap;
+    }
+}
+
+// ─── TEMPLATE 4 (Magazine / XXL) ─────────────────────────────────────────────
+async function exportT4(ctx, state, W, H) {
+    const t4   = state.post.t4;
+    const PAD  = 60;   // left/right padding of bottom block
+    const PAD_B = 52;  // bottom padding of block
+
+    const ff = t4.customFontFamily || t4.fontFamily || 'Archivo Black';
+    const fs = t4.fontSize  || 95;
+    const fw = t4.fontWeight || 900;
+
+    const [bgImg] = await Promise.all([loadImg(t4.bgImage)]);
+    await Promise.all([
+        loadFont(`${fw} ${fs}px "${ff}"`),
+        loadFont(`900 38px "Archivo Black"`),
+        loadFont(`900 22px "Archivo Black"`),
+    ]);
+
+    // ── Black base ────────────────────────────────────────────────────────────
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Background image ──────────────────────────────────────────────────────
+    if (bgImg) {
+        drawCover(ctx, bgImg, 0, 0, W, H,
+            t4.imagePosX ?? 50, t4.imagePosY ?? 25, (t4.imageScale ?? 100) / 100);
+    }
+
+    // ── Gradient (bottom-heavy, transparent → dark) ───────────────────────────
+    {
+        const gs = Math.max(0, Math.min(99, 100 - (t4.gradientStrength ?? 65))) / 100;
+        const g  = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0,  'rgba(0,0,0,0)');
+        g.addColorStop(gs, 'rgba(0,0,0,0)');
+        g.addColorStop(1,  'rgba(0,0,0,0.92)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    // ── Flat dim overlay ──────────────────────────────────────────────────────
+    ctx.save();
+    ctx.globalAlpha = t4.overlayOpacity ?? 0.35;
+    ctx.fillStyle   = t4.overlayColor   || '#000';
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+
+    // ── Brand badge (top-left rectangle) ─────────────────────────────────────
+    if (t4.showBrand !== false) {
+        const bFS    = t4.brandFontSize || 38;
+        const BPAD_H = 14, BPAD_V = 8;
+        ctx.save();
+        ctx.font         = `900 ${bFS}px "Archivo Black", sans-serif`;
+        setLS(ctx, -0.01 * bFS);
+        ctx.textBaseline = 'top';
+        ctx.textAlign    = 'left';
+        const bt  = t4.brandText || 'XXL';
+        const bTW = mW(ctx, bt);
+        const bBW = bTW + BPAD_H * 2;
+        const bBH = bFS + BPAD_V * 2;
+        ctx.fillStyle = t4.brandBgColor  || '#CC0000';
+        ctx.fillRect(40, 40, bBW, bBH);
+        ctx.fillStyle = t4.brandTextColor || '#FFF';
+        ctx.fillText(bt, 40 + BPAD_H, 40 + BPAD_V);
+        ctx.restore();
+    }
+
+    // ── Measure bottom content block (badge → headline → divider → swipe → dots) ──
+    const BADGE_FS   = 22;
+    const BADGE_PH   = 16, BADGE_PV = 5;
+    const BADGE_H    = BADGE_FS + BADGE_PV * 2; // ~32px
+    const BADGE_MB   = 22;
+
+    const LS_PX = (t4.letterSpacing ?? -0.02) * fs;
+    const LH    = Math.round(fs * (t4.lineHeight ?? 1.0));
+    ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, LS_PX);
+    const hlLines = wrapSimple(ctx, (t4.headline || '').toUpperCase(), W - PAD * 2);
+    const HL_H    = hlLines.length * LH;
+    const HL_MB   = 36;
+
+    const DIV_H  = t4.showDivider ? 1.5 : 0;
+    const DIV_MB = t4.showDivider ? 22  : 0;
+
+    const SW_FS = t4.swipeFontSize || 22;
+    const SW_H  = t4.showSwipe ? Math.round(SW_FS * 1.2) : 0;
+
+    const DOT_H  = 8, DOT_MT = 20;
+    const DOT_TH = t4.showDots ? DOT_H + DOT_MT : 0;
+
+    const badgeBlock = t4.showBadge ? BADGE_H + BADGE_MB : 0;
+    const totalBlock = badgeBlock + HL_H + HL_MB + DIV_H + DIV_MB + SW_H + DOT_TH;
+
+    let y = H - PAD_B - totalBlock;
+
+    // ── NEWS badge ────────────────────────────────────────────────────────────
+    if (t4.showBadge !== false) {
+        const bt  = (t4.badgeText || 'NEWS').toUpperCase();
+        ctx.save();
+        ctx.font         = `900 ${BADGE_FS}px "Archivo Black", sans-serif`;
+        setLS(ctx, 0.08 * BADGE_FS);
+        ctx.textBaseline = 'middle';
+        ctx.textAlign    = 'left';
+        const btW = mW(ctx, bt) + BADGE_PH * 2;
+        ctx.fillStyle    = '#FFF';
+        ctx.fillRect(PAD, y, btW, BADGE_H);
+        ctx.fillStyle    = '#000';
+        ctx.fillText(bt, PAD + BADGE_PH, y + BADGE_H / 2);
+        ctx.restore();
+        y += BADGE_H + BADGE_MB;
+    }
+
+    // ── Headline ──────────────────────────────────────────────────────────────
+    ctx.save();
+    ctx.font          = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, LS_PX);
+    ctx.fillStyle     = t4.headlineColor  || '#FFF';
+    ctx.textBaseline  = 'top';
+    ctx.textAlign     = 'left';
+    ctx.shadowColor   = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur    = 16;
+    ctx.shadowOffsetY = 3;
+    for (const ln of hlLines) { ctx.fillText(ln, PAD, y); y += LH; }
+    ctx.restore();
+    y += HL_MB;
+
+    // ── Divider line ──────────────────────────────────────────────────────────
+    if (t4.showDivider !== false) {
+        ctx.save();
+        ctx.globalAlpha = 0.6;
+        ctx.fillStyle   = t4.dividerColor || '#FFF';
+        ctx.fillRect(PAD, y, W - PAD * 2, 1.5);
+        ctx.restore();
+        y += DIV_H + DIV_MB;
+    }
+
+    // ── Swipe text ────────────────────────────────────────────────────────────
+    if (t4.showSwipe !== false) {
+        ctx.save();
+        ctx.globalAlpha  = 0.75;
+        ctx.font         = `700 ${SW_FS}px "Archivo Black", sans-serif`;
+        setLS(ctx, 0.18 * SW_FS);
+        ctx.fillStyle    = t4.swipeColor  || '#FFF';
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText((t4.swipeText || 'SWIPE LEFT').toUpperCase(), W / 2, y);
+        ctx.restore();
+        y += SW_H;
+    }
+
+    // ── Pagination dots ───────────────────────────────────────────────────────
+    if (t4.showDots) {
+        y += DOT_MT;
+        const cnt = Math.max(1, Math.min(10, t4.dotCount  || 3));
+        const act = Math.max(0, Math.min(cnt - 1, t4.activeDot || 0));
+        drawDots(ctx, W / 2, y, cnt, act, DOT_H, 20, 8, 6, t4.dotColor || '#FFF', 1, 0.45);
+    }
+}
+
+// ─── TEMPLATE 5 (Dual Image) ──────────────────────────────────────────────────
+async function exportT5(ctx, state, W, H) {
+    const t5      = state.post.t5;
+    const imgH    = Math.round((t5.imageSplit ?? 62) / 100 * H);
+    const textH   = H - imgH;
+    const PAD_H   = t5.paddingH ?? 52;
+    const PAD_V   = t5.paddingV ?? 36;
+    const imgHalfW = W / 2;
+
+    const ff = t5.customFontFamily || t5.fontFamily || 'Archivo Black';
+    const fs = t5.fontSize  || 74;
+    const fw = t5.fontWeight || 900;
+
+    const [leftImg, rightImg] = await Promise.all([
+        loadImg(t5.imageLeft),
+        loadImg(t5.imageRight),
+    ]);
+    await loadFont(`${fw} ${fs}px "${ff}"`);
+
+    // ── Black base ────────────────────────────────────────────────────────────
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Left image ────────────────────────────────────────────────────────────
+    if (leftImg) {
+        drawCover(ctx, leftImg, 0, 0, imgHalfW, imgH,
+            t5.leftPosX ?? 50, t5.leftPosY ?? 50, (t5.leftScale ?? 100) / 100);
+    }
+
+    // ── Right image ───────────────────────────────────────────────────────────
+    if (rightImg) {
+        drawCover(ctx, rightImg, imgHalfW, 0, imgHalfW, imgH,
+            t5.rightPosX ?? 50, t5.rightPosY ?? 50, (t5.rightScale ?? 100) / 100);
+    }
+
+    // ── Optional separator line between images ────────────────────────────────
+    if (t5.imageSeparator) {
+        ctx.save();
+        ctx.fillStyle = t5.separatorColor || '#FFF';
+        ctx.fillRect(imgHalfW - (t5.separatorWidth || 2) / 2, 0, t5.separatorWidth || 2, imgH);
+        ctx.restore();
+    }
+
+    // ── Text block background ──────────────────────────────────────────────────
+    ctx.fillStyle = t5.bgColor || '#000';
+    ctx.fillRect(0, imgH, W, textH);
+
+    // ── Headline (multi-color, centered) ──────────────────────────────────────
+    const parts5 = (t5.headline || '').split(/(\[.*?\])/);
+    const words5 = [];
+    for (const p of parts5) {
+        if (p.startsWith('[') && p.endsWith(']')) {
+            p.slice(1, -1).toUpperCase().split(/\s+/).forEach(w => { if (w) words5.push({ word: w, color: t5.highlightColor || '#FF0' }); });
+        } else {
+            p.toUpperCase().split(/\s+/).forEach(w => { if (w) words5.push({ word: w, color: t5.headlineColor || '#FFF' }); });
+        }
+    }
+
+    ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, (t5.letterSpacing ?? 0) * fs);
+    const hlLines5 = wrapColored(ctx, words5, W - PAD_H * 2);
+    const LH5      = Math.round(fs * (t5.lineHeight ?? 1.1));
+    const HL_H5    = hlLines5.length * LH5;
+
+    // Dots + Arrow block height
+    const DOT_H5   = 7;
+    const DOT_MT5  = 10;
+    const ARROW_H5 = t5.showArrow ? 20 : 0;
+    const ARROW_MT = t5.showArrow ? 0  : 0;
+    const DOTS_TH  = t5.showDots  ? DOT_H5 + DOT_MT5 : 0;
+    const navH     = ARROW_H5 + (t5.showArrow && t5.showDots ? 10 : 0) + DOTS_TH;
+
+    // Layout: paddingV top, content, paddingV*0.7 bottom
+    const availH = textH - PAD_V - Math.round(PAD_V * 0.7);
+    // Headline anchored to top of text area + PAD_V
+    const hlY = imgH + PAD_V;
+
+    ctx.save();
+    ctx.font         = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, (t5.letterSpacing ?? 0) * fs);
+    ctx.textBaseline = 'top';
+    ctx.textAlign    = t5.textAlign === 'left' ? 'left' : 'center';
+    const hlStartX   = t5.textAlign === 'left' ? PAD_H : W / 2;
+
+    // draw colored lines – for centered, we need to manually center each line
+    const sp5 = mW(ctx, ' ');
+    let cy5 = hlY;
+    for (const line of hlLines5) {
+        const lineW = line.reduce((acc, item, i) => acc + mW(ctx, item.word) + (i < line.length - 1 ? sp5 : 0), 0);
+        let cx5 = t5.textAlign === 'left' ? PAD_H : (W - lineW) / 2;
+        for (let i = 0; i < line.length; i++) {
+            ctx.fillStyle = line[i].color;
+            ctx.fillText(line[i].word, cx5, cy5);
+            cx5 += mW(ctx, line[i].word);
+            if (i < line.length - 1) cx5 += sp5;
+        }
+        cy5 += LH5;
+    }
+    ctx.restore();
+
+    // ── Arrow + dots (bottom center of text block) ────────────────────────────
+    const bottomY  = H - Math.round(PAD_V * 0.7);
+    let navY = bottomY - navH;
+
+    // Arrow (left-pointing: horizontal line + arrowhead on left)
+    if (t5.showArrow !== false) {
+        const aColor = t5.arrowColor || '#FFF';
+        const aW = 70, aH = 20;
+        const ax = (W - aW) / 2;
+        const ay = navY;
+        ctx.save();
+        ctx.strokeStyle = aColor;
+        ctx.lineWidth   = 2;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+        // Horizontal line
+        ctx.beginPath();
+        ctx.moveTo(ax + 68, ay + 10);
+        ctx.lineTo(ax + 2,  ay + 10);
+        ctx.stroke();
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(ax + 14, ay + 2);
+        ctx.lineTo(ax + 2,  ay + 10);
+        ctx.lineTo(ax + 14, ay + 18);
+        ctx.stroke();
+        ctx.restore();
+        navY += aH + (t5.showDots ? 10 : 0);
+    }
+
+    // Dots
+    if (t5.showDots) {
+        const cnt5 = Math.max(1, Math.min(10, t5.dotCount  || 4));
+        const act5 = Math.max(0, Math.min(cnt5 - 1, t5.activeDot || 0));
+        drawDots(ctx, W / 2, navY, cnt5, act5, DOT_H5, 18, 7, 5, t5.dotColor || '#FFF', 1, 0.4);
+    }
+
+    // ── Brand badge (top-left circle) ─────────────────────────────────────────
+    if (t5.showBrand !== false) {
+        const bFS  = t5.brandFontSize || 22;
+        const bDia = Math.round(bFS * 2.2);
+        const bCX  = 28 + bDia / 2;
+        const bCY  = 28 + bDia / 2;
+        // Circle fill
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(bCX, bCY, bDia / 2, 0, Math.PI * 2);
+        ctx.fillStyle = t5.brandBgColor || '#000';
+        ctx.fill();
+        // Border
+        ctx.strokeStyle = t5.brandBorderColor || '#FFF';
+        ctx.lineWidth   = 2;
+        ctx.stroke();
+        ctx.restore();
+        // Brand text inside circle
+        ctx.save();
+        ctx.font         = `900 ${bFS}px "Archivo Black", sans-serif`;
+        setLS(ctx, -0.02 * bFS);
+        ctx.fillStyle    = t5.brandTextColor || '#FFF';
+        ctx.textAlign    = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(t5.brandText || '', bCX, bCY);
+        ctx.restore();
+    }
+}
+
+// ─── TEMPLATE 6 (Sports / Hurdels) ───────────────────────────────────────────
+async function exportT6(ctx, state, W, H) {
+    const t6 = state.post.t6;
+    const PAD_H    = t6.paddingH    ?? 44;
+    const PAD_BOT  = t6.paddingBottom ?? 120;
+
+    const ff = t6.customFontFamily || t6.fontFamily || 'Archivo Black';
+    const fs = t6.fontSize  || 86;
+    const fw = t6.fontWeight || 900;
+
+    const [bgImg, circleImg] = await Promise.all([
+        loadImg(t6.bgImage),
+        (t6.showCircle && t6.circleImage) ? loadImg(t6.circleImage) : null,
+    ]);
+    await Promise.all([
+        loadFont(`${fw} ${fs}px "${ff}"`),
+        loadFont(`900 ${t6.brandFontSize || 32}px "${t6.brandFontFamily || 'Archivo Black'}"`),
+        loadFont(`700 ${t6.swipeFontSize || 22}px "${t6.swipeFontFamily || 'Bebas Neue'}"`),
+    ]);
+
+    // ── Black base ────────────────────────────────────────────────────────────
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Background image ──────────────────────────────────────────────────────
+    if (bgImg) {
+        ctx.save();
+        ctx.globalAlpha = t6.bgOpacity ?? 1;
+        drawCover(ctx, bgImg, 0, 0, W, H,
+            t6.imagePosX ?? 50, t6.imagePosY ?? 50, (t6.imageScale ?? 100) / 100);
+        ctx.restore();
+    }
+
+    // ── Flat dim overlay ──────────────────────────────────────────────────────
+    if ((t6.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t6.overlayOpacity;
+        ctx.fillStyle   = t6.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    // ── Cinematic multi-stop gradient (mirrors CSS exactly) ───────────────────
+    {
+        const gs  = t6.gradientStart    ?? 22;
+        const str = t6.gradientStrength ?? 0.96;
+        const p2  = (gs + (100 - gs) * 0.20) / 100;
+        const p3  = (gs + (100 - gs) * 0.46) / 100;
+        const p4  = (gs + (100 - gs) * 0.70) / 100;
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0,          'rgba(0,0,0,0)');
+        grad.addColorStop(gs / 100,   'rgba(0,0,0,0)');
+        grad.addColorStop(p2, `rgba(0,0,0,${+(str * 0.08).toFixed(3)})`);
+        grad.addColorStop(p3, `rgba(0,0,0,${+(str * 0.42).toFixed(3)})`);
+        grad.addColorStop(p4, `rgba(0,0,0,${+(str * 0.80).toFixed(3)})`);
+        grad.addColorStop(1,  `rgba(0,0,0,${+str.toFixed(3)})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    // ── Circle inset photo (top-right area) ───────────────────────────────────
+    if (t6.showCircle !== false && circleImg) {
+        const cSz  = t6.circleSize        ?? 200;
+        const cBW  = t6.circleBorderWidth ?? 5;
+        const cCX  = (t6.circlePosX / 100) * W;
+        const cCY  = (t6.circlePosY / 100) * H;
+        const r    = cSz / 2;
+        const ir   = Math.max(1, r - cBW);
+
+        // Shadow
+        ctx.save();
+        ctx.shadowColor  = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur   = 28;
+        ctx.shadowOffsetY = 6;
+        ctx.beginPath();
+        ctx.arc(cCX, cCY, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.001)';
+        ctx.fill();
+        ctx.restore();
+
+        // Image clipped to inner circle
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cCX, cCY, ir, 0, Math.PI * 2);
+        ctx.clip();
+        drawCover(ctx, circleImg, cCX - ir, cCY - ir, ir * 2, ir * 2, 50, 50, 1);
+        ctx.restore();
+
+        // Border ring
+        if (cBW > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cCX, cCY, r - cBW / 2, 0, Math.PI * 2);
+            ctx.strokeStyle = t6.circleBorderColor || '#FFF';
+            ctx.lineWidth   = cBW;
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    // ── Brand text (top-left) ─────────────────────────────────────────────────
+    if (t6.showBrand !== false) {
+        const bFS  = t6.brandFontSize   || 32;
+        const bFF  = t6.brandFontFamily || 'Archivo Black';
+        const bStyle = t6.brandItalic ? 'italic' : 'normal';
+        ctx.save();
+        ctx.font         = `${bStyle} 900 ${bFS}px "${bFF}", sans-serif`;
+        setLS(ctx, 0.03 * bFS);
+        ctx.fillStyle    = t6.brandColor || '#FFF';
+        ctx.textBaseline = 'top';
+        ctx.textAlign    = 'left';
+        ctx.shadowColor  = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur   = 8;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText((t6.brandText || '').toUpperCase(), 44, 40);
+        ctx.restore();
+    }
+
+    // ── Headline (left-aligned, bottom-left, [brackets] = highlight color) ────
+    const t6Parts = (t6.headline || '').split(/(\[.*?\])/);
+    const t6Words = [];
+    for (const p of t6Parts) {
+        if (p.startsWith('[') && p.endsWith(']')) {
+            p.slice(1, -1).toUpperCase().split(/\s+/).forEach(w => {
+                if (w) t6Words.push({ word: w, color: t6.highlightColor || '#FF3333' });
+            });
+        } else {
+            p.toUpperCase().split(/\s+/).forEach(w => {
+                if (w) t6Words.push({ word: w, color: t6.headlineColor || '#FFF' });
+            });
+        }
+    }
+
+    const LS6    = (t6.letterSpacing ?? 0) * fs;
+    const LH6    = Math.round(fs * (t6.lineHeight ?? 1.0));
+    ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, LS6);
+    const hlLines6 = wrapColored(ctx, t6Words, W - PAD_H * 2);
+    const HL_H6    = hlLines6.length * LH6;
+
+    // Swipe + dots block height
+    const SW_FS6 = t6.swipeFontSize || 22;
+    const SW_H6  = t6.showSwipe ? Math.round(SW_FS6 * 1.3) : 0;
+    const DOT_H6 = 7;
+    const DOT_MT6 = 10;
+    const DOT_TH6 = t6.showDots ? DOT_H6 + DOT_MT6 : 0;
+    const NAV_H6  = SW_H6 + (t6.showSwipe && t6.showDots ? 10 : 0) + DOT_TH6;
+
+    // Headline bottom edge = H - PAD_BOT
+    const hlTop = H - PAD_BOT - HL_H6;
+
+    ctx.save();
+    ctx.font          = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, LS6);
+    ctx.textBaseline  = 'top';
+    ctx.shadowColor   = 'rgba(0,0,0,0.7)';
+    ctx.shadowBlur    = 22;
+    ctx.shadowOffsetY = 4;
+
+    const sp6 = mW(ctx, ' ');
+    let hy6 = hlTop;
+    for (const line of hlLines6) {
+        let cx6 = PAD_H;
+        for (let i = 0; i < line.length; i++) {
+            ctx.fillStyle = line[i].color;
+            ctx.fillText(line[i].word, cx6, hy6);
+            cx6 += mW(ctx, line[i].word);
+            if (i < line.length - 1) cx6 += sp6;
+        }
+        hy6 += LH6;
+    }
+    ctx.restore();
+
+    // ── >>> SWIPE >>> + dots (bottom center, pb 26px) ─────────────────────────
+    const PB6   = 26;
+    let navY6   = H - PB6 - NAV_H6;
+
+    if (t6.showSwipe !== false) {
+        const swFF   = t6.swipeFontFamily || 'Bebas Neue';
+        const decoSz = Math.round(SW_FS6 * 0.52);
+        const decoTxt = '\u203A\u00A0\u203A\u00A0\u203A'; // › › ›
+
+        ctx.save();
+        ctx.fillStyle    = t6.swipeColor || '#FFF';
+        ctx.textBaseline = 'top';
+        ctx.textAlign    = 'center';
+
+        // Left deco (faded)
+        ctx.save();
+        ctx.globalAlpha = 0.45;
+        ctx.font        = `${decoSz}px sans-serif`;
+        setLS(ctx, 5);
+        ctx.fillText(decoTxt, W / 2 - 80, navY6 + (SW_FS6 - decoSz) / 2);
+        ctx.restore();
+
+        // Center swipe word
+        ctx.font = `700 ${SW_FS6}px "${swFF}", sans-serif`;
+        setLS(ctx, 0.22 * SW_FS6);
+        ctx.fillText((t6.swipeText || 'SWIPE').toUpperCase(), W / 2, navY6);
+
+        // Right deco (faded)
+        ctx.save();
+        ctx.globalAlpha = 0.45;
+        ctx.font        = `${decoSz}px sans-serif`;
+        setLS(ctx, 5);
+        ctx.fillText(decoTxt, W / 2 + 80, navY6 + (SW_FS6 - decoSz) / 2);
+        ctx.restore();
+
+        ctx.restore();
+        navY6 += SW_H6 + (t6.showDots ? 10 : 0);
+    }
+
+    if (t6.showDots) {
+        const cnt6 = Math.max(1, Math.min(10, t6.dotCount  || 4));
+        const act6 = Math.max(0, Math.min(cnt6 - 1, t6.activeDot || 0));
+        drawDots(ctx, W / 2, navY6, cnt6, act6, DOT_H6, 20, 7, 5, t6.dotColor || '#FFF', 1, 0.45);
+    }
+}
+
 // ─── MAIN EXPORT FUNCTION ─────────────────────────────────────────────────────
 async function exportCanvas() {
     const state = window.state;
@@ -747,6 +1313,9 @@ async function exportCanvas() {
             const tmpl = state.post.template;
             if      (tmpl === 'template2') await exportT2(ctx, state, W, H);
             else if (tmpl === 'template3') await exportT3(ctx, state, W, H);
+            else if (tmpl === 'template4') await exportT4(ctx, state, W, H);
+            else if (tmpl === 'template5') await exportT5(ctx, state, W, H);
+            else if (tmpl === 'template6') await exportT6(ctx, state, W, H);
             else                           await exportT1(ctx, state, W, H);
         } else {
             await exportHighlight(ctx, state, W);
@@ -784,8 +1353,8 @@ async function exportCanvas() {
             if (wrapper)    { wrapper.style.transition = 'opacity 0.3s ease'; wrapper.style.opacity = '1'; }
             if (exportBtn)  { exportBtn.disabled = false; exportBtn.classList.remove('export-loading'); }
             if (exportBtnHeader)  { exportBtnHeader.disabled = false; exportBtnHeader.classList.remove('export-loading'); }
-            if (exportText) exportText.textContent = 'Export';
-            if (exportTextHeader) exportTextHeader.textContent = 'Export';
+            if (exportText) exportText.textContent = 'EXPORT';
+            if (exportTextHeader) exportTextHeader.textContent = 'EXPORT';
         state.isExporting = false;
         }, wait);
     }
