@@ -76,44 +76,36 @@ function renderColorPicker(label, currentColor, onChangeStr) {
   // Create a global handler function name
   const handlerName = `handleColorPick_${id}`;
 
-  // Parse the onChange string to extract function name and parameter
-  // Format is like: "window.updatePostStyle('highlightColor', '$VAL')"
+  // Parse the onChange string — handles both:
+  //   "window.updatePostStyle('key', '$VAL')"   (all current callers)
+  //   "updatePostStyle('key', '$VAL')"           (legacy bare-name format)
   const match = onChangeStr.match(
-    /^(\w+)\(['"]([^'"]+)['"],\s*['"]\$VAL['"]\)$/,
+    /^(?:window\.)?(\w+)\(['"]([^'"]+)['"],\s*['"]\$VAL['"]\)$/,
   );
 
   // Register the handler globally
   window[handlerName] = function (color) {
     try {
       if (match) {
-        // Direct function call approach
-        const funcName = match[1];
+        // Direct, eval-free call — works for every window.xxxState pattern
+        const funcName  = match[1];
         const paramName = match[2];
-
-        if (funcName === "updatePostStyle") {
-          window.updatePostStyle(paramName, color);
-        } else if (funcName === "updateHighlightState") {
-          window.updateHighlightState(paramName, color);
+        if (typeof window[funcName] === 'function') {
+          window[funcName](paramName, color);
         } else {
-          // Fallback to eval (safe in this context since we control the input)
-          const code = onChangeStr.replace(/\$VAL/g, JSON.stringify(color));
-          const fn = new Function("return " + code);
-          fn();
+          console.error('[colorPicker] function not found on window:', funcName);
         }
       } else {
-        // Fallback: try to execute the onChange string directly
+        // Fallback for complex onChange expressions
         const code = onChangeStr.replace(/\$VAL/g, JSON.stringify(color));
-        const fn = new Function("return " + code);
-        fn();
+        (0, eval)(code);
       }
-
-      // Don't close the picker - allow multiple color selections
-      // Re-render sidebar to update the color display
+      // Re-render sidebar so the color swatch updates immediately
       window.renderSidebarContent();
     } catch (e) {
-      console.error("Color picker error:", e);
-      console.error("OnChange string:", onChangeStr);
-      console.error("Color value:", color);
+      console.error('Color picker error:', e);
+      console.error('OnChange string:', onChangeStr);
+      console.error('Color value:', color);
     }
   };
 
