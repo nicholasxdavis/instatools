@@ -10,4 +10,14 @@ The core focus of this tool is privacy and speed: all image processing happens c
 - **Highlight Covers:** A specialized tool located in /tools/highlight/ for designing and exporting Instagram Story highlight covers.
 - **Profile Pictures:** A dedicated tool in /tools/pfp/ specifically designed to frame, style, and export professional-grade profile pictures.
 
+## Made with Instatools
 
+<p align="center">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post.png?raw=true" width="49%" alt="Instatools Example 1">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-two.png?raw=true" width="49%" alt="Instatools Example 2">
+</p>
+
+<p align="center">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-three.png?raw=true" width="49%" alt="Instatools Example 3">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-four.png?raw=true" width="49%" alt="Instatools Example 4">
+</p>
