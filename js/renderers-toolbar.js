@@ -345,16 +345,16 @@ toolbar.appendChild(btn);
 return btn;
     }
 
-    // Single Color Picker Button (Cleaner, less overwhelming)
+    // Single Color Picker Chip (compact, Canva-style)
     function addColorPicker(currentColor, onChange) {
 const wrap = document.createElement('div');
 wrap.className = 'ctx-color-wrap';
 
 const btn = document.createElement('button');
-btn.className = 'ctx-btn';
+btn.className = 'ctx-btn ctx-color-btn';
 btn.title = 'Change Color';
-// Show a small preview dot and text
-btn.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${currentColor};border:1px solid rgba(255,255,255,0.4);display:inline-block;"></span> Color`;
+// Single circular swatch only – label is handled by ctx-label
+btn.innerHTML = `<span class="ctx-color-dot" style="background:${currentColor};"></span>`;
 
 const inp = document.createElement('input');
 inp.type = 'color';
@@ -362,7 +362,8 @@ inp.value = currentColor;
 inp.oninput = e => { 
     e.stopPropagation(); 
     // Live update the little preview dot
-    btn.querySelector('span').style.backgroundColor = e.target.value;
+    const dot = btn.querySelector('.ctx-color-dot');
+    if (dot) dot.style.backgroundColor = e.target.value;
     onChange(e.target.value); 
 };
 

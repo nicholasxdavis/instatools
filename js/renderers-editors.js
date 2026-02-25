@@ -949,6 +949,16 @@ function loadSystemTemplate(id) {
     // Switch the active template
     window.state.post.template = template.templateId || template.id;
 
+    // Reset the specific template's state back to its default so changes apply
+    const tId = template.templateId || template.id;
+    if (tId !== 'template1' && window.DEFAULT_TEMPLATE_STATES && window.DEFAULT_TEMPLATE_STATES[tId]) {
+        // e.g. window.state.post.t6 = { ...window.DEFAULT_TEMPLATE_STATES.t6 }
+        const stateKey = tId.replace('template', 't');
+        if (window.state.post[stateKey] && window.DEFAULT_TEMPLATE_STATES[stateKey]) {
+             window.state.post[stateKey] = JSON.parse(JSON.stringify(window.DEFAULT_TEMPLATE_STATES[stateKey]));
+        }
+    }
+
     // For template1, merge style settings
     if (template.style) {
       window.state.post.style = {
@@ -2539,42 +2549,67 @@ function renderTemplate5Editor(container) {
                         </div>
                     </div>
 
-                    <!-- Brand Badge -->
+                    <!-- Watermark -->
                     <div class="space-y-3 pt-4 border-t border-gray-100">
                         <div class="flex justify-between items-center">
                             <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
-                                <i data-lucide="tag" class="w-3 h-3"></i> Brand Circle (Top-Left)
+                                <i data-lucide="image" class="w-3 h-3"></i> Watermark
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <span class="text-[9px] text-gray-400">Show</span>
-                                <input type="checkbox" ${t5.showBrand ? "checked" : ""}
-                                    onchange="window.updateT5State('showBrand', this.checked); window.debouncedRenderCanvas()"
-                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle brand badge">
+                                <input type="checkbox" ${t5.showWatermark ? "checked" : ""}
+                                    onchange="window.updateT5State('showWatermark', this.checked); window.debouncedRenderCanvas()"
+                                    class="accent-black h-3.5 w-3.5 cursor-pointer" aria-label="Toggle watermark">
                             </label>
                         </div>
-                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
-                            <div>
-                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Brand Text</label>
-                                <input type="text" id="t5-brand-text"
-                                    value="${window.escapeHtml(t5.brandText)}"
-                                    oninput="window.updateT5State('brandText', this.value)"
-                                    class="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200"
-                                    placeholder="e.g. CAN, ESPN, TMZ..."
-                                    aria-label="Brand text">
-                            </div>
-                            <div>
-                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Circle Size</label>
-                                <input type="range" min="10" max="40" value="${t5.brandFontSize}"
-                                    oninput="window.updateT5State('brandFontSize', parseFloat(this.value)); document.getElementById('t5-brand-fs').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
-                                    class="w-full" aria-label="Brand size">
-                                <div id="t5-brand-fs" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.brandFontSize}px</div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>${renderColorPicker('BG Color', t5.brandBgColor, "window.updateT5State('brandBgColor', '$VAL')")}</div>
-                                <div>${renderColorPicker('Text Color', t5.brandTextColor, "window.updateT5State('brandTextColor', '$VAL')")}</div>
-                            </div>
-                            <div>${renderColorPicker('Border Color', t5.brandBorderColor, "window.updateT5State('brandBorderColor', '$VAL')")}</div>
+                        <div class="flex gap-2">
+                            <input
+                                type="text" id="t5-watermark-url"
+                                class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs transition-all-200 focus:bg-white"
+                                placeholder="Watermark URL..."
+                                oninput="window.updateT5State('watermarkUrl', this.value)"
+                                value="${t5.watermarkUrl && !t5.watermarkUrl.startsWith('data:') ? window.escapeHtml(t5.watermarkUrl) : ''}"
+                                aria-label="Watermark URL"
+                            >
+                            <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload watermark">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't5Watermark')">
+                            </label>
                         </div>
+                        ${t5.watermarkUrl ? `
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3 font-medium">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Size</label>
+                                    <input type="range" min="40" max="400" value="${t5.watermarkSize}"
+                                        oninput="window.updateT5State('watermarkSize', parseFloat(this.value)); document.getElementById('t5-wm-size-display').textContent = this.value + 'px'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Watermark size">
+                                    <div id="t5-wm-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t5.watermarkSize}px</div>
+                                </div>
+                                <div>
+                                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Opacity</label>
+                                    <input type="range" min="0" max="1" step="0.01" value="${t5.watermarkOpacity}"
+                                        oninput="window.updateT5State('watermarkOpacity', parseFloat(this.value)); document.getElementById('t5-wm-opacity-display').textContent = Math.round(this.value*100) + '%'; window.debouncedRenderCanvas()"
+                                        class="w-full" aria-label="Watermark opacity">
+                                    <div id="t5-wm-opacity-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t5.watermarkOpacity * 100)}%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Position</label>
+                                <div class="grid grid-cols-3 gap-1.5 mb-3">
+                                    <button onclick="window.state.post.t5.watermarkPosX=10;window.state.post.t5.watermarkPosY=10;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 10 && t5.watermarkPosY === 10 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Top Left">TL</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=50;window.state.post.t5.watermarkPosY=10;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 50 && t5.watermarkPosY === 10 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Top Center">TC</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=90;window.state.post.t5.watermarkPosY=10;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 90 && t5.watermarkPosY === 10 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Top Right">TR</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=10;window.state.post.t5.watermarkPosY=50;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 10 && t5.watermarkPosY === 50 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Center Left">CL</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=50;window.state.post.t5.watermarkPosY=50;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 50 && t5.watermarkPosY === 50 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Center">C</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=90;window.state.post.t5.watermarkPosY=50;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 90 && t5.watermarkPosY === 50 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Center Right">CR</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=10;window.state.post.t5.watermarkPosY=90;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 10 && t5.watermarkPosY === 90 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Bottom Left">BL</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=50;window.state.post.t5.watermarkPosY=90;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 50 && t5.watermarkPosY === 90 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Bottom Center">BC</button>
+                                    <button onclick="window.state.post.t5.watermarkPosX=90;window.state.post.t5.watermarkPosY=90;window.debouncedRenderCanvas();window.renderSidebarContent()" class="p-2 text-[9px] font-bold uppercase rounded border transition-all-200 ${t5.watermarkPosX === 90 && t5.watermarkPosY === 90 ? "bg-black text-white border-black" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"}" title="Bottom Right">BR</button>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
                     </div>
 
                     <!-- Arrow + Dots -->
@@ -2700,6 +2735,24 @@ function renderTemplate6Editor(container) {
                             <button onclick="window.updateT6State('fontWeight',${w}); window.debouncedRenderCanvas(); window.renderSidebarContent()"
                                 class="py-2 rounded-lg border text-[9px] font-bold transition-all ${String(t6.fontWeight)===w ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400'}"
                                 style="font-weight:${w}">${label}</button>`).join('')}
+                    </div>
+                </div>
+                <!-- ── TEXT ALIGNMENT ── -->
+                <div class="pt-3">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Text Alignment</label>
+                    <div class="grid grid-cols-3 gap-1">
+                        ${[
+                            { val: 'left', icon: 'align-left', label: 'Left' },
+                            { val: 'center', icon: 'align-center', label: 'Center' },
+                            { val: 'right', icon: 'align-right', label: 'Right' }
+                        ].map(({val, icon, label}) => `
+                            <button onclick="window.updateT6State('textAlign','${val}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                class="flex flex-col items-center justify-center py-2 rounded-lg border transition-all ${t6.textAlign === val ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400'}"
+                                title="${label}">
+                                <i data-lucide="${icon}" class="w-4 h-4 mb-1"></i>
+                                <span class="text-[8px] font-bold uppercase">${label}</span>
+                            </button>
+                        `).join('')}
                     </div>
                 </div>
                 <div class="pt-2">

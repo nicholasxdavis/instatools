@@ -89,13 +89,143 @@ function handleResize() {
             scale *= 0.82;
         }
         
+        // If manual zoom is set, use it instead of auto-fit
+        if (window.state.manualZoom !== null) {
+            scale = window.state.manualZoom;
+        }
+        
         // Clamp scale to reasonable bounds
-        scale = Math.max(0.05, Math.min(scale, 4));
+        scale = Math.max(0.1, Math.min(scale, 3));
 
         wrapper.style.transform = `scale(${scale})`;
         wrapper.style.width = `${targetW}px`;
         wrapper.style.height = `${targetH}px`;
     }
+}
+
+// ── Zoom Functions ─────────────────────────────────────────────────────────────
+function zoomIn() {
+    if (!window.state || !window.CONSTANTS) return;
+    const container = document.getElementById('preview-container');
+    const wrapper = document.getElementById('scale-wrapper');
+    if (!container || !wrapper) return;
+    
+    const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
+    const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+    const isMobile = window.innerWidth <= 768;
+    const pad = isMobile ? 28 : 40;
+    
+    // Get current scale
+    let currentScale = window.state.manualZoom;
+    if (currentScale === null) {
+        // Calculate auto-fit scale
+        currentScale = Math.min((container.offsetWidth - pad) / targetW, (container.offsetHeight - pad) / targetH);
+        if (isMobile && window.state.mode === 'highlight') {
+            currentScale *= 0.82;
+        }
+    }
+    
+    // Increase by 0.15 (smooth increments)
+    const newScale = Math.min(currentScale + 0.15, 3.0);
+    window.state.manualZoom = newScale;
+    
+    // Apply with smooth transition
+    wrapper.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+    wrapper.style.transform = `scale(${newScale})`;
+    
+    // Update button states
+    updateZoomButtons();
+}
+
+function zoomOut() {
+    if (!window.state || !window.CONSTANTS) return;
+    const container = document.getElementById('preview-container');
+    const wrapper = document.getElementById('scale-wrapper');
+    if (!container || !wrapper) return;
+    
+    const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
+    const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+    const isMobile = window.innerWidth <= 768;
+    const pad = isMobile ? 28 : 40;
+    
+    // Get current scale
+    let currentScale = window.state.manualZoom;
+    if (currentScale === null) {
+        // Calculate auto-fit scale
+        currentScale = Math.min((container.offsetWidth - pad) / targetW, (container.offsetHeight - pad) / targetH);
+        if (isMobile && window.state.mode === 'highlight') {
+            currentScale *= 0.82;
+        }
+    }
+    
+    // Decrease by 0.15 (smooth increments)
+    const newScale = Math.max(currentScale - 0.15, 0.1);
+    window.state.manualZoom = newScale;
+    
+    // Apply with smooth transition
+    wrapper.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
+    wrapper.style.transform = `scale(${newScale})`;
+    
+    // Update button states
+    updateZoomButtons();
+}
+
+function resetZoom() {
+    if (!window.state) return;
+    const wrapper = document.getElementById('scale-wrapper');
+    if (!wrapper) return;
+    
+    // Reset to auto-fit
+    window.state.manualZoom = null;
+    
+    // Apply with smooth transition
+    wrapper.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+    
+    // Trigger resize to recalculate auto-fit
+    handleResize();
+    
+    // Update button states
+    updateZoomButtons();
+}
+
+function updateZoomButtons() {
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    const zoomResetBtn = document.getElementById('zoom-reset-btn');
+    
+    if (!zoomInBtn || !zoomOutBtn || !zoomResetBtn) return;
+    
+    const hasManualZoom = window.state.manualZoom !== null;
+    const currentScale = window.state.manualZoom !== null ? window.state.manualZoom : 
+        (() => {
+            const container = document.getElementById('preview-container');
+            if (!container || !window.CONSTANTS) return 1;
+            const isMobile = window.innerWidth <= 768;
+            const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
+            const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+            const pad = isMobile ? 28 : 40;
+            let scale = Math.min((container.offsetWidth - pad) / targetW, (container.offsetHeight - pad) / targetH);
+            if (isMobile && window.state.mode === 'highlight') scale *= 0.82;
+            return scale;
+        })();
+    
+    // Enable/disable buttons based on zoom limits
+    zoomInBtn.disabled = currentScale >= 3.0;
+    zoomOutBtn.disabled = currentScale <= 0.1;
+    
+    // Highlight reset button if manual zoom is active (no pink, just opacity change)
+    if (hasManualZoom) {
+        zoomResetBtn.classList.add('active');
+    } else {
+        zoomResetBtn.classList.remove('active');
+    }
+    
+    // Ensure icon colors are maintained
+    const zoomButtons = document.querySelectorAll('.zoom-btn [data-lucide] svg');
+    zoomButtons.forEach(svg => {
+        svg.style.stroke = '#ec7258';
+        svg.style.color = '#ec7258';
+    });
 }
 
 // ── Mobile: Update toggle button label to show current tab ─────────────────
@@ -196,7 +326,13 @@ window.addEventListener('DOMContentLoaded', () => {
         window.renderApp();
     }
     if (window.debounceResize) {
-        window.addEventListener('resize', window.debounceResize(handleResize));
+        window.addEventListener('resize', window.debounceResize(() => {
+            handleResize();
+            // Only update zoom buttons if not in manual zoom mode
+            if (window.state.manualZoom === null) {
+                updateZoomButtons();
+            }
+        }));
     }
     
     // Collapsible Sidebar Functionality
@@ -245,13 +381,45 @@ window.addEventListener('DOMContentLoaded', () => {
     // Mobile swipe-down to dismiss panel
     initMobileSwipeGesture();
     
+    // Initialize zoom controls
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+    const zoomResetBtn = document.getElementById('zoom-reset-btn');
+    
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', zoomIn);
+    }
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', zoomOut);
+    }
+    if (zoomResetBtn) {
+        zoomResetBtn.addEventListener('click', resetZoom);
+    }
+    
+    // Initialize zoom button icons
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        setTimeout(() => {
+            lucide.createIcons();
+            // Set icon colors to #ec7258
+            const zoomButtons = document.querySelectorAll('.zoom-btn [data-lucide] svg');
+            zoomButtons.forEach(svg => {
+                svg.style.stroke = '#ec7258';
+                svg.style.color = '#ec7258';
+            });
+            updateZoomButtons();
+        }, 100);
+    }
+    
     // Check welcome popup
     if (window.checkWelcomePopup) {
         window.checkWelcomePopup();
     }
     
     // Initial resize to set canvas scale correctly
-    setTimeout(handleResize, 100);
+    setTimeout(() => {
+        handleResize();
+        updateZoomButtons();
+    }, 100);
 });
 
 // Make globally available
@@ -260,4 +428,8 @@ if (typeof window !== 'undefined') {
     window.initializeIcons = initializeIcons;
     window.handleResize = handleResize;
     window.updateMobileToggleLabel = updateMobileToggleLabel;
+    window.zoomIn = zoomIn;
+    window.zoomOut = zoomOut;
+    window.resetZoom = resetZoom;
+    window.updateZoomButtons = updateZoomButtons;
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#131314">
+
+    <title>Page Not Found — Instatools</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./favicon.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="./css/styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #131314; color: #fff; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-center p-5 selection:bg-white selection:text-black relative overflow-hidden">
+    
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+    <div class="relative z-10 max-w-md w-full">
+        <!-- Logo -->
+        <a href="index.html" class="inline-block mb-10 transition-opacity hover:opacity-80">
+            <img src="./src/ui/logo.png" alt="Instatools Logo" class="h-10 mx-auto">
+        </a>
+
+        <!-- 404 Content -->
+        <h1 class="text-7xl font-bold mb-4 font-black" style="background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">404</h1>
+        <h2 class="text-2xl font-semibold mb-4 text-gray-200">Page not found</h2>
+        <p class="text-gray-400 mb-8 text-base leading-relaxed">
+            The page you are looking for doesn't exist or has been moved.
+        </p>
+
+        <!-- Back Home Button -->
+        <a href="index.html" class="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-black bg-white rounded-lg transition-transform hover:-translate-y-0.5 hover:shadow-lg active:scale-95">
+            Back to Home
+        </a>
+    </div>
+
+</body>
+</html>

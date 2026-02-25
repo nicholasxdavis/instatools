@@ -53,6 +53,11 @@ function setMode(mode) {
             window.state.mode = mode;
             window.state.activeTab = 'editor';
             
+            // Reset zoom to auto-fit when mode changes
+            if (window.state.manualZoom !== null) {
+                window.state.manualZoom = null;
+            }
+            
             // Update buttons
     const postBtn = document.getElementById('mode-post-btn');
     const highlightBtn = document.getElementById('mode-highlight-btn');
@@ -67,6 +72,13 @@ function setMode(mode) {
             }
             
             window.renderApp();
+            
+            // Update zoom buttons after mode change
+            if (window.updateZoomButtons) {
+                setTimeout(() => {
+                    window.updateZoomButtons();
+                }, 100);
+            }
         }
 
 function setActiveTab(tab) {
@@ -174,6 +186,36 @@ function renderSidebarContent() {
 
         // --- POST GENERATOR UI ---
 function renderCanvas() {
+    // Helper function to get transform string with scale and translateY for positioning
+    // When scaled, object-position alone doesn't work well, so we combine it with translateY
+    function getImageTransform(scale, posY) {
+        const scaleFactor = scale / 100;
+        const scaleValue = scaleFactor;
+        
+        if (scaleFactor === 1) {
+            // At 100% scale, no transform needed (use object-position only)
+            return 'none';
+        }
+        
+        // Calculate translateY based on position offset from center
+        // When image is scaled larger, we need to translate to compensate for the scale
+        // Formula: translate by the offset amount, scaled by (scaleFactor - 1)
+        // This ensures that changing posY moves the image correctly when zoomed
+        const offsetFromCenter = (posY - 50) / 100; // -0.5 to 0.5 (negative = up, positive = down)
+        // Translate by the offset, multiplied by how much we've scaled beyond 100%
+        // At 200% scale (2x), we need to translate more to achieve the same visual position
+        const translateY = offsetFromCenter * 100 * (scaleFactor - 1);
+        
+        return `scale(${scaleValue}) translateY(${translateY}%)`;
+    }
+    
+    // Get object-position Y - use center when scaled (translate handles positioning)
+    function getObjectPositionY(pos, scale) {
+        const scaleFactor = scale / 100;
+        if (scaleFactor === 1) return pos;
+        return 50; // Center when scaled, translate handles the offset
+    }
+    
     const root = document.getElementById('canvas-root');
             if (!root) return;
 
@@ -260,7 +302,7 @@ function renderCanvas() {
                             >
                                 <img
                                     src="${safeT2Img}"
-                                    style="width:100%;height:100%;object-fit:cover;object-position:${t2.imagePosX}% ${t2.imagePosY}%;transform:scale(${t2.imageScale/100});"
+                                    style="width:100%;height:100%;object-fit:cover;object-position:${t2.imagePosX}% ${getObjectPositionY(t2.imagePosY, t2.imageScale)}%;transform:${getImageTransform(t2.imageScale, t2.imagePosY)};"
                                     onerror="this.style.display='none'"
                                     alt="Background"
                                 >
@@ -355,7 +397,7 @@ function renderCanvas() {
                             >
                                 <img
                                     src="${safeBg}"
-                                    style="width:100%;height:100%;object-fit:cover;object-position:${t6.imagePosX}% ${t6.imagePosY}%;transform:scale(${t6.imageScale / 100});transform-origin:center center;opacity:${t6.bgOpacity};"
+                                    style="width:100%;height:100%;object-fit:cover;object-position:${t6.imagePosX}% ${getObjectPositionY(t6.imagePosY, t6.imageScale)}%;transform:${getImageTransform(t6.imageScale, t6.imagePosY)};transform-origin:center center;opacity:${t6.bgOpacity};"
                                     onerror="this.style.display='none'"
                                     alt="Background"
                                 >
@@ -372,7 +414,7 @@ function renderCanvas() {
                             <div
                                 data-ctx="circle-inset"
                                 title="Click to replace circle image"
-                                style="position:absolute;left:${t6.circlePosX}%;top:${t6.circlePosY}%;transform:translate(-50%,-50%);width:${t6.circleSize}px;height:${t6.circleSize}px;border-radius:50%;overflow:hidden;border:${t6.circleBorderWidth}px solid ${t6.circleBorderColor};cursor:pointer;z-index:20;box-shadow:0 6px 28px rgba(0,0,0,0.5);background:#1a1a1a;flex-shrink:0;"
+                                style="position:absolute;left:${t6.circlePosX}%;top:${t6.circlePosY}%;transform:translate(-50%,-50%);width:${t6.circleSize}px;height:${t6.circleSize}px;border-radius:50%;overflow:hidden;border:${t6.circleBorderWidth}px solid ${t6.circleBorderColor};cursor:pointer;z-index:20;box-shadow:0 8px 32px rgba(0,0,0,0.6);background:#1a1a1a;flex-shrink:0;"
                             >
                                 ${safeCircle
                                     ? `<img src="${safeCircle}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" alt="Circle inset">`
@@ -399,7 +441,7 @@ function renderCanvas() {
                                     data-ctx="headline"
                                     title="Click to edit headline"
                                     ondblclick="window.focusSidebarControl('t6-headline')"
-                                    style="margin:0;padding:0;font-family:'${t6.customFontFamily || t6.fontFamily}',sans-serif;font-size:${t6.fontSize}px;font-weight:${t6.fontWeight};line-height:${t6.lineHeight};letter-spacing:${t6.letterSpacing}em;text-transform:uppercase;text-align:left;word-break:break-word;cursor:pointer;pointer-events:auto;"
+                                    style="margin:0;padding:0;align-self:center;font-family:'${t6.customFontFamily || t6.fontFamily}',sans-serif;font-size:${t6.fontSize}px;font-weight:${t6.fontWeight};line-height:${t6.lineHeight};letter-spacing:${t6.letterSpacing}em;text-transform:uppercase;text-align:${t6.textAlign || 'center'};white-space:pre-wrap;text-shadow:0px 4px 15px rgba(0,0,0,0.8);word-break:break-word;cursor:pointer;pointer-events:auto;"
                                 >${t6HeadlineHTML}</h1>
                             </div>
 
@@ -419,15 +461,32 @@ function renderCanvas() {
             const t5 = window.state.post.t5;
             const safeLeft  = window.escapeHtml(window.getCorsProxyUrl(t5.imageLeft));
             const safeRight = window.escapeHtml(window.getCorsProxyUrl(t5.imageRight));
+            const safeT5Watermark = t5.watermarkUrl ? window.escapeHtml(window.getCorsProxyUrl(t5.watermarkUrl)) : '';
             const imgHeightPx = Math.round((t5.imageSplit / 100) * window.CONSTANTS.POST_HEIGHT);
+
+            // Watermark Positioning Logic (Mirrors Template 2)
+            const t5ClampedPosY = Math.max(0, Math.min(100, t5.watermarkPosY));
+            const t5PosX = Math.max(0, t5.watermarkPosX);
+            
+            let t5WmTX = '-50%', t5WmTY = '-50%';
+            let t5WmLeft = null, t5WmRight = null, t5WmTop = null, t5WmBottom = null;
+            
+            if (t5ClampedPosY <= 15) { t5WmTY = '0%'; t5WmTop = `${t5ClampedPosY}%`; }
+            else if (t5ClampedPosY >= 85) { t5WmTY = '0%'; t5WmBottom = `${100 - t5ClampedPosY}%`; }
+            else { t5WmTop = `${t5ClampedPosY}%`; }
+            
+            if (t5PosX <= 15) { t5WmTX = '0%'; t5WmLeft = `${Math.min(100, t5PosX)}%`; }
+            else if (t5PosX >= 85) { t5WmTX = '0%'; const t5RightValue = 100 - t5PosX; t5WmRight = `${t5RightValue}%`; }
+            else { t5WmLeft = `${t5PosX}%`; }
 
             // Parse headline: [word] = highlightColor, plain = headlineColor
             const t5Parts = t5.headline.split(/(\[.*?\])/);
             const t5HeadlineHTML = t5Parts.map(part => {
                 if (part.startsWith('[') && part.endsWith(']')) {
-                    return `<span style="color:${t5.highlightColor}">${window.escapeHtml(part.slice(1, -1))}</span>`;
+                    // To get the "popping" look on the colored text, we can optionally add a white shadow or stroke. Let's stick to text-shadow.
+                    return `<span style="color:${t5.highlightColor};text-shadow:0px 4px 25px rgba(0,0,0,1);">${window.escapeHtml(part.slice(1, -1))}</span>`;
                 }
-                return `<span style="color:${t5.headlineColor}">${window.escapeHtml(part)}</span>`;
+                return `<span style="color:${t5.headlineColor};text-shadow:0px 4px 25px rgba(0,0,0,1);">${window.escapeHtml(part)}</span>`;
             }).join('');
 
             // Dots HTML
@@ -442,8 +501,8 @@ function renderCanvas() {
                 return `<div style="display:flex;align-items:center;justify-content:center;gap:5px;">${dots}</div>`;
             })() : '';
 
-            // Arrow HTML (left-pointing arrow, thin with arrowhead)
-            const arrowSvg = t5.showArrow ? `<svg width="70" height="20" viewBox="0 0 70 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;"><line x1="68" y1="10" x2="2" y2="10" stroke="${t5.arrowColor}" stroke-width="2"/><polyline points="14,2 2,10 14,18" fill="none" stroke="${t5.arrowColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>` : '';
+            // Arrow HTML (left-pointing arrow with thick stroke to match reference)
+            const arrowSvg = t5.showArrow ? `<svg width="50" height="20" viewBox="0 0 50 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;transform:scaleX(-1);"><line x1="48" y1="10" x2="2" y2="10" stroke="${t5.arrowColor}" stroke-width="3"/><polyline points="12,2 2,10 12,18" fill="none" stroke="${t5.arrowColor}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg>` : '';
 
             // Separator between images
             const sepStyle = t5.imageSeparator ? `border-left:${t5.separatorWidth}px solid ${t5.separatorColor};` : '';
@@ -463,42 +522,59 @@ function renderCanvas() {
                                 >
                                     <img
                                         src="${safeLeft}"
-                                        style="width:100%;height:100%;object-fit:cover;object-position:${t5.leftPosX}% ${t5.leftPosY}%;transform:scale(${t5.leftScale/100});transform-origin:center center;"
+                                        style="width:100%;height:100%;object-fit:cover;object-position:${t5.leftPosX}% ${getObjectPositionY(t5.leftPosY, t5.leftScale)}%;transform:${getImageTransform(t5.leftScale, t5.leftPosY)};transform-origin:center center;"
                                         onerror="this.style.display='none'"
                                         alt="Left image"
                                     >
                                 </div>
 
                                 <!-- RIGHT IMAGE -->
-                                <div
-                                    data-ctx="background-right"
-                                    title="Click to edit right image"
-                                    ondblclick="window.focusSidebarControl('t5-right-url')"
-                                    style="flex:1;overflow:hidden;cursor:pointer;position:relative;${sepStyle}"
-                                >
-                                    <img
-                                        src="${safeRight}"
-                                        style="width:100%;height:100%;object-fit:cover;object-position:${t5.rightPosX}% ${t5.rightPosY}%;transform:scale(${t5.rightScale/100});transform-origin:center center;"
-                                        onerror="this.style.display='none'"
-                                        alt="Right image"
-                                    >
-                                </div>
+                        <div
+                            data-ctx="background-right"
+                            title="Click to edit right image"
+                            ondblclick="window.focusSidebarControl('t5-right-url')"
+                            style="flex:1;overflow:hidden;cursor:pointer;position:relative;${sepStyle}"
+                        >
+                            <img
+                                src="${safeRight}"
+                                style="width:100%;height:100%;object-fit:cover;object-position:${t5.rightPosX}% ${getObjectPositionY(t5.rightPosY, t5.rightScale)}%;transform:${getImageTransform(t5.rightScale, t5.rightPosY)};transform-origin:center center;"
+                                onerror="this.style.display='none'"
+                                alt="Right image"
+                            >
+                        </div>
 
+                        <!-- WATERMARK OVERLAY -->
+                        ${safeT5Watermark && (t5.showWatermark !== false) ? `
+                            <div
+                                data-ctx="watermark"
+                                title="Click to edit watermark"
+                                ondblclick="window.focusSidebarControl('t5-watermark-url')"
+                                style="position:absolute;z-index:30;${t5WmLeft !== null ? `left:${t5WmLeft};` : ''}${t5WmRight !== null ? `right:${t5WmRight};` : ''}${t5WmTop !== null ? `top:${t5WmTop};` : ''}${t5WmBottom !== null ? `bottom:${t5WmBottom};` : ''} transform:translate(${t5WmTX},${t5WmTY});cursor:pointer;opacity:${t5.watermarkOpacity};"
+                            >
+                                <img
+                                    src="${safeT5Watermark}"
+                                    style="width:${t5.watermarkSize}px;height:auto;object-fit:contain;pointer-events:none;display:block;"
+                                    onerror="this.style.display='none'"
+                                    alt="Watermark"
+                                >
                             </div>
+                        ` : ''}
+
+                    </div>
 
                             <!-- BOTTOM: text block -->
-                            <div style="flex:1;background:${t5.bgColor};display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:${t5.paddingV}px ${t5.paddingH}px ${Math.round(t5.paddingV * 0.7)}px;position:relative;overflow:hidden;">
+                            <div style="flex:1;background:${t5.bgColor};display:flex;flex-direction:column;align-items:center;justify-content:center;padding:${t5.paddingV}px ${t5.paddingH}px ${Math.round(t5.paddingV * 0.7)}px;position:relative;overflow:hidden;">
 
                                 <!-- HEADLINE -->
                                 <h1
                                     data-ctx="headline"
                                     title="Click to edit headline"
                                     ondblclick="window.focusSidebarControl('t5-headline')"
-                                    style="margin:0;font-family:'${t5.customFontFamily || t5.fontFamily}',sans-serif;font-size:${t5.fontSize}px;font-weight:${t5.fontWeight};text-transform:uppercase;text-align:${t5.textAlign};line-height:${t5.lineHeight};letter-spacing:${t5.letterSpacing}em;word-break:break-word;width:100%;cursor:pointer;"
+                                    style="margin:0;font-family:'${t5.customFontFamily || t5.fontFamily}',sans-serif;font-size:${t5.fontSize}px;font-weight:${t5.fontWeight};text-transform:uppercase;text-align:${t5.textAlign || 'center'};white-space:pre-wrap;line-height:${t5.lineHeight};letter-spacing:${t5.letterSpacing}em;word-break:break-word;width:100%;cursor:pointer;"
                                 >${t5HeadlineHTML}</h1>
 
-                                <!-- ARROW + DOTS -->
-                                <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                                <!-- BOTTOM ARROW + DOTS -->
+                                <div style="position:absolute;bottom:20px;display:flex;flex-direction:column;align-items:center;gap:6px;">
                                     ${arrowSvg}
                                     ${t5DotsHtml}
                                 </div>
@@ -507,19 +583,6 @@ function renderCanvas() {
 
                         </div>
 
-                        <!-- BRAND BADGE: absolutely positioned top-left corner -->
-                        ${t5.showBrand ? `
-                        <div
-                            data-ctx="brand"
-                            title="Click to edit brand"
-                            ondblclick="window.focusSidebarControl('t5-brand-text')"
-                            style="position:absolute;top:28px;left:28px;z-index:30;cursor:pointer;display:flex;align-items:center;gap:0;"
-                        >
-                            <div style="width:${t5.brandFontSize * 2.2}px;height:${t5.brandFontSize * 2.2}px;border-radius:50%;background:${t5.brandBgColor};border:2px solid ${t5.brandBorderColor};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <span style="font-family:'Archivo Black',sans-serif;font-size:${t5.brandFontSize}px;font-weight:900;color:${t5.brandTextColor};letter-spacing:-0.02em;line-height:1;">${window.escapeHtml(t5.brandText)}</span>
-                            </div>
-                        </div>
-                        ` : ''}
                     `;
                     return; // Done — skip template1 rendering below
                 }
@@ -557,7 +620,7 @@ function renderCanvas() {
                             >
                                 <img
                                     src="${safeT4Img}"
-                                    style="width:100%;height:100%;object-fit:cover;object-position:${t4.imagePosX}% ${t4.imagePosY}%;transform:scale(${t4.imageScale/100});transform-origin:center center;"
+                                    style="width:100%;height:100%;object-fit:cover;object-position:${t4.imagePosX}% ${getObjectPositionY(t4.imagePosY, t4.imageScale)}%;transform:${getImageTransform(t4.imageScale, t4.imagePosY)};transform-origin:center center;"
                                     onerror="this.style.display='none'"
                                     alt="Background"
                                 >
@@ -650,7 +713,7 @@ function renderCanvas() {
                             >
                                 <img
                                     src="${safeT3Img}"
-                                    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${t3.imagePosX}% ${t3.imagePosY}%;transform:scale(${t3.imageScale/100});transform-origin:center center;"
+                                    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${t3.imagePosX}% ${getObjectPositionY(t3.imagePosY, t3.imageScale)}%;transform:${getImageTransform(t3.imageScale, t3.imagePosY)};transform-origin:center center;"
                                     onerror="this.style.display='none'"
                                     alt="Background"
                                 >
@@ -763,7 +826,7 @@ function renderCanvas() {
                     <div class="absolute inset-0 z-0 bg-black overflow-hidden" data-ctx="background" title="Click to edit background" ondblclick="window.focusSidebarControl('input-bg-image')" style="cursor:pointer;">
                         <img 
                             src="${safeBgImage}" 
-                            style="width: 100%; height: 100%; object-fit: cover; object-position: ${s.imagePosX}% ${s.imagePosY}%; transform: scale(${s.imageScale/100}); opacity: ${s.bgOpacity};" 
+                            style="width: 100%; height: 100%; object-fit: cover; object-position: ${s.imagePosX}% ${getObjectPositionY(s.imagePosY, s.imageScale)}%; transform: ${getImageTransform(s.imageScale, s.imagePosY)}; opacity: ${s.bgOpacity};" 
                             onerror="this.style.display='none'"
                             alt="Background"
                         >
@@ -881,7 +944,7 @@ function renderCanvas() {
                             <div class="absolute inset-0 z-0">
                                 <img 
                                     src="${safeBgImage}" 
-                                    style="width: 100%; height: 100%; object-fit: cover; object-position: ${h.imagePosX}% ${h.imagePosY}%; transform: scale(${h.imageScale/100}); opacity: ${h.bgOpacity};" 
+                                    style="width: 100%; height: 100%; object-fit: cover; object-position: ${h.imagePosX}% ${getObjectPositionY(h.imagePosY, h.imageScale)}%; transform: ${getImageTransform(h.imageScale, h.imagePosY)}; opacity: ${h.bgOpacity};" 
                                     onerror="this.style.display='none'"
                                     alt="Background"
                                 >

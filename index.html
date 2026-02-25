@@ -7,12 +7,57 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#131314">
-    <title>Post Generator — Instatools</title>
-    
+
+    <title>Instagram Post Generator — Instatools</title>
+
+    <!-- Primary SEO Meta -->
+    <meta name="description" content="Instatools is a professional Instagram post generator. Design high‑impact posts with advanced typography controls, smart layouts, local-only image processing, and high‑resolution export.">
+    <meta name="keywords" content="Instagram post generator, Instagram post maker, Instagram design tool, Instatools, social media graphics, Instagram templates, Instagram content creator">
+    <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://instatools.app/">
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <link rel="shortcut icon" href="favicon.png">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Instatools">
+    <meta property="og:title" content="Instagram Post Generator — Instatools">
+    <meta property="og:description" content="Design scroll‑stopping Instagram posts in your browser with precise layout tools, typography controls, and high‑resolution export. Everything renders locally on your device.">
+    <meta property="og:url" content="https://instatools.app/">
+    <meta property="og:image" content="https://instatools.app/src/ui/share.png">
+    <meta property="og:image:alt" content="Instatools — Instagram post and highlight design workspace">
+    <meta property="og:image:type" content="image/png">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Instagram Post Generator — Instatools">
+    <meta name="twitter:description" content="Create professional Instagram posts with Instatools. Fully in‑browser, privacy‑friendly, and optimized for export.">
+    <meta name="twitter:image" content="https://instatools.app/src/ui/share.png">
+
+    <!-- Structured Data (Site + Post Editor) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Instatools - Instagram Post Generator",
+      "url": "https://instatools.app/",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Web",
+      "description": "Browser-based toolkit for creating professional Instagram posts with advanced typography, layout tools, and high-resolution export.",
+      "image": "https://instatools.app/src/ui/share.png",
+      "inLanguage": "en",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous" />
@@ -182,6 +227,19 @@
                 <div id="canvas-root" class="relative bg-black overflow-hidden flex flex-col font-sans">
                     <!-- Content injected by JS -->
                 </div>
+            </div>
+
+            <!-- Zoom Controls (Mobile Only) -->
+            <div id="zoom-controls" class="zoom-controls-container">
+                <button id="zoom-out-btn" class="zoom-btn" aria-label="Zoom out" title="Zoom out">
+                    <i data-lucide="zoom-out"></i>
+                </button>
+                <button id="zoom-reset-btn" class="zoom-btn zoom-reset" aria-label="Reset zoom" title="Reset zoom">
+                    <i data-lucide="maximize-2"></i>
+                </button>
+                <button id="zoom-in-btn" class="zoom-btn" aria-label="Zoom in" title="Zoom in">
+                    <i data-lucide="zoom-in"></i>
+                </button>
             </div>
 
             <!-- Contextual Floating Toolbar moved to body level -->

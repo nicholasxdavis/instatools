@@ -844,11 +844,23 @@ async function exportT4(ctx, state, W, H) {
     setLS(ctx, LS_PX);
     ctx.fillStyle     = t4.headlineColor  || '#FFF';
     ctx.textBaseline  = 'top';
-    ctx.textAlign     = 'left';
+    ctx.textAlign     = 'left'; // Always draw left-aligned internally
     ctx.shadowColor   = 'rgba(0,0,0,0.5)';
     ctx.shadowBlur    = 16;
     ctx.shadowOffsetY = 3;
-    for (const ln of hlLines) { ctx.fillText(ln, PAD, y); y += LH; }
+    
+    const align4 = t4.textAlign || 'left';
+    for (const ln of hlLines) { 
+        const lineW = mW(ctx, ln);
+        let cx4 = PAD;
+        if (align4 === 'center') {
+            cx4 = (W - lineW) / 2;
+        } else if (align4 === 'right') {
+            cx4 = W - PAD - lineW;
+        }
+        ctx.fillText(ln, cx4, y); 
+        y += LH; 
+    }
     ctx.restore();
     y += HL_MB;
 
@@ -966,15 +978,29 @@ async function exportT5(ctx, state, W, H) {
     ctx.font         = `${fw} ${fs}px "${ff}", sans-serif`;
     setLS(ctx, (t5.letterSpacing ?? 0) * fs);
     ctx.textBaseline = 'top';
-    ctx.textAlign    = t5.textAlign === 'left' ? 'left' : 'center';
-    const hlStartX   = t5.textAlign === 'left' ? PAD_H : W / 2;
+    ctx.textAlign    = 'left'; // Always draw left-aligned internally because we calculate cx5 manually
+    ctx.shadowColor   = 'rgba(0,0,0,1)';
+    ctx.shadowBlur    = 25;
+    ctx.shadowOffsetY = 4;
+
+    const align5 = t5.textAlign || 'center';
 
     // draw colored lines – for centered, we need to manually center each line
     const sp5 = mW(ctx, ' ');
     let cy5 = hlY;
     for (const line of hlLines5) {
-        const lineW = line.reduce((acc, item, i) => acc + mW(ctx, item.word) + (i < line.length - 1 ? sp5 : 0), 0);
-        let cx5 = t5.textAlign === 'left' ? PAD_H : (W - lineW) / 2;
+        let lineW = 0;
+        if (align5 !== 'left') {
+            lineW = line.reduce((acc, item, i) => acc + mW(ctx, item.word) + (i < line.length - 1 ? sp5 : 0), 0);
+        }
+
+        let cx5 = PAD_H;
+        if (align5 === 'center') {
+            cx5 = (W - lineW) / 2;
+        } else if (align5 === 'right') {
+            cx5 = W - PAD_H - lineW;
+        }
+
         for (let i = 0; i < line.length; i++) {
             ctx.fillStyle = line[i].color;
             ctx.fillText(line[i].word, cx5, cy5);
@@ -1022,32 +1048,36 @@ async function exportT5(ctx, state, W, H) {
         drawDots(ctx, W / 2, navY, cnt5, act5, DOT_H5, 18, 7, 5, t5.dotColor || '#FFF', 1, 0.4);
     }
 
-    // ── Brand badge (top-left circle) ─────────────────────────────────────────
-    if (t5.showBrand !== false) {
-        const bFS  = t5.brandFontSize || 22;
-        const bDia = Math.round(bFS * 2.2);
-        const bCX  = 28 + bDia / 2;
-        const bCY  = 28 + bDia / 2;
-        // Circle fill
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(bCX, bCY, bDia / 2, 0, Math.PI * 2);
-        ctx.fillStyle = t5.brandBgColor || '#000';
-        ctx.fill();
-        // Border
-        ctx.strokeStyle = t5.brandBorderColor || '#FFF';
-        ctx.lineWidth   = 2;
-        ctx.stroke();
-        ctx.restore();
-        // Brand text inside circle
-        ctx.save();
-        ctx.font         = `900 ${bFS}px "Archivo Black", sans-serif`;
-        setLS(ctx, -0.02 * bFS);
-        ctx.fillStyle    = t5.brandTextColor || '#FFF';
-        ctx.textAlign    = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(t5.brandText || '', bCX, bCY);
-        ctx.restore();
+    // ── Watermark (overlaid on top image area) ────────────────────────────────
+    if (t5.showWatermark && t5.watermarkUrl) {
+        const wmImg = await loadImg(t5.watermarkUrl);
+        if (wmImg) {
+            const wmSize = t5.watermarkSize || 180;
+            const wmOp   = t5.watermarkOpacity ?? 1;
+            const wmPosX = t5.watermarkPosX ?? 50;
+            const wmPosY = t5.watermarkPosY ?? 10;
+
+            const wmAspectRatio = wmImg.width / wmImg.height;
+            const wmW = wmSize;
+            const wmH = wmSize / wmAspectRatio;
+
+            let wx = (wmPosX / 100) * W;
+            let wy = (wmPosY / 100) * imgH;
+
+            // Handle edge clamping like CSS logic
+            if (wmPosX <= 15) wx = (wmPosX / 100) * W;
+            else if (wmPosX >= 85) wx = W - ( (100-wmPosX)/100 * W ) - wmW;
+            else wx -= wmW / 2;
+
+            if (wmPosY <= 15) wy = (wmPosY / 100) * imgH;
+            else if (wmPosY >= 85) wy = imgH - ( (100-wmPosY)/100 * imgH ) - wmH;
+            else wy -= wmH / 2;
+
+            ctx.save();
+            ctx.globalAlpha = wmOp;
+            ctx.drawImage(wmImg, wx, wy, wmW, wmH);
+            ctx.restore();
+        }
     }
 }
 
@@ -1206,14 +1236,27 @@ async function exportT6(ctx, state, W, H) {
     ctx.font          = `${fw} ${fs}px "${ff}", sans-serif`;
     setLS(ctx, LS6);
     ctx.textBaseline  = 'top';
-    ctx.shadowColor   = 'rgba(0,0,0,0.7)';
-    ctx.shadowBlur    = 22;
+    ctx.shadowColor   = 'rgba(0,0,0,1)';
+    ctx.shadowBlur    = 25;
     ctx.shadowOffsetY = 4;
 
     const sp6 = mW(ctx, ' ');
     let hy6 = hlTop;
+    const align6 = t6.textAlign || 'left';
+    
     for (const line of hlLines6) {
+        let lineW = 0;
+        if (align6 !== 'left') {
+            lineW = line.reduce((acc, item, i) => acc + mW(ctx, item.word) + (i < line.length - 1 ? sp6 : 0), 0);
+        }
+        
         let cx6 = PAD_H;
+        if (align6 === 'center') {
+            cx6 = (W - lineW) / 2;
+        } else if (align6 === 'right') {
+            cx6 = W - PAD_H - lineW;
+        }
+        
         for (let i = 0; i < line.length; i++) {
             ctx.fillStyle = line[i].color;
             ctx.fillText(line[i].word, cx6, hy6);

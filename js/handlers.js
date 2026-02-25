@@ -635,7 +635,20 @@ async function loadPreset(id) {
             // template is always a non-empty string ('template1'/'template2'/'template3')
             if (sp.template) {
                 window.state.post.template = sp.template;
+                
+                // --- CRITICAL FIX: Base new fields on current defaults before applying preset ---
+                // This ensures if a preset was saved before a field existed (like t6.textAlign),
+                // it gets the new sensible default instead of undefined/legacy values.
+                const tId = sp.template;
+                if (tId !== 'template1' && window.DEFAULT_TEMPLATE_STATES && window.DEFAULT_TEMPLATE_STATES[tId]) {
+                    const stateKey = tId.replace('template', 't');
+                    if (window.state.post[stateKey]) {
+                        // Apply default first
+                        window.state.post[stateKey] = JSON.parse(JSON.stringify(window.DEFAULT_TEMPLATE_STATES[stateKey]));
+                    }
+                }
             }
+            
             // headline / caption can legitimately be '' — use undefined check only
             if (sp.headline !== undefined && sp.headline !== null) {
                 window.state.post.headline = sp.headline;
