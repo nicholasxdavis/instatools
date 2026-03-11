@@ -3657,6 +3657,461 @@ function applyT7Theme(theme) {
     window.renderApp();
 }
 
+// ── Template 9 Editor (Toad Creek) ──────────────────────────────────────────────────
+function renderTemplate9Editor(container) {
+    const t9 = window.state.post.t9;
+    container.innerHTML = `
+        <div class="space-y-4">
+            <!-- ── HEADLINE ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="type" class="w-3 h-3"></i> Headline
+                </label>
+                <textarea
+                    id="t9-headline"
+                    class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-2 text-xs text-gray-200 focus:border-[#d53478] focus:ring-1 focus:ring-[#d53478] outline-none resize-y min-h-[80px]"
+                    oninput="window.updateT9State('headline', this.value)"
+                >${window.escapeHtml(t9.headline)}</textarea>
+                <p class="text-[10px] text-gray-500">Use [brackets] for gold text.</p>
+            </div>
+
+            <!-- ── BACKGROUND IMAGE ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="image" class="w-3 h-3"></i> Background Image
+                </label>
+                
+                <!-- Upload / URL -->
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="relative group">
+                        <div class="h-24 bg-[#1e1e1e] border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-[#d53478] hover:bg-[#252525] transition-all"
+                             onclick="document.getElementById('t9-bg-upload').click()">
+                            <i data-lucide="upload-cloud" class="w-6 h-6 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
+                            <span class="text-[10px] text-gray-400 group-hover:text-gray-200">Click to Upload</span>
+                        </div>
+                        <input type="file" id="t9-bg-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't9Bg')">
+                    </div>
+                    <input type="text" 
+                        class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
+                        placeholder="Or paste image URL..."
+                        value="${window.escapeHtml(t9.bgImage)}"
+                        oninput="window.updateT9State('bgImage', this.value)"
+                    >
+                </div>
+
+                <!-- Position / Scale -->
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Scale</label>
+                        <input type="range" min="100" max="250" value="${t9.imageScale}" 
+                            oninput="window.updateT9State('imageScale', parseFloat(this.value)); document.getElementById('t9-scale-display').textContent=this.value+'%';" class="w-full">
+                        <div id="t9-scale-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.imageScale}%</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Y-Pos</label>
+                        <input type="range" min="0" max="100" value="${t9.imagePosY}" 
+                            oninput="window.updateT9State('imagePosY', parseFloat(this.value)); document.getElementById('t9-posy-display').textContent=this.value+'%';" class="w-full">
+                        <div id="t9-posy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.imagePosY}%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── LOGO ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="shield" class="w-3 h-3"></i> Logo (Top Left)
+                    </label>
+                    <input type="checkbox" ${t9.showLogo ? 'checked' : ''} 
+                        onchange="window.updateT9State('showLogo', this.checked)" class="w-3 h-3">
+                </div>
+                
+                ${t9.showLogo ? `
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="relative group">
+                        <div class="h-16 bg-[#1e1e1e] border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-[#d53478] hover:bg-[#252525] transition-all"
+                             onclick="document.getElementById('t9-logo-upload').click()">
+                            <i data-lucide="upload" class="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
+                            <span class="text-[9px] text-gray-400 group-hover:text-gray-200">Upload Logo</span>
+                        </div>
+                        <input type="file" id="t9-logo-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't9Logo')">
+                    </div>
+                    <input type="text" 
+                        class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
+                        placeholder="Logo URL..."
+                        value="${window.escapeHtml(t9.logoUrl)}"
+                        oninput="window.updateT9State('logoUrl', this.value)"
+                    >
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Size</label>
+                            <input type="range" min="50" max="400" value="${t9.logoSize}" 
+                                oninput="window.updateT9State('logoSize', parseFloat(this.value)); document.getElementById('t9-logo-size-display').textContent=this.value+'px';" class="w-full">
+                            <div id="t9-logo-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.logoSize}px</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Margin</label>
+                            <input type="range" min="0" max="20" value="${t9.logoPosX}" 
+                                oninput="window.updateT9State('logoPosX', parseFloat(this.value)); window.updateT9State('logoPosY', parseFloat(this.value)); document.getElementById('t9-logo-margin-display').textContent=this.value+'%';" class="w-full">
+                            <div id="t9-logo-margin-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.logoPosX}%</div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
+            <!-- ── TYPOGRAPHY ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="type" class="w-3 h-3"></i> Typography
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Font Size</label>
+                        <input type="range" min="40" max="150" value="${t9.fontSize}" 
+                            oninput="window.updateT9State('fontSize', parseFloat(this.value)); document.getElementById('t9-fs-display').textContent=this.value+'px';" class="w-full">
+                        <div id="t9-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.fontSize}px</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Line Height</label>
+                        <input type="range" min="0.8" max="1.5" step="0.05" value="${t9.lineHeight}" 
+                            oninput="window.updateT9State('lineHeight', parseFloat(this.value)); document.getElementById('t9-lh-display').textContent=parseFloat(this.value).toFixed(2);" class="w-full">
+                        <div id="t9-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.lineHeight}</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Bottom Pad</label>
+                        <input type="range" min="20" max="200" value="${t9.paddingBottom}" 
+                            oninput="window.updateT9State('paddingBottom', parseFloat(this.value)); document.getElementById('t9-bottom-pad-display').textContent=this.value+'px';" class="w-full">
+                        <div id="t9-bottom-pad-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.paddingBottom}px</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Side Pad</label>
+                        <input type="range" min="0" max="100" value="${t9.paddingH}" 
+                            oninput="window.updateT9State('paddingH', parseFloat(this.value)); document.getElementById('t9-side-pad-display').textContent=this.value+'px';" class="w-full">
+                        <div id="t9-side-pad-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.paddingH}px</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── COLORS ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="palette" class="w-3 h-3"></i> Colors
+                </label>
+                <div class="grid grid-cols-1 gap-2">
+                    <div>${renderColorPicker('Normal Text', t9.headlineColor, "window.updateT9State('headlineColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Gold Text', t9.highlightColor, "window.updateT9State('highlightColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Bottom Fade', t9.bottomFadeColor, "window.updateT9State('bottomFadeColor','$VAL')")}</div>
+                </div>
+                <div class="mt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Fade Height</label>
+                    <input type="range" min="0" max="100" value="${t9.bottomFadeHeight}" 
+                        oninput="window.updateT9State('bottomFadeHeight', parseFloat(this.value)); document.getElementById('t9-fade-height-display').textContent=this.value+'%';" class="w-full">
+                    <div id="t9-fade-height-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t9.bottomFadeHeight}%</div>
+                </div>
+                <div class="mt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Fade Opacity</label>
+                    <input type="range" min="0" max="1" step="0.05" value="${t9.bottomFadeOpacity}" 
+                        oninput="window.updateT9State('bottomFadeOpacity', parseFloat(this.value)); document.getElementById('t9-fade-opacity-display').textContent=Math.round(this.value*100)+'%';" class="w-full">
+                    <div id="t9-fade-opacity-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t9.bottomFadeOpacity*100)}%</div>
+                </div>
+            </div>
+
+        </div>
+    `;
+    setTimeout(() => window.initializeIcons(container), 0);
+}
+
+// ── Template 10 Editor (Grunge Print) ────────────────────────────────────────────────
+function renderTemplate10Editor(container) {
+    const t10 = window.state.post.t10;
+    container.innerHTML = `
+        <div class="space-y-4">
+            <!-- ── HEADLINE ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="type" class="w-3 h-3"></i> Headline
+                </label>
+                <textarea
+                    id="t10-headline"
+                    class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-2 text-xs text-gray-200 focus:border-[#d53478] focus:ring-1 focus:ring-[#d53478] outline-none resize-y min-h-[80px]"
+                    oninput="window.updateT10State('headline', this.value)"
+                >${window.escapeHtml(t10.headline)}</textarea>
+                <p class="text-[10px] text-gray-500">Use [brackets] for highlight-colored words.</p>
+            </div>
+
+            <!-- ── BACKGROUND IMAGE ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="image" class="w-3 h-3"></i> Background Image
+                </label>
+                
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="relative group">
+                        <div class="h-24 bg-[#1e1e1e] border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-[#d53478] hover:bg-[#252525] transition-all"
+                             onclick="document.getElementById('t10-bg-upload').click()">
+                            <i data-lucide="upload-cloud" class="w-6 h-6 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
+                            <span class="text-[10px] text-gray-400 group-hover:text-gray-200">Click to Upload</span>
+                        </div>
+                        <input type="file" id="t10-bg-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't10Bg')">
+                    </div>
+                    <input type="text" 
+                        class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
+                        placeholder="Or paste image URL..."
+                        value="${window.escapeHtml(t10.bgImage)}"
+                        oninput="window.updateT10State('bgImage', this.value)"
+                    >
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Scale</label>
+                        <input type="range" min="100" max="250" value="${t10.imageScale || 100}" 
+                            oninput="window.updateT10State('imageScale', parseFloat(this.value)); document.getElementById('t10-scale-display').textContent=this.value+'%';" class="w-full">
+                        <div id="t10-scale-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.imageScale || 100}%</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Y-Pos</label>
+                        <input type="range" min="0" max="100" value="${t10.imagePosY || 50}" 
+                            oninput="window.updateT10State('imagePosY', parseFloat(this.value)); document.getElementById('t10-posy-display').textContent=this.value+'%';" class="w-full">
+                        <div id="t10-posy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.imagePosY || 50}%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── WATERMARK (TOP RIGHT) ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="droplets" class="w-3 h-3"></i> Watermark (Top Right)
+                    </label>
+                    <input type="checkbox" ${t10.showWatermark ? 'checked' : ''} 
+                        onchange="window.updateT10State('showWatermark', this.checked)" class="w-3 h-3">
+                </div>
+                
+                ${t10.showWatermark ? `
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="relative group">
+                        <div class="h-16 bg-[#1e1e1e] border-2 border-dashed border-gray-700 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-[#d53478] hover:bg-[#252525] transition-all"
+                             onclick="document.getElementById('t10-watermark-upload').click()">
+                            <i data-lucide="upload" class="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
+                            <span class="text-[9px] text-gray-400 group-hover:text-gray-200">Upload Watermark</span>
+                        </div>
+                        <input type="file" id="t10-watermark-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't10Watermark')">
+                    </div>
+                    <input type="text" 
+                        class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
+                        placeholder="Watermark URL..."
+                        value="${window.escapeHtml(t10.watermarkUrl)}"
+                        oninput="window.updateT10State('watermarkUrl', this.value)"
+                    >
+                    <div class="grid grid-cols-3 gap-2 mt-1">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Size</label>
+                            <input type="range" min="80" max="400" value="${t10.watermarkSize}" 
+                                oninput="window.updateT10State('watermarkSize', parseFloat(this.value)); document.getElementById('t10-wm-size-display').textContent=this.value+'px';" class="w-full">
+                            <div id="t10-wm-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.watermarkSize}px</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">X-Pos</label>
+                            <input type="range" min="0" max="130" value="${t10.watermarkPosX}" 
+                                oninput="window.updateT10State('watermarkPosX', parseFloat(this.value)); document.getElementById('t10-wm-x-display').textContent=this.value+'%';" class="w-full">
+                            <div id="t10-wm-x-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.watermarkPosX}%</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Y-Pos</label>
+                            <input type="range" min="0" max="100" value="${t10.watermarkPosY}" 
+                                oninput="window.updateT10State('watermarkPosY', parseFloat(this.value)); document.getElementById('t10-wm-y-display').textContent=this.value+'%';" class="w-full">
+                            <div id="t10-wm-y-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.watermarkPosY}%</div>
+                        </div>
+                    </div>
+                    <div class="mt-1">
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Opacity</label>
+                        <input type="range" min="0" max="1" step="0.05" value="${t10.watermarkOpacity}" 
+                            oninput="window.updateT10State('watermarkOpacity', parseFloat(this.value)); document.getElementById('t10-wm-opacity-display').textContent=Math.round(this.value*100)+'%';" class="w-full">
+                        <div id="t10-wm-opacity-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t10.watermarkOpacity*100)}%</div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
+            <!-- ── TYPOGRAPHY / GRUNGE ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-3 h-3"></i> Grunge Typography
+                </label>
+                <p class="text-[10px] text-gray-500 mb-1">Font is locked to <span class="font-semibold">Rubik Dirt</span> to keep the grunge print look.</p>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Font Size</label>
+                        <input type="range" min="60" max="180" value="${t10.fontSize}" 
+                            oninput="window.updateT10State('fontSize', parseFloat(this.value)); document.getElementById('t10-fs-display').textContent=this.value+'px';" class="w-full">
+                        <div id="t10-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.fontSize}px</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Line Height</label>
+                        <input type="range" min="0.7" max="1.4" step="0.05" value="${t10.lineHeight}" 
+                            oninput="window.updateT10State('lineHeight', parseFloat(this.value)); document.getElementById('t10-lh-display').textContent=parseFloat(this.value).toFixed(2);" class="w-full">
+                        <div id="t10-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.lineHeight}</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Bottom Pad</label>
+                        <input type="range" min="40" max="220" value="${t10.paddingBottom}" 
+                            oninput="window.updateT10State('paddingBottom', parseFloat(this.value)); document.getElementById('t10-bottom-pad-display').textContent=this.value+'px';" class="w-full">
+                        <div id="t10-bottom-pad-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.paddingBottom}px</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Side Pad</label>
+                        <input type="range" min="0" max="120" value="${t10.paddingH}" 
+                            oninput="window.updateT10State('paddingH', parseFloat(this.value)); document.getElementById('t10-side-pad-display').textContent=this.value+'px';" class="w-full">
+                        <div id="t10-side-pad-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.paddingH}px</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── COLORS & GLOW ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="palette" class="w-3 h-3"></i> Colors & Glow
+                </label>
+                <div class="grid grid-cols-1 gap-2">
+                    <div>${renderColorPicker('Headline', t10.headlineColor, "window.updateT10State('headlineColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Highlight', t10.highlightColor, "window.updateT10State('highlightColor','$VAL')")}</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Glow Height</label>
+                        <input type="range" min="10" max="70" value="${t10.glowHeight}" 
+                            oninput="window.updateT10State('glowHeight', parseFloat(this.value)); document.getElementById('t10-glow-height-display').textContent=this.value+'%';" class="w-full">
+                        <div id="t10-glow-height-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.glowHeight}%</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Glow Strength</label>
+                        <input type="range" min="0" max="1" step="0.05" value="${t10.glowOpacity}" 
+                            oninput="window.updateT10State('glowOpacity', parseFloat(this.value)); document.getElementById('t10-glow-opacity-display').textContent=Math.round(this.value*100)+'%';" class="w-full">
+                        <div id="t10-glow-opacity-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t10.glowOpacity*100)}%</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Black Overlay</label>
+                        <input type="range" min="0" max="0.9" step="0.05" value="${t10.overlayOpacity}" 
+                            oninput="window.updateT10State('overlayOpacity', parseFloat(this.value)); document.getElementById('t10-overlay-opacity-display').textContent=Math.round(this.value*100)+'%';" class="w-full">
+                        <div id="t10-overlay-opacity-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t10.overlayOpacity*100)}%</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Bottom Fade Height</label>
+                        <input type="range" min="10" max="80" value="${t10.fadeHeight}" 
+                            oninput="window.updateT10State('fadeHeight', parseFloat(this.value)); document.getElementById('t10-fade-height-display').textContent=this.value+'%';" class="w-full">
+                        <div id="t10-fade-height-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.fadeHeight}%</div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Bottom Fade Strength</label>
+                    <input type="range" min="0" max="1" step="0.05" value="${t10.fadeStrength}" 
+                        oninput="window.updateT10State('fadeStrength', parseFloat(this.value)); document.getElementById('t10-fade-strength-display').textContent=Math.round(this.value*100)+'%';" class="w-full">
+                    <div id="t10-fade-strength-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t10.fadeStrength*100)}%</div>
+                </div>
+            </div>
+
+            <!-- ── TEXTURE / NOISE ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="aperture" class="w-3 h-3"></i> Film Grain
+                </label>
+                <p class="text-[10px] text-gray-500">Canvas-generated grain — renders identically in the export.</p>
+                <div class="mt-1">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Noise Strength</label>
+                    <input type="range" min="0" max="1" step="0.05" value="${t10.noiseAmount}" 
+                        oninput="window.updateT10State('noiseAmount', parseFloat(this.value)); document.getElementById('t10-noise-display').textContent=Math.round(this.value*100)+'%';" class="w-full">
+                    <div id="t10-noise-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t10.noiseAmount*100)}%</div>
+                </div>
+            </div>
+
+            <!-- ── SWIPE CTA ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="chevron-right" class="w-3 h-3"></i> Swipe CTA
+                    </label>
+                    <input type="checkbox" ${t10.showSwipe ? 'checked' : ''} 
+                        onchange="window.updateT10State('showSwipe', this.checked)" class="w-3 h-3">
+                </div>
+
+                ${t10.showSwipe ? `
+                <div class="space-y-3">
+
+                    <!-- Style picker -->
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Style</label>
+                        <div class="flex gap-1">
+                            ${['text','chevron','badge'].map(s => `
+                            <button onclick="window.updateT10State('swipeStyle','${s}')"
+                                class="flex-1 py-1 rounded text-[9px] font-bold uppercase transition-all"
+                                style="background:${(t10.swipeStyle||'text')===s?'rgba(213,52,120,0.25)':'rgba(255,255,255,0.05)'};border:1px solid ${(t10.swipeStyle||'text')===s?'#d53478':'rgba(255,255,255,0.1)'};color:${(t10.swipeStyle||'text')===s?'#f9a8d4':'rgba(209,213,219,0.7)'};">
+                                ${ s==='text'?'Text' : s==='chevron'?'› Chevron ›':'[ Badge ]' }
+                            </button>`).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Text -->
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Text</label>
+                        <input 
+                            type="text"
+                            id="t10-swipe-text"
+                            class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none uppercase tracking-[0.2em]"
+                            placeholder="SWIPE"
+                            value="${window.escapeHtml(t10.swipeText)}"
+                            oninput="window.updateT10State('swipeText', this.value)"
+                        >
+                    </div>
+
+                    <!-- Font family -->
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Font Family</label>
+                        <select class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
+                            onchange="window.updateT10State('swipeFontFamily', this.value)">
+                            ${['Rubik Dirt','Archivo Black','Bebas Neue','Anton','Oswald','Inter','DM Sans','system-ui'].map(f =>
+                                `<option value="${f}" ${(t10.swipeFontFamily||'Rubik Dirt')===f?'selected':''}>${f}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Custom Font</label>
+                        <input type="text"
+                            class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
+                            placeholder="Any Google Font name…"
+                            value="${window.escapeHtml(t10.swipeCustomFontFamily||'')}"
+                            oninput="window.updateT10State('swipeCustomFontFamily', this.value)">
+                    </div>
+
+                    <!-- Color + Size -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Color</label>
+                            ${renderColorPicker('Swipe Color', t10.swipeColor, "window.updateT10State('swipeColor','$VAL')")}
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1">Font Size</label>
+                            <input type="range" min="14" max="56" value="${t10.swipeFontSize}" 
+                                oninput="window.updateT10State('swipeFontSize', parseFloat(this.value)); document.getElementById('t10-swipe-size-display').textContent=this.value+'px';" class="w-full">
+                            <div id="t10-swipe-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t10.swipeFontSize}px</div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+
+        </div>
+    `;
+    setTimeout(() => window.initializeIcons(container), 0);
+}
+
 // Make globally available
 if (typeof window !== "undefined") {
   window.buildPresetsHtml = buildPresetsHtml;
@@ -3671,6 +4126,8 @@ if (typeof window !== "undefined") {
   window.renderTemplate6Editor = renderTemplate6Editor;
   window.renderTemplate7Editor = renderTemplate7Editor;
   window.renderTemplate8Editor = renderTemplate8Editor;
+  window.renderTemplate9Editor = renderTemplate9Editor;
+  window.renderTemplate10Editor = renderTemplate10Editor;
   window.renderHighlightEditor = renderHighlightEditor;
   window.renderLibrary = renderLibrary;
   window.loadSystemTemplate = loadSystemTemplate;

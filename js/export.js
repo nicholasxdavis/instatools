@@ -6,38 +6,95 @@
  *   • Circle overlay uses arc() + clip() — never bleeds outside the ring
  *   • object-fit:cover simulated precisely for every image
  *   • Full letter-spacing, text-shadow, opacity, glow support
- *   • All three post templates + highlight creator
+ *   • All post templates (1–10) + highlight creator
  */
 
 // ─── CORS proxy helpers ────────────────────────────────────────────────────────
-// Never draw a non-CORS image into canvas — that taints it and blocks toBlob().
-// We try the original URL first (works when the host sends CORS headers), then
-// fall through to public CORS proxies, then give up gracefully (null = skip).
+// The live canvas uses plain <img> tags — no CORS required.  But drawing into
+// an offscreen canvas taints it the moment a non-CORS image is used, blocking
+// toBlob().  Strategy:
+//   1. Normalize known URLs (github.com/blob → raw.githubusercontent.com)
+//   2. fetch() → blob URL  (ignores non-CORS cache, follows redirects cleanly)
+//   3. Fall through to public CORS proxies if the origin blocks CORS directly
 const _CORS_PROXIES = [
     u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
     u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
 ];
 
+// ─── Normalise GitHub blob-viewer URLs to raw.githubusercontent.com ────────────
+// github.com/blob/… does NOT send CORS headers.
+// raw.githubusercontent.com sends  Access-Control-Allow-Origin: *  — use that.
+function _normalizeImgUrl(src) {
+    try {
+        const u = new URL(src);
+        if (u.hostname === 'github.com') {
+            // /user/repo/blob/branch/...path...
+            const m = u.pathname.match(/^\/([^/]+)\/([^/]+)\/blob\/(.+)/);
+            if (m) {
+                return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}`;
+            }
+        }
+    } catch (_) { /* not a valid URL — leave as-is */ }
+    return src;
+}
+
 async function loadImg(src) {
     if (!src) return null;
 
-    // Build candidate list: original URL first, then proxied copies
-    const candidates = [src, ..._CORS_PROXIES.map(fn => fn(src))];
-
-    for (const url of candidates) {
-        const img = await new Promise(resolve => {
-            const el        = new Image();
-            el.crossOrigin  = 'anonymous'; // ALWAYS — never taint the canvas
-            el.onload       = () => resolve(el);
-            el.onerror      = () => resolve(null);
-            el.src          = url;
+    // Data / blob URLs are always same-origin — load directly, no CORS needed.
+    if (src.startsWith('data:') || src.startsWith('blob:')) {
+        return new Promise(resolve => {
+            const el   = new Image();
+            el.onload  = () => resolve(el);
+            el.onerror = () => resolve(null);
+            el.src     = src;
             setTimeout(() => resolve(null), 8000);
         });
-        if (img) return img; // got it — stop trying
     }
 
-    // All attempts failed — caller will skip drawing this image
-    console.warn('[export] Could not load image (CORS blocked by all proxies):', src);
+    // Normalise the URL first (e.g. convert GitHub blob viewer → raw CDN)
+    const normalized = _normalizeImgUrl(src);
+
+    // Build candidate list: normalised URL first, then CORS proxies.
+    // (If normalised === src we still try src, just without the bad redirect.)
+    const candidates = [normalized];
+    if (normalized !== src) candidates.push(src); // also try original as last resort
+    _CORS_PROXIES.forEach(fn => candidates.push(fn(normalized)));
+
+    for (const url of candidates) {
+        try {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 8000);
+
+            const resp = await fetch(url, {
+                mode:        'cors',
+                credentials: 'omit',
+                cache:       'no-cache', // bypass the non-CORS cache entry
+                signal:      controller.signal,
+            });
+            clearTimeout(tid);
+            if (!resp.ok) continue;
+
+            const blob    = await resp.blob();
+            const blobUrl = URL.createObjectURL(blob);
+
+            const img = await new Promise(resolve => {
+                const el   = new Image();
+                // onload fires once the bitmap is decoded in memory;
+                // revoking the blob URL here is safe — the decoded bitmap stays.
+                el.onload  = () => { URL.revokeObjectURL(blobUrl); resolve(el); };
+                el.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
+                el.src     = blobUrl;
+            });
+
+            if (img) return img;
+        } catch (_) {
+            // fetch failed (CORS rejection, network error, or abort timeout)
+            // → try the next candidate
+        }
+    }
+
+    console.warn('[export] Could not load image (all attempts failed):', src);
     return null;
 }
 
@@ -1524,6 +1581,419 @@ async function exportT7(ctx, state, W, H) {
     }
 }
 
+// ─── TEMPLATE 9 (Toad Creek: bottom fade, logo TL, gold/white text) ───────────
+async function exportT9(ctx, state, W, H) {
+    const t9 = state.post.t9;
+
+    const [bgImg, logoImg] = await Promise.all([
+        loadImg(t9.bgImage),
+        (t9.showLogo && t9.logoUrl) ? loadImg(t9.logoUrl) : null,
+    ]);
+
+    const ff = t9.customFontFamily || t9.fontFamily || 'Anton';
+    const fs = t9.fontSize || 108;
+    const fw = t9.fontWeight || 700;
+    await loadFont(`${fw} ${fs}px "${ff}"`);
+
+    // ── Black base ────────────────────────────────────────────────────────────
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Background image ──────────────────────────────────────────────────────
+    if (bgImg) {
+        ctx.save();
+        drawCover(
+            ctx,
+            bgImg,
+            0,
+            0,
+            W,
+            H,
+            t9.imagePosX ?? 50,
+            t9.imagePosY ?? 50,
+            (t9.imageScale ?? 100) / 100
+        );
+        ctx.restore();
+    }
+
+    // ── Bottom colour fade ────────────────────────────────────────────────────
+    // Use the fade colour's own RGB at alpha=0 for the transparent stop so the
+    // gradient interpolates through the correct hue (not through black).
+    const fadePct = Math.max(0, Math.min(100, t9.bottomFadeHeight ?? 50)) / 100;
+    if (fadePct > 0 && (t9.bottomFadeOpacity ?? 0) > 0) {
+        const fadeH   = fadePct * H;
+        const fadeY   = H - fadeH;
+        const col     = t9.bottomFadeColor || '#172d42';
+        const { r: fr, g: fg, b: fb } = h2rgb(col);
+        const g       = ctx.createLinearGradient(0, fadeY, 0, H);
+        g.addColorStop(0, `rgba(${fr},${fg},${fb},0)`);
+        g.addColorStop(1, col);
+        ctx.save();
+        ctx.globalAlpha = t9.bottomFadeOpacity ?? 1;
+        ctx.fillStyle   = g;
+        ctx.fillRect(0, fadeY, W, fadeH + 2);
+        ctx.restore();
+    }
+
+    // ── Logo (top-left) ───────────────────────────────────────────────────────
+    if (logoImg && t9.showLogo !== false) {
+        const ls = t9.logoSize || 251;
+        const lW = ls;
+        const aspect = (logoImg.naturalHeight || logoImg.height || 1) /
+                       (logoImg.naturalWidth || logoImg.width || 1);
+        const lH = lW * aspect;
+        const x = (t9.logoPosX ?? 2) / 100 * W;
+        const y = (t9.logoPosY ?? 2) / 100 * H;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.55)';
+        ctx.shadowBlur = 18;
+        ctx.shadowOffsetY = 4;
+        ctx.drawImage(logoImg, x, y, lW, lH);
+        ctx.restore();
+    }
+
+    // ── Headline (bottom centre, [brackets] = gold) ──────────────────────────
+    const PAD_H = t9.paddingH ?? 40;
+    const PAD_B = t9.paddingBottom ?? 80;
+    const lh = t9.lineHeight ?? 1.1;
+    const lsEm = t9.letterSpacing ?? 0;
+    const lsPx = lsEm * fs;
+
+    ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, lsPx);
+
+    // Split into logical lines (respect explicit newlines)
+    const allLines = [];
+    const rawLines = (t9.headline || '').split(/\r?\n/);
+    for (const rawLine of rawLines) {
+        const parts = rawLine.split(/(\[.*?\])/);
+        const words = [];
+        for (const p of parts) {
+            if (!p) continue;
+            if (p.startsWith('[') && p.endsWith(']')) {
+                p.slice(1, -1).toUpperCase().split(/\s+/).forEach(w => {
+                    if (w) words.push({ word: w, color: t9.highlightColor || '#d2a02d' });
+                });
+            } else {
+                p.toUpperCase().split(/\s+/).forEach(w => {
+                    if (w) words.push({ word: w, color: t9.headlineColor || '#fffdfd' });
+                });
+            }
+        }
+        const wrapped = wrapColored(ctx, words, W - PAD_H * 2);
+        for (const line of wrapped) allLines.push(line);
+    }
+
+    const lineH = Math.round(fs * lh);
+    const totalH = allLines.length * lineH;
+    let y = H - PAD_B - totalH;
+
+    const sp = mW(ctx, ' ');
+    const align = t9.textAlign || 'center';
+
+    ctx.save();
+    ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
+    setLS(ctx, lsPx);
+    ctx.textBaseline = 'top';
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 22;
+    ctx.shadowOffsetY = 4;
+
+    for (const line of allLines) {
+        let lineW = 0;
+        if (align !== 'left') {
+            lineW = line.reduce(
+                (acc, item, i) =>
+                    acc + mW(ctx, item.word) + (i < line.length - 1 ? sp : 0),
+                0
+            );
+        }
+
+        let x = PAD_H;
+        if (align === 'center') {
+            x = (W - lineW) / 2;
+        } else if (align === 'right') {
+            x = W - PAD_H - lineW;
+        }
+
+        for (let i = 0; i < line.length; i++) {
+            ctx.fillStyle = line[i].color;
+            ctx.fillText(line[i].word, x, y);
+            x += mW(ctx, line[i].word);
+            if (i < line.length - 1) x += sp;
+        }
+        y += lineH;
+    }
+
+    ctx.restore();
+}
+
+// ─── TEMPLATE 10 (Grunge Print: top-right watermark, bottom glow) ─────────────
+async function exportT10(ctx, state, W, H) {
+    const t10 = state.post.t10;
+
+    const [bgImg, wmImg] = await Promise.all([
+        loadImg(t10.bgImage),
+        (t10.showWatermark && t10.watermarkUrl) ? loadImg(t10.watermarkUrl) : null,
+    ]);
+
+    const ff = t10.customFontFamily || t10.fontFamily || 'Rubik Dirt';
+    const fs = t10.fontSize || 153;
+    const fw = t10.fontWeight || 400;
+    await loadFont(`${fw} ${fs}px "${ff}"`);
+    if (t10.showSwipe !== false) {
+        await loadFont(`700 ${t10.swipeFontSize || 26}px "${ff}"`);
+    }
+
+    // ── Base background ────────────────────────────────────────────────────────
+    ctx.fillStyle = '#f4f4f4';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Background image ──────────────────────────────────────────────────────
+    if (bgImg) {
+        const posY = t10.imagePosY != null ? t10.imagePosY : 50;
+        const scale = (t10.imageScale != null ? t10.imageScale : 100) / 100;
+        drawCover(
+            ctx,
+            bgImg,
+            0,
+            0,
+            W,
+            H,
+            50,
+            posY,
+            scale
+        );
+    }
+
+    // ── Bottom dark fade on background ────────────────────────────────────────
+    const fadeHpct    = Math.max(0, Math.min(100, t10.fadeHeight   ?? 40)) / 100;
+    const fadeStrength = Math.max(0, Math.min(1,  t10.fadeStrength ?? 0.7));
+    if (fadeHpct > 0 && fadeStrength > 0) {
+        const fadeH = fadeHpct * H;
+        const fadeY = H - fadeH;
+        const g     = ctx.createLinearGradient(0, fadeY, 0, H);
+        g.addColorStop(0, 'rgba(0,0,0,0)');
+        g.addColorStop(1, `rgba(0,0,0,${fadeStrength})`);
+        ctx.save();
+        ctx.fillStyle = g;
+        ctx.fillRect(0, fadeY, W, fadeH + 2);
+        ctx.restore();
+    }
+
+    // ── Global black overlay ───────────────────────────────────────────────────
+    if ((t10.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t10.overlayOpacity ?? 0.35;
+        ctx.fillStyle = t10.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    // ── Bottom dark glow ─────────────────────────────────────────────────────
+    // CSS: a 260px-tall div at the BOTTOM of a container, with a radial gradient
+    // whose center is at the top of that div (50% 0%), plus filter:blur(46px).
+    // The container has overflow:hidden so the glow is clipped to the bottom region.
+    // Canvas equivalent: radial gradient centered BELOW the canvas bottom
+    // (simulating the gradient source at the very bottom edge), clipped to the
+    // bottom glowHpct region.  No blob in the middle.
+    const glowHpct    = Math.max(0, Math.min(100, t10.glowHeight ?? 64)) / 100;
+    const glowOpacity = Math.max(0, Math.min(1,   t10.glowOpacity ?? 0.9));
+    if (glowHpct > 0 && glowOpacity > 0) {
+        const containerH = glowHpct * H;
+        const containerY = H - containerH; // top of the glow container
+
+        ctx.save();
+        // Clip to the container area — nothing draws above this line
+        ctx.beginPath();
+        ctx.rect(0, containerY, W, containerH + 2);
+        ctx.clip();
+
+        // Gradient center sits just below the canvas bottom (translateY(34px) analog).
+        // Radius = 75 % of W so it spreads to ~150 % total, matching the 140 % wide div.
+        const gradCX = W / 2;
+        const gradCY = H + H * 0.04;   // ~4 % of H below bottom edge
+        const gradR  = W * 0.75;
+
+        const grad = ctx.createRadialGradient(gradCX, gradCY, 0, gradCX, gradCY, gradR);
+        grad.addColorStop(0,    `rgba(0,0,0,${glowOpacity})`);
+        grad.addColorStop(0.32, `rgba(0,0,0,${+(glowOpacity * 0.7).toFixed(3)})`);
+        grad.addColorStop(0.78, 'rgba(0,0,0,0)');
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(-W * 0.2, containerY, W * 1.4, containerH + gradR);
+        ctx.restore();
+    }
+
+    // ── Headline (bottom centre, grunge text) ─────────────────────────────────
+    const PAD_H = t10.paddingH ?? 74;
+    const PAD_B = t10.paddingBottom ?? 85;
+    const lh = t10.lineHeight ?? 0.85;
+    const lsEm = t10.letterSpacing ?? 0;
+    const lsPx = lsEm * fs;
+
+    ctx.font = `${fw} ${fs}px "${ff}", system-ui`;
+    setLS(ctx, lsPx);
+
+    const allLines10 = [];
+    const rawLines10 = (t10.headline || '').split(/\r?\n/);
+    for (const rawLine of rawLines10) {
+        const parts = rawLine.split(/(\[.*?\])/);
+        const words = [];
+        for (const p of parts) {
+            if (!p) continue;
+            if (p.startsWith('[') && p.endsWith(']')) {
+                p.slice(1, -1).toUpperCase().split(/\s+/).forEach(w => {
+                    if (w) words.push({ word: w, color: t10.highlightColor || '#ffffff' });
+                });
+            } else {
+                p.toUpperCase().split(/\s+/).forEach(w => {
+                    if (w) words.push({ word: w, color: t10.headlineColor || '#EC4899' });
+                });
+            }
+        }
+        const wrapped = wrapColored(ctx, words, W - PAD_H * 2);
+        for (const line of wrapped) allLines10.push(line);
+    }
+
+    const lineH10 = Math.round(fs * lh);
+    const totalH10 = allLines10.length * lineH10;
+    let y10 = H - PAD_B - totalH10;
+
+    const sp10 = mW(ctx, ' ');
+    const align10 = t10.textAlign || 'center';
+
+    ctx.save();
+    ctx.font = `${fw} ${fs}px "${ff}", system-ui`;
+    setLS(ctx, lsPx);
+    ctx.textBaseline = 'top';
+    ctx.globalAlpha = 0.85;
+
+    for (const line of allLines10) {
+        let lineW = 0;
+        if (align10 !== 'left') {
+            lineW = line.reduce(
+                (acc, item, i) =>
+                    acc + mW(ctx, item.word) + (i < line.length - 1 ? sp10 : 0),
+                0
+            );
+        }
+
+        let x10 = PAD_H;
+        if (align10 === 'center') {
+            x10 = (W - lineW) / 2;
+        } else if (align10 === 'right') {
+            x10 = W - PAD_H - lineW;
+        }
+
+        for (let i = 0; i < line.length; i++) {
+            ctx.fillStyle = line[i].color;
+            ctx.fillText(line[i].word, x10, y10);
+            x10 += mW(ctx, line[i].word);
+            if (i < line.length - 1) x10 += sp10;
+        }
+        y10 += lineH10;
+    }
+
+    ctx.restore();
+
+    // ── Film grain (via filter.js applyGrain) ─────────────────────────────────
+    if ((t10.noiseAmount || 0) > 0 && typeof applyGrain === 'function') {
+        applyGrain(ctx, W, H, t10.noiseAmount);
+    }
+
+    // ── Swipe CTA — 3 styles ───────────────────────────────────────────────────
+    if (t10.showSwipe !== false) {
+        const swFF  = t10.swipeCustomFontFamily || t10.swipeFontFamily || ff;
+        const swFS  = t10.swipeFontSize || 26;
+        const swTxt = (t10.swipeText || 'SWIPE').toUpperCase();
+        const swCol = t10.swipeColor || '#FFFFFF';
+        const ySw   = H - 30;
+
+        await loadFont(`700 ${swFS}px "${swFF}"`);
+
+        ctx.save();
+        ctx.fillStyle    = swCol;
+        ctx.textBaseline = 'bottom';
+        ctx.textAlign    = 'center';
+
+        if (t10.swipeStyle === 'chevron') {
+            // Centre word
+            ctx.font = `700 ${swFS}px "${swFF}", system-ui`;
+            setLS(ctx, 0.24 * swFS);
+            const txtW   = mW(ctx, swTxt);
+            const gap    = swFS * 0.55;
+            const decoSz = Math.round(swFS * 0.52);
+            const decoTxt = '\u203A\u00A0\u203A\u00A0\u203A';
+
+            ctx.font = `700 ${swFS}px "${swFF}", system-ui`;
+            setLS(ctx, 0.24 * swFS);
+            ctx.fillText(swTxt, W / 2, ySw);
+
+            // Left chevrons
+            ctx.save();
+            ctx.globalAlpha = 0.45;
+            ctx.font = `${decoSz}px sans-serif`;
+            setLS(ctx, 5);
+            ctx.textAlign = 'right';
+            ctx.fillText(decoTxt, W / 2 - txtW / 2 - gap, ySw);
+            ctx.restore();
+
+            // Right chevrons
+            ctx.save();
+            ctx.globalAlpha = 0.45;
+            ctx.font = `${decoSz}px sans-serif`;
+            setLS(ctx, 5);
+            ctx.textAlign = 'left';
+            ctx.fillText(decoTxt, W / 2 + txtW / 2 + gap, ySw);
+            ctx.restore();
+
+        } else if (t10.swipeStyle === 'badge') {
+            ctx.font = `700 ${swFS}px "${swFF}", system-ui`;
+            setLS(ctx, 0.30 * swFS);
+            const tw    = mW(ctx, swTxt);
+            const padH  = swFS * 0.55;
+            const padV  = swFS * 0.22;
+            const bW    = tw + padH * 2;
+            const bH    = swFS + padV * 2;
+            const bX    = W / 2 - bW / 2;
+            const bY    = ySw - bH;
+            // Border rect
+            ctx.save();
+            ctx.strokeStyle = swCol;
+            ctx.lineWidth   = Math.max(1.5, swFS / 16);
+            ctx.strokeRect(bX, bY, bW, bH);
+            ctx.restore();
+            // Text inside
+            ctx.textBaseline = 'middle';
+            ctx.fillText(swTxt, W / 2, bY + bH / 2);
+
+        } else {
+            // 'text' — plain bold
+            ctx.font = `700 ${swFS}px "${swFF}", system-ui`;
+            setLS(ctx, 0.24 * swFS);
+            ctx.fillText(swTxt, W / 2, ySw);
+        }
+
+        ctx.restore();
+    }
+
+    // ── Watermark (top-right biased, adjustable) ──────────────────────────────
+    if (wmImg && t10.showWatermark !== false && t10.watermarkUrl) {
+        const wmW = t10.watermarkSize || 364;
+        const wmH = (wmImg.naturalHeight / wmImg.naturalWidth) * wmW;
+        const posX = t10.watermarkPosX != null ? t10.watermarkPosX : 100;
+        const posY = t10.watermarkPosY != null ? t10.watermarkPosY : 0;
+        const { x: wx, y: wy } = calcWmXY(posX, posY, W, H, wmW, wmH);
+
+        ctx.save();
+        ctx.globalAlpha = t10.watermarkOpacity ?? 0.9;
+        ctx.drawImage(wmImg, wx, wy, wmW, wmH);
+        ctx.restore();
+    }
+}
+
 // ─── MAIN EXPORT FUNCTION ─────────────────────────────────────────────────────
 async function exportCanvas() {
     const state = window.state;
@@ -1568,15 +2038,18 @@ async function exportCanvas() {
         canvas.height = H;
         const ctx = canvas.getContext('2d');
 
-            if (isPost) {
+        if (isPost) {
             const tmpl = state.post.template;
-            if      (tmpl === 'template2') await exportT2(ctx, state, W, H);
-            else if (tmpl === 'template3') await exportT3(ctx, state, W, H);
-            else if (tmpl === 'template4') await exportT4(ctx, state, W, H);
-            else if (tmpl === 'template5') await exportT5(ctx, state, W, H);
-            else if (tmpl === 'template6' || tmpl === 'template8') await exportT6(ctx, state, W, H);
-            else if (tmpl === 'template7') await exportT7(ctx, state, W, H);
-            else                           await exportT1(ctx, state, W, H);
+            if      (tmpl === 'template2')                     await exportT2(ctx, state, W, H);
+            else if (tmpl === 'template3')                     await exportT3(ctx, state, W, H);
+            else if (tmpl === 'template4')                     await exportT4(ctx, state, W, H);
+            else if (tmpl === 'template5')                     await exportT5(ctx, state, W, H);
+            else if (tmpl === 'template6' || tmpl === 'template8')
+                                                              await exportT6(ctx, state, W, H);
+            else if (tmpl === 'template7')                     await exportT7(ctx, state, W, H);
+            else if (tmpl === 'template9')                     await exportT9(ctx, state, W, H);
+            else if (tmpl === 'template10')                    await exportT10(ctx, state, W, H);
+            else                                               await exportT1(ctx, state, W, H);
         } else {
             await exportHighlight(ctx, state, W);
         }

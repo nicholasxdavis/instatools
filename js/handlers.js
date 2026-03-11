@@ -71,6 +71,22 @@ function updateT8State(key, value) {
   }
 }
 
+function updateT9State(key, value) {
+  if (!window.state) return;
+  window.state.post.t9[key] = value;
+  if (window.debouncedRenderCanvas) {
+    window.debouncedRenderCanvas();
+  }
+}
+
+function updateT10State(key, value) {
+  if (!window.state) return;
+  window.state.post.t10[key] = value;
+  if (window.debouncedRenderCanvas) {
+    window.debouncedRenderCanvas();
+  }
+}
+
 // Helper function to update style and display value in real-time
 function updatePostStyleWithDisplay(key, value, displayId, format = 'number') {
     if (!window.state) return;
@@ -400,7 +416,31 @@ function handleFileUpload(event, type) {
         if (window.debouncedRenderCanvas) {
           window.debouncedRenderCanvas();
         }
-            } else if (type === 't7Profile') {
+      } else if (type === 't9Bg') {
+        window.state.post.t9.bgImage = res;
+        if (window.debouncedRenderCanvas) {
+          window.debouncedRenderCanvas();
+        }
+      } else if (type === 't9Logo') {
+        window.state.post.t9.logoUrl = res;
+        if (window.debouncedRenderCanvas) {
+          window.debouncedRenderCanvas();
+        }
+      } else if (type === 't10Bg') {
+        window.state.post.t10.bgImage = res;
+        if (window.debouncedRenderCanvas) {
+          window.debouncedRenderCanvas();
+        }
+      } else if (type === 't10Watermark') {
+        window.state.post.t10.watermarkUrl = res;
+        window.state.post.t10.showWatermark = true;
+        if (window.renderSidebarContent) {
+          window.renderSidebarContent();
+        }
+        if (window.debouncedRenderCanvas) {
+          window.debouncedRenderCanvas();
+        }
+      } else if (type === 't7Profile') {
                 window.updateT7State('profileImageUrl', res);
             } else if (type === 'highlightIcon') {
                 window.state.highlight.customIconUrl = res;
@@ -606,6 +646,9 @@ async function savePreset() {
             t4:       JSON.parse(JSON.stringify(postSnap.t4)),
             t5:       JSON.parse(JSON.stringify(postSnap.t5)),
             t6:       JSON.parse(JSON.stringify(postSnap.t6)),
+            t7:       JSON.parse(JSON.stringify(postSnap.t7)),
+            t8:       JSON.parse(JSON.stringify(postSnap.t8)),
+            t9:       JSON.parse(JSON.stringify(postSnap.t9)),
         },
 
         // Full highlight snapshot
@@ -711,6 +754,15 @@ async function loadPreset(id) {
             }
             if (sp.t6 && typeof sp.t6 === 'object') {
                 window.state.post.t6 = { ...window.state.post.t6, ...sp.t6 };
+            }
+            if (sp.t7 && typeof sp.t7 === 'object') {
+                window.state.post.t7 = { ...window.state.post.t7, ...sp.t7 };
+            }
+            if (sp.t8 && typeof sp.t8 === 'object') {
+                window.state.post.t8 = { ...window.state.post.t8, ...sp.t8 };
+            }
+            if (sp.t9 && typeof sp.t9 === 'object') {
+                window.state.post.t9 = { ...window.state.post.t9, ...sp.t9 };
             }
         } else {
             // ── Legacy format: top-level style only ───────────────────
@@ -870,6 +922,7 @@ if (typeof window !== 'undefined') {
     window.updateT6State = updateT6State;
     window.updateT7State = updateT7State;
   window.updateT8State = updateT8State;
+  window.updateT9State = updateT9State;
     window.updatePostStyleWithDisplay = updatePostStyleWithDisplay;
     window.updateHighlightStateWithDisplay = updateHighlightStateWithDisplay;
     window.setWatermarkPosition = setWatermarkPosition;

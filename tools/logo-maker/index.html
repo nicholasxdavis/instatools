@@ -33,6 +33,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Poppins:wght@300;400;500;600;700;900&family=Montserrat:wght@300;400;500;600;700;900&family=Playfair+Display:wght@400;500;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700;900&family=Manrope:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Righteous&family=Rubik+Dirt&family=Rubik+Glitch&family=Rye&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
 
@@ -312,6 +313,81 @@
     #preview-container::-webkit-scrollbar-thumb {
         background: rgba(255,255,255,0.12);
         border-radius: 6px;
+    }
+
+    /* ── Premium Effects ────────────────────────────── */
+    .effect-retro {
+        letter-spacing: 4px !important;
+        transform: skew(-10deg) rotate(-5deg);
+        text-shadow: 2px 2px 0px #FF9800, 4px 4px 0px #FF5722, 6px 6px 0px #F44336, 8px 8px 0px #b71c1c, 12px 12px 20px rgba(0,0,0,0.4) !important;
+    }
+    .effect-glitch { position: relative; }
+    .effect-glitch::before, .effect-glitch::after {
+        content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; color: inherit;
+    }
+    .effect-glitch::before { left: 6px; text-shadow: -4px 0 #ff0000; clip-path: inset(15% 0 45% 0); transform: translate(-2px, 2px); }
+    .effect-glitch::after { left: -4px; text-shadow: -2px 0 cyan; clip-path: inset(60% 0 10% 0); transform: translate(2px, -2px); }
+    
+    .effect-modish {
+        background: linear-gradient(90deg, #00d2ff, #3a7bd5, #ff007f, #7f00ff, #00d2ff);
+        color: transparent !important;
+        -webkit-background-clip: text; background-clip: text; position: relative; z-index: 1;
+    }
+    .effect-neon { color: transparent !important; -webkit-text-stroke: 2px #ff00ff; position: relative; }
+    .effect-neon::before {
+        content: attr(data-text); position: absolute; top: 0; left: 0; color: transparent;
+        -webkit-text-stroke: 2px #00ffff; transform: translate(3px, 3px); z-index: -1;
+    }
+    .effect-neon::after {
+        content: attr(data-text); position: absolute; top: 0; left: 0; color: transparent;
+        -webkit-text-stroke: 2px #fffc00; transform: translate(-3px, -3px); z-index: -2;
+        filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.4));
+    }
+    .effect-chrome {
+        background: linear-gradient(to bottom, #ffffff 0%, #e0e0e0 30%, #7a7a7a 49%, #333333 50%, #555555 55%, #d1d1d1 80%, #ffffff 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent !important;
+        filter: drop-shadow(0px 5px 3px rgba(0,0,0,0.6)) drop-shadow(0px 0px 15px rgba(255,255,255,0.1)); position: relative;
+    }
+    .effect-chrome::before {
+        content: attr(data-text); position: absolute; left: 0; top: 0; z-index: 10;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, transparent 45%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .effect-space {
+        transform: skew(-10deg) rotate(-5deg);
+        text-shadow: 1px 1px 0 #f44336, 2px 2px 0 #f44336, 3px 3px 0 #f44336, 4px 4px 0 #ff9800, 5px 5px 0 #ff9800, 6px 6px 0 #ff9800, 7px 7px 0 #ffc107, 8px 8px 0 #ffc107, 9px 9px 0 #ffc107, 10px 10px 0 #ffeb3b, 11px 11px 0 #ffeb3b, 12px 12px 0 #ffeb3b, 18px 18px 25px rgba(0,0,0,0.9) !important;
+    }
+    .effect-gothic {
+        background: linear-gradient(to bottom, #d4e4ff 0%, #87a8d0 50%, #304e75 51%, #1a2a40 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent !important;
+        -webkit-text-stroke: 1.5px #a166ff;
+        filter: drop-shadow(0 0 10px rgba(161, 102, 255, 0.5)) drop-shadow(4px 4px 3px rgba(0,0,0,0.8));
+    }
+    .effect-grunge { opacity: 0.85; filter: drop-shadow(1px 1px 0px rgba(255,255,255,0.9)); transform: rotate(-2deg); }
+    .effect-dots {
+        background: radial-gradient(circle, #222 35%, transparent 40%); background-size: 12px 12px;
+        -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.08));
+    }
+    .effect-displaced { position: relative; letter-spacing: -2px !important; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.05)); }
+    .effect-displaced::before { content: attr(data-text); position: absolute; top: 0; left: -5px; color: inherit; clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+    .effect-displaced::after { content: attr(data-text); position: absolute; top: 0; left: 4px; color: inherit; clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); }
+    .effect-chromatic {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+        text-shadow: -4px 2px 0px rgba(255, 0, 0, 0.8), 4px -2px 0px rgba(0, 255, 255, 0.8), 0px 0px 15px rgba(255, 255, 255, 0.1) !important;
+    }
+    .effect-brush { transform: rotate(-6deg); position: relative; }
+    .effect-brush::before {
+        content: attr(data-tagline); position: absolute; top: 5px; left: -40px; background: #e61919; color: white !important; font-family: 'Montserrat', sans-serif !important;
+        font-size: 0.25em !important; font-weight: 900; width: 3.5em; height: 3.5em; display: flex; align-items: center; justify-content: center;
+        border-radius: 50%; transform: rotate(-15deg); text-align: center; line-height: 1.1; letter-spacing: 0.5px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.3); z-index: -1; white-space: pre-wrap; word-wrap: break-word; padding: 0.4em; box-sizing: border-box; -webkit-text-stroke: 0;
+    }
+    .effect-grunge-invert { opacity: 0.85; filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.9)); transform: rotate(-2deg); }
+    .effect-dusty { filter: drop-shadow(1px 1px 0 rgba(255,255,255,0.8)); }
+    .effect-paper {
+        background: linear-gradient(170deg, #111 0%, #444 30%, #111 60%, #555 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent !important;
+        transform: scaleY(1.3); filter: drop-shadow(0 2px 1px rgba(0,0,0,0.2)); margin-top: -15px;
     }
 
     /* ── Glow ────────────────────────────────────────── */
@@ -821,6 +897,28 @@
                 </button>
                 <div class="logo-section-content open" id="sec-fx">
                     <div class="logo-section-inner">
+                        <div>
+                            <div class="logo-sidebar-label" style="margin-bottom:5px;">Premium Text Effect</div>
+                            <select id="logo-texteffect-select" class="logo-select">
+                                <option value="none">None</option>
+                                <option value="retro">Yellow Retro (Speed)</option>
+                                <option value="glitch">Glitch Distortion</option>
+                                <option value="modish">Motion Gradient</option>
+                                <option value="neon">Neon Tube</option>
+                                <option value="chrome">Elegant Chrome</option>
+                                <option value="space">Space Fleet 3D</option>
+                                <option value="gothic">Glass Chrome</option>
+                                <option value="grunge">Grunge Print</option>
+                                <option value="dots">Halftone Dots</option>
+                                <option value="displaced">Displaced Distort</option>
+                                <option value="chromatic">Chromatic Glass</option>
+                                <option value="brush">Brush Print Stamp</option>
+                                <option value="grunge-invert">Inverted Grunge</option>
+                                <option value="dusty">Dusty Broken Crush</option>
+                                <option value="paper">Crumpled Paper</option>
+                            </select>
+                        </div>
+                        <div class="logo-divider"></div>
                         <div class="logo-toggle-row">
                             <span class="logo-toggle-label">Noise / Grain Texture</span>
                             <label class="lm-switch"><input id="t-noise" type="checkbox"><span class="lm-track"></span></label>
@@ -999,7 +1097,9 @@
                         </div>
                         <!-- Text block -->
                         <div id="logo-text-block" style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;">
-                            <div id="logo-text" style="font-family:Inter,system-ui,sans-serif;font-size:42px;font-weight:400;letter-spacing:0px;line-height:1.2;white-space:nowrap;text-transform:none;">Instatools</div>
+                            <div id="logo-text-wrapper" style="padding: 10px 15px; margin: -10px -15px;">
+                                <div id="logo-text" style="font-family:Inter,system-ui,sans-serif;font-size:42px;font-weight:400;letter-spacing:0px;line-height:1.2;white-space:nowrap;text-transform:none;">Instatools</div>
+                            </div>
                             <div id="logo-tagline-el" style="font-family:Inter,system-ui,sans-serif;font-size:13px;font-weight:400;letter-spacing:0.12em;opacity:0.5;white-space:nowrap;margin-top:3px;"></div>
                         </div>
                     </div>
@@ -1063,13 +1163,32 @@
     };
 
     const TEMPLATES = [
-        { name:'Dark Min.',  icon:'moon',          s:{ bgType:'solid', bgColor:'#0a0a0a', textColor:'#ffffff', iconColor:'#ffffff', fontFamily:'Inter', fontWeight:'300', fontSize:48, letterSpacing:2, cardRadius:16, shadowStrength:0.9, iconBg:true, iconBgOpacity:6, layout:'ltr', textTransform:'none', italic:false, glowEffect:false } },
-        { name:'Bold Brand', icon:'zap',           s:{ bgType:'solid', bgColor:'#ffffff', textColor:'#0a0a0a', iconColor:'#d53478', fontFamily:'Poppins', fontWeight:'900', fontSize:40, letterSpacing:-1, cardRadius:12, shadowStrength:0.12, iconBg:true, iconBgOpacity:10, layout:'ltr', textTransform:'none', italic:false, glowEffect:false } },
-        { name:'Neon Glow',  icon:'sparkles',      s:{ bgType:'solid', bgColor:'#0d0d1a', textColor:'#c084fc', iconColor:'#c084fc', fontFamily:'Space Grotesk', fontWeight:'700', fontSize:44, letterSpacing:1, cardRadius:20, shadowStrength:0.95, iconBg:true, iconBgOpacity:15, layout:'ltr', textTransform:'none', italic:false, glowEffect:true, glowColor:'#c084fc' } },
-        { name:'Rose Gold',  icon:'flower-2',      s:{ bgType:'gradient', bgColor:'#1a0a10', bgGradient1:'#1a0a10', bgGradient2:'#2d0f1e', bgGradientAngle:135, textColor:'#fda4af', iconColor:'#f43f5e', fontFamily:'Playfair Display', fontWeight:'700', fontSize:42, letterSpacing:0, cardRadius:28, shadowStrength:0.85, iconBg:false, iconBgOpacity:0, layout:'ttd', textTransform:'none', italic:false, glowEffect:false } },
-        { name:'Clean',      icon:'sparkle',       s:{ bgType:'solid', bgColor:'#f8fafc', textColor:'#0f172a', iconColor:'#3b82f6', fontFamily:'Manrope', fontWeight:'700', fontSize:40, letterSpacing:0, cardRadius:24, shadowStrength:0.06, iconBg:true, iconBgOpacity:8, layout:'ltr', textTransform:'none', italic:false, glowEffect:false } },
-        { name:'Retro Bold', icon:'flame',         s:{ bgType:'solid', bgColor:'#18130e', textColor:'#f59e0b', iconColor:'#f59e0b', fontFamily:'Bebas Neue', fontWeight:'400', fontSize:60, letterSpacing:5, cardRadius:4, shadowStrength:0.9, iconBg:false, iconBgOpacity:0, layout:'ltr', textTransform:'uppercase', italic:false, glowEffect:false } },
+        { name:'Dark Min.',  icon:'moon',          s:{ bgType:'solid', bgColor:'#0a0a0a', textColor:'#ffffff', iconColor:'#ffffff', fontFamily:'Inter', fontWeight:'300', fontSize:48, letterSpacing:2, cardRadius:16, shadowStrength:0.9, iconBg:true, iconBgOpacity:6, layout:'ltr', textTransform:'none', italic:false, glowEffect:false, textEffect:'none' } },
+        { name:'Bold Brand', icon:'zap',           s:{ bgType:'solid', bgColor:'#ffffff', textColor:'#0a0a0a', iconColor:'#d53478', fontFamily:'Poppins', fontWeight:'900', fontSize:40, letterSpacing:-1, cardRadius:12, shadowStrength:0.12, iconBg:true, iconBgOpacity:10, layout:'ltr', textTransform:'none', italic:false, glowEffect:false, textEffect:'none' } },
+        { name:'Neon Glow',  icon:'sparkles',      s:{ bgType:'solid', bgColor:'#0d0d1a', textColor:'#c084fc', iconColor:'#c084fc', fontFamily:'Space Grotesk', fontWeight:'700', fontSize:44, letterSpacing:1, cardRadius:20, shadowStrength:0.95, iconBg:true, iconBgOpacity:15, layout:'ltr', textTransform:'none', italic:false, glowEffect:true, glowColor:'#c084fc', textEffect:'none' } },
+        { name:'Rose Gold',  icon:'flower-2',      s:{ bgType:'gradient', bgColor:'#1a0a10', bgGradient1:'#1a0a10', bgGradient2:'#2d0f1e', bgGradientAngle:135, textColor:'#fda4af', iconColor:'#f43f5e', fontFamily:'Playfair Display', fontWeight:'700', fontSize:42, letterSpacing:0, cardRadius:28, shadowStrength:0.85, iconBg:false, iconBgOpacity:0, layout:'ttd', textTransform:'none', italic:false, glowEffect:false, textEffect:'none' } },
+        { name:'Clean',      icon:'sparkle',       s:{ bgType:'solid', bgColor:'#f8fafc', textColor:'#0f172a', iconColor:'#3b82f6', fontFamily:'Manrope', fontWeight:'700', fontSize:40, letterSpacing:0, cardRadius:24, shadowStrength:0.06, iconBg:true, iconBgOpacity:8, layout:'ltr', textTransform:'none', italic:false, glowEffect:false, textEffect:'none' } },
+        { name:'Retro Bold', icon:'flame',         s:{ bgType:'solid', bgColor:'#18130e', textColor:'#f59e0b', iconColor:'#f59e0b', fontFamily:'Bebas Neue', fontWeight:'400', fontSize:60, letterSpacing:5, cardRadius:4, shadowStrength:0.9, iconBg:false, iconBgOpacity:0, layout:'ltr', textTransform:'uppercase', italic:false, glowEffect:false, textEffect:'none' } },
     ];
+
+    const PREMIUM_EFFECTS = {
+        none: {},
+        retro: { fontFamily: 'Bangers', textColor: '#FFD700' },
+        glitch: { fontFamily: 'Montserrat', fontWeight: '900', textColor: '#ffffff', textTransform: 'uppercase' },
+        modish: { fontFamily: 'Montserrat', fontWeight: '900', letterSpacing: 2 },
+        neon: { fontFamily: 'Righteous', textTransform: 'uppercase' },
+        chrome: { fontFamily: 'Playfair Display', fontWeight: '900', italic: true },
+        space: { fontFamily: 'Montserrat', fontWeight: '900', italic: true, textColor: '#fffae3' },
+        gothic: { fontFamily: 'Rye' },
+        grunge: { fontFamily: 'Rubik Dirt', textColor: '#4a4a4a' },
+        dots: { fontFamily: 'Playfair Display', fontWeight: '900', italic: true },
+        displaced: { fontFamily: 'Montserrat', fontWeight: '900', textColor: '#111' },
+        chromatic: { fontFamily: 'Playfair Display', fontWeight: '700', textColor: '#000', letterSpacing: 2 },
+        brush: { fontFamily: 'Permanent Marker', textColor: '#111', textTransform: 'uppercase' },
+        'grunge-invert': { fontFamily: 'Rubik Dirt', textColor: '#f0f0f0' },
+        dusty: { fontFamily: 'Rubik Glitch', textColor: '#222' },
+        paper: { fontFamily: 'Oswald', fontWeight: '700', textTransform: 'uppercase', letterSpacing: -2, textColor: '#222' }
+    };
 
     const BG_PATTERNS = {
         none:     null,
@@ -1110,6 +1229,7 @@
         layout:'ltr', canvasBg:'check',
         exportScale:3, exportFilename:'',
         taglineSize:13, taglineSpacing:2, taglineOpacity:50, taglineWeight:'400',
+        textEffect:'none',
     };
 
     // ── Undo/Redo ──────────────────────────────────────
@@ -1239,7 +1359,11 @@
         el.style.textAlign   = S.textAlign;
         el.style.textTransform = S.textTransform;
         el.style.fontStyle   = S.italic ? 'italic' : 'normal';
-        el.style.textShadow  = S.textShadow ? `0 2px 14px rgba(0,0,0,0.7),0 0 28px ${S.textColor}55` : 'none';
+        el.style.textShadow  = S.textShadow ? `0 2px 14px rgba(0,0,0,0.7),0 0 28px ${S.textColor}55` : '';
+
+        el.className = S.textEffect && S.textEffect !== 'none' ? 'effect-' + S.textEffect : '';
+        el.setAttribute('data-text', S.text || '');
+        el.setAttribute('data-tagline', S.tagline ? S.tagline.replace(/\\n/g, '\n') : 'DISTORT\nEFFECT');
 
         if (tg) {
             const has = (S.tagline || '').trim().length > 0;
@@ -1455,6 +1579,7 @@
         sc('t-border', S.cardBorder); sc('t-glow', S.glowEffect);
         sc('t-frost', S.frostedGlass); sc('t-noise', S.noiseTexture); sc('t-innshadow', S.innerShadow);
         sv('export-filename', S.exportFilename || '');
+        if (gid('logo-texteffect-select')) gid('logo-texteffect-select').value = S.textEffect || 'none';
 
         if (gid('pick-txt')) gid('pick-txt').style.background = S.textColor;
         if (gid('pick-bg'))  gid('pick-bg').style.background  = S.bgColor;
@@ -1729,7 +1854,6 @@
         return {
             pixelRatio: S.exportScale,
             skipAutoScale: true,
-            fetchRequestInit: { mode: 'cors', credentials: 'omit', cache: 'force-cache' },
         };
     }
 
@@ -1761,29 +1885,40 @@
         await document.fonts.ready;
 
         // Save inline styles we'll temporarily override
-        const savedMinWidth     = card.style.minWidth;
-        const savedPaddingRight = card.style.paddingRight;
-        const savedOverflow     = card.style.overflow;
+        const savedMinWidth      = card.style.minWidth;
+        const savedPaddingLeft   = card.style.paddingLeft;
+        const savedPaddingRight  = card.style.paddingRight;
+        const savedPaddingTop    = card.style.paddingTop;
+        const savedPaddingBottom = card.style.paddingBottom;
+        const savedOverflow      = card.style.overflow;
 
-        // Extra right padding prevents trailing letter-spacing from being clipped.
-        // CSS letter-spacing adds space after the last char, but this space is
-        // excluded from the element's measured intrinsic width → overflow:hidden clips it.
-        const basePR  = S.layout === 'circle' ? 26 : S.paddingX;
-        const lsBonus = Math.max(0, S.letterSpacing, S.taglineSpacing) + 6; // +6 safety px
-        card.style.minWidth     = 'max-content';
-        card.style.paddingRight = (basePR + lsBonus) + 'px';
-        card.style.overflow     = 'visible';  // belt-and-suspenders
+        // Extra symmetric padding prevents trailing letter-spacing & heavy text shadows from being clipped.
+        const basePX  = S.layout === 'circle' ? 26 : S.paddingX;
+        const basePY  = S.layout === 'circle' ? 20 : S.paddingY;
+        const lsBonus = Math.max(0, S.letterSpacing, S.taglineSpacing) + 12; // +12 safety px (for extreme italics/shadows)
+        const shBonus = (S.textEffect && S.textEffect !== 'none' || S.textShadow) ? 25 : 5;  // premium effects often bleed
+        
+        card.style.minWidth      = 'max-content';
+        card.style.paddingLeft   = (basePX + lsBonus) + 'px';
+        card.style.paddingRight  = (basePX + lsBonus) + 'px';
+        card.style.paddingTop    = (basePY + shBonus) + 'px';
+        card.style.paddingBottom = (basePY + shBonus) + 'px';
+        card.style.overflow      = 'visible';  // belt-and-suspenders
 
         void card.getBoundingClientRect(); // synchronous layout reflow
         await waitFrames();
         await sleep(200);   // extra settle for font-swap and sub-pixel layout
-        return { savedMinWidth, savedPaddingRight, savedOverflow };
+        return { savedMinWidth, savedPaddingLeft, savedPaddingRight, savedPaddingTop, savedPaddingBottom, savedOverflow };
     }
 
-    function restoreCard(card, { savedMinWidth, savedPaddingRight, savedOverflow }) {
-        card.style.minWidth     = savedMinWidth;
-        card.style.paddingRight = savedPaddingRight;
-        card.style.overflow     = savedOverflow;
+    function restoreCard(card, { savedMinWidth, savedPaddingLeft, savedPaddingRight, savedPaddingTop, savedPaddingBottom, savedOverflow }) {
+        if (!card) return;
+        card.style.minWidth      = savedMinWidth;
+        card.style.paddingLeft   = savedPaddingLeft;
+        card.style.paddingRight  = savedPaddingRight;
+        card.style.paddingTop    = savedPaddingTop;
+        card.style.paddingBottom = savedPaddingBottom;
+        card.style.overflow      = savedOverflow;
     }
 
     // ── Export (WYSIWYG) ────────────────────────────────
@@ -1800,9 +1935,9 @@
         if (overlay) overlay.classList.remove('hidden');
         if (ht) ht.textContent = 'EXPORTING…';
 
-        const cardState = await prepareCardForExport(card);
-
+        let cardState = null;
         try {
+            cardState = await prepareCardForExport(card);
             const opts = buildExportOpts();
 
             // ── Warm-up: html-to-image inlines Google Font data-URIs on first call ──
@@ -1836,7 +1971,7 @@
                 showToast('Export failed — ' + (err2 && err2.message || 'unknown'), 'error');
             }
         } finally {
-            restoreCard(card, cardState);
+            if (cardState) restoreCard(card, cardState);
             if (overlay) overlay.classList.add('hidden');
             document.querySelectorAll('.logo-export-btn[data-format],#export-btn,#export-btn-header').forEach(b => { b.disabled = false; b.classList.remove('export-loading'); });
             if (ht) ht.textContent = 'EXPORT';
@@ -1851,9 +1986,9 @@
 
         if (btn) { btn.disabled = true; btn.classList.add('export-loading'); btn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Copying…'; }
 
-        const cardState = await prepareCardForExport(card);
-
+        let cardState = null;
         try {
+            cardState = await prepareCardForExport(card);
             const opts = buildExportOpts();
 
             // Warm-up pass
@@ -1880,7 +2015,7 @@
         } catch (e) {
             showToast('Copy failed — ' + (e && e.message || 'unknown'), 'error');
         } finally {
-            restoreCard(card, cardState);
+            if (cardState) restoreCard(card, cardState);
             if (btn) { btn.disabled = false; btn.classList.remove('export-loading'); }
         }
     }
@@ -2025,6 +2160,13 @@
         if (gid('t-icoflipy')) gid('t-icoflipy').addEventListener('change', e => { S.iconFlipY=e.target.checked; pushHist(); applyState(); });
 
         // ── Effects ──
+        if (gid('logo-texteffect-select')) {
+            gid('logo-texteffect-select').addEventListener('change', e => {
+                S.textEffect = e.target.value;
+                if (PREMIUM_EFFECTS[S.textEffect]) Object.assign(S, PREMIUM_EFFECTS[S.textEffect]);
+                pushHist(); syncUI(); renderFonts(); applyState();
+            });
+        }
         if (gid('t-noise')) gid('t-noise').addEventListener('change', e => { S.noiseTexture=e.target.checked; show('noise-detail',S.noiseTexture); pushHist(); applyState(); });
         wireSlider('s-noise','v-noise',v=>{ S.noiseIntensity=parseInt(v)||5; return v+'%'; });
         if (gid('t-innshadow')) gid('t-innshadow').addEventListener('change', e => { S.innerShadow=e.target.checked; show('innshadow-detail',S.innerShadow); pushHist(); applyState(); });

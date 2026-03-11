@@ -96,8 +96,8 @@ function renderTabs() {
     let tabs;
     if (window.state.mode === 'post') {
         const tmpl = window.state.post ? window.state.post.template : null;
-        const isT2orT3 = tmpl === 'template2' || tmpl === 'template3' || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6' || tmpl === 'template7' || tmpl === 'template8';
-        // T2/T3/T4/T5/T6/T7/T8 have no separate Design tab — everything is in the Editor tab
+        const isT2orT3 = tmpl === 'template2' || tmpl === 'template3' || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6' || tmpl === 'template7' || tmpl === 'template8' || tmpl === 'template9' || tmpl === 'template10';
+        // T2/T3/T4/T5/T6/T7/T8/T9/T10 have no separate Design tab — everything is in the Editor tab
         tabs = isT2orT3 ? ['editor', 'templates'] : ['editor', 'design', 'templates'];
     } else {
         // Highlight mode: only Editor tab — no Templates tab needed
@@ -122,7 +122,7 @@ function renderSidebarContent() {
             if (window.state.mode === 'post') {
                 const tmpl = window.state.post.template;
                 const isT2orT3 = tmpl === 'template2' || tmpl === 'template3';
-                const isNoDesignTab = isT2orT3 || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6' || tmpl === 'template7' || tmpl === 'template8';
+                const isNoDesignTab = isT2orT3 || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6' || tmpl === 'template7' || tmpl === 'template8' || tmpl === 'template9' || tmpl === 'template10';
 
                 // Guard: T2/T3/T4/T5 have no Design tab — silently fall back to Editor
                 if (isNoDesignTab && window.state.activeTab === 'design') {
@@ -137,6 +137,8 @@ function renderSidebarContent() {
                     else if (tmpl === 'template6') window.renderTemplate6Editor(container);
                     else if (tmpl === 'template7') window.renderTemplate7Editor(container);
                     else if (tmpl === 'template8') window.renderTemplate8Editor(container);
+                    else if (tmpl === 'template9') window.renderTemplate9Editor(container);
+                    else if (tmpl === 'template10') window.renderTemplate10Editor(container);
                     else window.renderPostEditor(container);
                 }
                 else if (window.state.activeTab === 'templates') window.renderPostTemplates(container);
@@ -881,6 +883,263 @@ function renderCanvas() {
                         </div>
                     `;
                     return; // Done â€” skip template1 rendering below
+                }
+
+                // ── TEMPLATE 9 CANVAS (Toad Creek: bottom fade, logo top left, gold/white text) ──
+                if (window.state.post.template === 'template9') {
+                    const t9 = window.state.post.t9;
+                    const safeT9Img = window.escapeHtml(window.getCorsProxyUrl(t9.bgImage));
+                    const safeT9Logo = t9.logoUrl ? window.escapeHtml(window.getCorsProxyUrl(t9.logoUrl)) : '';
+                    
+                    // Parse headline: [word] = gold, plain = white
+                    const t9Parts = t9.headline.split(/(\[.*?\])/);
+                    const t9HeadlineHTML = t9Parts.map(part => {
+                        if (part.startsWith('[') && part.endsWith(']')) {
+                            return `<span style="color:${t9.highlightColor}">${window.escapeHtml(part.slice(1, -1))}</span>`;
+                        }
+                        return `<span style="color:${t9.headlineColor}">${window.escapeHtml(part)}</span>`;
+                    }).join('');
+
+                    root.innerHTML = `
+                        <div style="position:absolute;inset:0;background:#000;overflow:hidden;">
+                            
+                            <!-- Background Image -->
+                            <div 
+                                data-ctx="background" 
+                                title="Click to edit background" 
+                                ondblclick="window.focusSidebarControl('t9-bg-url')"
+                                style="position:absolute;inset:0;cursor:pointer;"
+                            >
+                                <img 
+                                    src="${safeT9Img}" 
+                                    style="width:100%;height:100%;object-fit:cover;object-position:50% ${getObjectPositionY(t9.imagePosY, t9.imageScale)}%;transform:${getImageTransform(t9.imageScale, t9.imagePosY)};transform-origin:center center;" 
+                                    onerror="this.style.display='none'"
+                                    alt="Background"
+                                >
+                            </div>
+
+                            <!-- Bottom Fade -->
+                            <div style="position:absolute;bottom:0;left:0;right:0;height:${t9.bottomFadeHeight}%;background:linear-gradient(to bottom, transparent 0%, ${t9.bottomFadeColor} 100%);opacity:${t9.bottomFadeOpacity};pointer-events:none;"></div>
+
+                            <!-- Logo (Top Left) -->
+                            ${t9.showLogo && safeT9Logo ? `
+                            <div 
+                                data-ctx="logo" 
+                                title="Click to edit logo" 
+                                ondblclick="window.focusSidebarControl('t9-logo-url')"
+                                style="position:absolute;top:${t9.logoPosY}%;left:${t9.logoPosX}%;width:${t9.logoSize}px;cursor:pointer;z-index:20;"
+                            >
+                                <img src="${safeT9Logo}" style="width:100%;height:auto;display:block;" alt="Logo">
+                            </div>
+                            ` : ''}
+
+                            <!-- Headline (Bottom Center) -->
+                            <div style="position:absolute;bottom:0;left:0;right:0;padding:0 ${t9.paddingH}px ${t9.paddingBottom}px ${t9.paddingH}px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;z-index:30;pointer-events:none;">
+                                <h1 
+                                    data-ctx="headline" 
+                                    title="Click to edit headline" 
+                                    ondblclick="window.focusSidebarControl('t9-headline')"
+                                    style="margin:0;font-family:'${t9.customFontFamily || t9.fontFamily}',sans-serif;font-size:${t9.fontSize}px;font-weight:${t9.fontWeight};line-height:${t9.lineHeight};text-align:center;text-transform:uppercase;pointer-events:auto;cursor:pointer;text-shadow:0 2px 10px rgba(0,0,0,0.5);"
+                                >${t9HeadlineHTML}</h1>
+                            </div>
+
+                        </div>
+                    `;
+                    return; // Done
+                }
+
+                // ── TEMPLATE 10 CANVAS (Grunge Print: top-right watermark, bottom white glow, grunge text) ──
+                if (window.state.post.template === 'template10') {
+                    const t10 = window.state.post.t10;
+                    const safeT10Img = window.escapeHtml(window.getCorsProxyUrl(t10.bgImage));
+                    const safeT10Watermark = t10.watermarkUrl ? window.escapeHtml(window.getCorsProxyUrl(t10.watermarkUrl)) : '';
+
+                    // Parse headline: [word] = highlightColor, plain = headlineColor
+                    const t10Parts = t10.headline.split(/(\[.*?\])/);
+                    const t10HeadlineHTML = t10Parts.map(part => {
+                        if (part.startsWith('[') && part.endsWith(']')) {
+                            return `<span style="color:${t10.highlightColor}">${window.escapeHtml(part.slice(1, -1))}</span>`;
+                        }
+                        return `<span style="color:${t10.headlineColor}">${window.escapeHtml(part)}</span>`;
+                    }).join('');
+
+                    const safeT10Swipe = window.escapeHtml(t10.swipeText || 'SWIPE');
+
+                    // Watermark Positioning Logic (top-right biased, but fully adjustable)
+                    const t10ClampedPosY = Math.max(0, Math.min(100, t10.watermarkPosY));
+                    const t10PosX = Math.max(0, t10.watermarkPosX);
+
+                    let t10WmTX = '-50%';
+                    let t10WmTY = '-50%';
+                    let t10WmLeft = null;
+                    let t10WmRight = null;
+                    let t10WmTop = null;
+                    let t10WmBottom = null;
+
+                    if (t10ClampedPosY <= 15) {
+                        t10WmTY = '0%';
+                        t10WmTop = `${t10ClampedPosY}%`;
+                    } else if (t10ClampedPosY >= 85) {
+                        t10WmTY = '0%';
+                        t10WmBottom = `${100 - t10ClampedPosY}%`;
+                    } else {
+                        t10WmTop = `${t10ClampedPosY}%`;
+                    }
+
+                    if (t10PosX <= 15) {
+                        t10WmTX = '0%';
+                        t10WmLeft = `${Math.min(100, t10PosX)}%`;
+                    } else if (t10PosX >= 85) {
+                        t10WmTX = '0%';
+                        const t10RightValue = 100 - t10PosX;
+                        t10WmRight = `${t10RightValue}%`;
+                    } else {
+                        t10WmLeft = `${t10PosX}%`;
+                    }
+
+                    const glowHeightPct = Math.max(0, Math.min(100, t10.glowHeight || 40));
+                    const glowOpacity = Math.max(0, Math.min(1, t10.glowOpacity != null ? t10.glowOpacity : 0.8));
+
+                    root.innerHTML = `
+                        <div style="position:absolute;inset:0;background:#f4f4f4;overflow:hidden;">
+
+                            <!-- Background Image -->
+                            <div 
+                                data-ctx="background" 
+                                title="Click to edit background" 
+                                ondblclick="window.focusSidebarControl('t10-bg-url')"
+                                style="position:absolute;inset:0;cursor:pointer;"
+                            >
+                                <img 
+                                    src="${safeT10Img}" 
+                                    style="width:100%;height:100%;object-fit:cover;object-position:50% ${getObjectPositionY(t10.imagePosY || 50, t10.imageScale || 100)}%;transform:${getImageTransform(t10.imageScale || 100, t10.imagePosY || 50)};" 
+                                    onerror="this.style.display='none'"
+                                    alt="Background"
+                                >
+                            </div>
+
+                            <!-- Bottom Dark Fade on Background -->
+                            <div style="position:absolute;left:0;right:0;bottom:0;height:${t10.fadeHeight}%;pointer-events:none;background:linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,${t10.fadeStrength}) 100%);"></div>
+
+                            <!-- Global Black Overlay -->
+                            <div style="position:absolute;inset:0;background:${t10.overlayColor};opacity:${t10.overlayOpacity};pointer-events:none;"></div>
+
+                            <!-- Film Grain / Noise Overlay — canvas-generated via filter.js -->
+                            ${t10.noiseAmount > 0 ? `
+                            <div style="
+                                position:absolute;
+                                inset:0;
+                                pointer-events:none;
+                                mix-blend-mode:multiply;
+                                background-image:url('${typeof window.getGrainDataUrl === 'function' ? window.getGrainDataUrl(180) : ''}');
+                                background-size:180px 180px;
+                                background-repeat:repeat;
+                                opacity:${Math.min(1, t10.noiseAmount * 1.6)};
+                                filter:contrast(1.6) brightness(1.05);
+                            "></div>
+                            ` : ''}
+
+                            <!-- Bottom Dark Glow (subtle black vignette instead of white) -->
+                            <div style="position:absolute;left:0;right:0;bottom:0;height:${glowHeightPct}%;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;">
+                                <div style="
+                                    width:140%;
+                                    height:260px;
+                                    background:radial-gradient(
+                                        circle at 50% 0%,
+                                        rgba(0,0,0,${glowOpacity}) 0%,
+                                        rgba(0,0,0,${glowOpacity * 0.7}) 32%,
+                                        transparent 78%
+                                    );
+                                    filter:blur(46px);
+                                    transform:translateY(34px);
+                                "></div>
+                            </div>
+
+                            <!-- Headline (Bottom Center, Grunge) -->
+                            <div style="position:absolute;bottom:0;left:0;right:0;padding:0 ${t10.paddingH}px ${t10.paddingBottom}px ${t10.paddingH}px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;z-index:30;pointer-events:none;">
+                                <h1 
+                                    data-ctx="headline" 
+                                    title="Click to edit headline" 
+                                    ondblclick="window.focusSidebarControl('t10-headline')"
+                                    class="effect-grunge"
+                                    style="
+                                        margin:0;
+                                        font-family:'${t10.customFontFamily || t10.fontFamily}', system-ui;
+                                        font-size:${t10.fontSize}px;
+                                        font-weight:${t10.fontWeight};
+                                        line-height:${t10.lineHeight};
+                                        text-align:${t10.textAlign || 'center'};
+                                        color:${t10.headlineColor};
+                                        opacity:0.85;
+                                        pointer-events:auto;
+                                        cursor:pointer;
+                                        text-transform:uppercase;
+                                    "
+                                >${t10HeadlineHTML}</h1>
+                            </div>
+
+                            <!-- Swipe CTA (Bottom Center) — 3 styles -->
+                            ${t10.showSwipe ? (() => {
+                                const swFF  = window.escapeHtml(t10.swipeCustomFontFamily || t10.swipeFontFamily || t10.fontFamily || 'Rubik Dirt');
+                                const swSz  = t10.swipeFontSize || 26;
+                                const swCol = t10.swipeColor || '#ffffff';
+                                const decoSz = Math.round(swSz * 0.52);
+                                const baseStyle = `font-family:'${swFF}',system-ui;color:${swCol};font-size:${swSz}px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;line-height:1;`;
+                                const decoStyle = `color:${swCol};opacity:0.45;font-size:${decoSz}px;letter-spacing:5px;font-family:sans-serif;line-height:1;`;
+
+                                let inner = '';
+                                if (t10.swipeStyle === 'chevron') {
+                                    inner = `
+                                        <span style="${decoStyle}">›&nbsp;›&nbsp;›</span>
+                                        <span style="${baseStyle}margin:0 10px;">${safeT10Swipe}</span>
+                                        <span style="${decoStyle}">›&nbsp;›&nbsp;›</span>`;
+                                } else if (t10.swipeStyle === 'badge') {
+                                    inner = `<span style="${baseStyle}border:1.5px solid ${swCol};border-radius:3px;padding:4px 14px;letter-spacing:0.3em;">${safeT10Swipe}</span>`;
+                                } else {
+                                    // 'text' — plain
+                                    inner = `<span style="${baseStyle}">${safeT10Swipe}</span>`;
+                                }
+                                return `
+                            <div style="position:absolute;left:0;right:0;bottom:30px;display:flex;justify-content:center;z-index:36;pointer-events:none;">
+                                <div
+                                    data-ctx="swipe"
+                                    title="Click to edit swipe"
+                                    ondblclick="window.focusSidebarControl('t10-swipe-text')"
+                                    style="display:flex;align-items:center;pointer-events:auto;cursor:pointer;"
+                                >${inner}</div>
+                            </div>`;
+                            })() : ''}
+
+                            <!-- Watermark (Top-Right by default) -->
+                            ${safeT10Watermark && t10.showWatermark ? `
+                            <div
+                                data-ctx="watermark"
+                                title="Click to edit watermark"
+                                ondblclick="window.focusSidebarControl('t10-watermark-url')"
+                                style="
+                                    position:absolute;
+                                    ${t10WmLeft !== null ? `left:${t10WmLeft};` : ''}
+                                    ${t10WmRight !== null ? `right:${t10WmRight};` : ''}
+                                    ${t10WmTop !== null ? `top:${t10WmTop};` : ''}
+                                    ${t10WmBottom !== null ? `bottom:${t10WmBottom};` : ''}
+                                    transform:translate(${t10WmTX},${t10WmTY});
+                                    cursor:pointer;
+                                    opacity:${t10.watermarkOpacity};
+                                    z-index:40;
+                                "
+                            >
+                                <img
+                                    src="${safeT10Watermark}"
+                                    style="width:${t10.watermarkSize}px;height:auto;object-fit:contain;pointer-events:none;display:block;"
+                                    onerror="this.style.display='none'"
+                                    alt="Watermark"
+                                >
+                            </div>
+                            ` : ''}
+
+                        </div>
+                    `;
+                    return; // Done
                 }
 
                 // â”€â”€ TEMPLATE 1 setup â”€â”€

@@ -96,13 +96,7 @@
         transform: translateY(-2px);
       }
       .tool-card-header {
-        height: 130px;
-        background: #1e1e1e;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
+        display: none; /* Hide visual previews/icons at the top of cards */
       }
       .tool-card-header-dots {
         position: absolute;
@@ -561,7 +555,7 @@
               <div>
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                   <h2 class="tool-card-title">Profile Previewer</h2>
-                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(221,221,221,0.35); background: #535353; border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0;">New</span>
+                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(221,221,221,0.35); background: #535353; border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0; transform: translateY(-4px);">New</span>
                 </div>
                 <p class="tool-card-desc">Preview your full Instagram profile — bio, highlights, photo grid and action buttons — before going live.</p>
               </div>
@@ -659,7 +653,6 @@
               <div>
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                   <h2 class="tool-card-title">Logo Maker</h2>
-                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(221,221,221,0.35); background: #535353; border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0; transform: translateY(-2px);">Wordmark</span>
                 </div>
                 <p class="tool-card-desc">Wordmark-style logo maker is nearly ready. Check back soon to design clean text logos with Google Fonts and export presets.</p>
               </div>
@@ -667,6 +660,56 @@
                 <span class="tool-tag">Logos</span>
                 <span class="tool-tag">Google Fonts</span>
                 <span class="tool-tag">Branding</span>
+              </div>
+              <div class="tool-card-divider"></div>
+              <button class="tool-launch-btn" type="button" disabled style="cursor:not-allowed;opacity:0.5;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fcf5f9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.8;">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Coming soon
+              </button>
+            </div>
+          </div>
+
+          <!-- ── Card 7: Reeltools (Coming Soon) ── -->
+          <div class="tool-card">
+            <div class="tool-card-header"></div>
+            <div class="tool-card-body">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <h2 class="tool-card-title">Reeltools</h2>
+                </div>
+                <p class="tool-card-desc">Smart tools for planning and formatting Instagram Reels — from hooks to captions and cover frames.</p>
+              </div>
+              <div class="tool-card-tags">
+                <span class="tool-tag">Reels</span>
+                <span class="tool-tag">Video</span>
+                <span class="tool-tag">Planning</span>
+              </div>
+              <div class="tool-card-divider"></div>
+              <button class="tool-launch-btn" type="button" disabled style="cursor:not-allowed;opacity:0.5;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fcf5f9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.8;">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Coming soon
+              </button>
+            </div>
+          </div>
+
+          <!-- ── Card 8: Story Generator (Coming Soon) ── -->
+          <div class="tool-card">
+            <div class="tool-card-header"></div>
+            <div class="tool-card-body">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <h2 class="tool-card-title">Story Generator</h2>
+                </div>
+                <p class="tool-card-desc">Generate on-brand Instagram Stories with templated layouts, text prompts, and export-ready sequences.</p>
+              </div>
+              <div class="tool-card-tags">
+                <span class="tool-tag">Stories</span>
+                <span class="tool-tag">Templates</span>
+                <span class="tool-tag">Scheduling</span>
               </div>
               <div class="tool-card-divider"></div>
               <button class="tool-launch-btn" type="button" disabled style="cursor:not-allowed;opacity:0.5;">

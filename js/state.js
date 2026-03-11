@@ -15,7 +15,7 @@ const state = {
 
   // Post State
   post: {
-    template: "template1", // 'template1' | 'template2' | 'template3' | 'template4' | 'template5' | 'template6' | 'template7' | 'template8'
+    template: "template1", // 'template1' | 'template2' | 'template3' | 'template4' | 'template5' | 'template6' | 'template7' | 'template8' | 'template9' | 'template10'
     headline: "OBAMA CLAIMS [ALIENS] ARE {REAL}",
     caption: "He also denied that they're being held at Area 51",
     bgImage:
@@ -70,7 +70,7 @@ const state = {
       paddingV: 20,
       showWatermark: false,
       watermarkUrl:
-        "https://github.com/nicholasxdavis/ptm/blob/main/holder/example-watermark.png?raw=true",
+        "https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/example-watermark.png",
       watermarkSize: 200,
       watermarkOpacity: 1.0,
       watermarkPosX: 50,
@@ -237,6 +237,82 @@ const state = {
       showEngagementIcons: true,
       iconColor: "#8B98A5",
       iconHoverColor: "#1DA1F2",
+    },
+
+    // Template 9 state (Little Toad Creek style: bottom fade, logo top left, gold/white text)
+    t9: {
+      headline: "[LITTLE TOAD CREEK]\nOPENS NEW LOCATION\nIN [LAS CRUCES, NM]",
+      bgImage: "https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/creek-patio.webp",
+      logoUrl: "https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/toad-logo.png",
+      logoSize: 251,
+      logoPosX: 2,
+      logoPosY: 2,
+      fontFamily: "Anton",
+      customFontFamily: "",
+      fontSize: 108,
+      fontWeight: 700,
+      headlineColor: "#fffdfd",
+      highlightColor: "#d2a02d",
+      bottomFadeColor: "#172d42",
+      bottomFadeHeight: 50,
+      bottomFadeOpacity: 1.0,
+      imagePosX: 50,
+      imagePosY: 50,
+      imageScale: 100,
+      lineHeight: 1.1,
+      letterSpacing: 0,
+      textAlign: "center",
+      paddingH: 40,
+      paddingBottom: 80,
+      showLogo: true,
+    },
+
+    // Template 10 state (Grunge print: top-right watermark, bottom black glow, grunge text)
+    t10: {
+      headline: "Clark [set for] [Team USA] debut",
+      bgImage:
+        "https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/clark.jpg",
+      fontFamily: "Rubik Dirt",
+      customFontFamily: "",
+      fontSize: 153,
+      fontWeight: 400,
+      headlineColor: "#EC4899",
+      highlightColor: "#ffffff",
+      lineHeight: 0.85,
+      letterSpacing: 0,
+      textAlign: "center",
+      paddingH: 74,
+      paddingBottom: 85,
+      // Global black overlay over background image
+      overlayColor: "#000000",
+      overlayOpacity: 0.35,
+      // Bottom dark fade on background
+      fadeHeight: 40, // % of canvas height used for darkening from mid → bottom
+      fadeStrength: 0.7, // max darkness at very bottom (0–1)
+      // Film grain / noise amount (0–1)
+      noiseAmount: 0.1,
+      // Swipe CTA
+      showSwipe: true,
+      swipeStyle: "text",           // 'text' | 'chevron' | 'badge'
+      swipeText: "SWIPE",
+      swipeFontFamily: "Rubik Dirt",
+      swipeCustomFontFamily: "",
+      swipeColor: "#ffffff",
+      swipeFontSize: 26,
+      // Watermark (image) – defaults to top-right
+      watermarkUrl:
+        "https://raw.githubusercontent.com/nicholasxdavis/ptm/main/holder/example-watermark.png",
+      watermarkSize: 364,
+      watermarkOpacity: 0.9,
+      showWatermark: true,
+      watermarkPosX: 102,
+      watermarkPosY: 0,
+      // Bottom white glow band
+      glowHeight: 64, // percentage of canvas height
+      glowOpacity: 0.9,
+      // Background position
+      imagePosY: 29,
+      imageScale: 100,
     },
 
     // Template 4 state (Magazine Cover style: XXL-inspired, full bleed + brand badge + swipe + dots)
@@ -526,6 +602,18 @@ const SYSTEM_TEMPLATES = [
     previewImage: "src/ui/templates/template8.png",
     templateId: "template8",
   },
+  {
+    id: "template9",
+    name: "Toad Creek",
+    previewImage: "src/ui/templates/template9.png",
+    templateId: "template9",
+  },
+  {
+    id: "template10",
+    name: "Grunge Print",
+    previewImage: "src/ui/templates/template10.png",
+    templateId: "template10",
+  },
 ];
 
 // Icon mapping for highlight generator
@@ -573,6 +661,8 @@ const DEFAULT_TEMPLATE_STATES = {
   t6: JSON.parse(JSON.stringify(state.post.t6)),
   t7: JSON.parse(JSON.stringify(state.post.t7)),
   t8: JSON.parse(JSON.stringify(state.post.t8)),
+  t9: JSON.parse(JSON.stringify(state.post.t9)),
+  t10: JSON.parse(JSON.stringify(state.post.t10)),
 };
 
 // Make globally available
