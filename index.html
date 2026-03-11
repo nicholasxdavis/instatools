@@ -239,8 +239,17 @@
                     <!-- Desktop Menu Button -->
                     <a class="btn border-0" id="menu-btn" title="Toggle Sidebar"><i class="bx bx-chevron-right"></i></a>
                 </div>
-                <!-- Right side: Mode Buttons + Save Button -->
-                <div class="flex items-center gap-3">
+                <!-- Right side: Beta badge + Mode Buttons + Save Button -->
+                <div class="flex items-center gap-4">
+                    <!-- Desktop beta pill -->
+                    <div class="hidden sm:flex items-center">
+                        <span style="font-size:11px;color:rgba(248,250,252,0.7);background:rgba(248,250,252,0.06);border-radius:999px;padding:4px 10px;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(248,250,252,0.16);">
+                            <span style="font-weight:600;letter-spacing:0.08em;text-transform:uppercase;font-size:10px;color:#eb6f5a;">This tool is in beta</span>
+                            <a href="https://github.com/nicholasxdavis/instatools/issues" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-decoration-style:dotted;color:rgba(248,250,252,0.9);font-weight:500;white-space:nowrap;">
+                                Report issues
+                            </a>
+                        </span>
+                    </div>
                     <!-- Mode Buttons (Right side on mobile) -->
                     <div class="flex bg-black p-1 rounded-lg gap-1 mode-buttons-container">
                         <a href="tools/other/index.html" class="px-6 py-1.5 text-xs font-bold uppercase rounded-md transition-all-200 bg-white text-black hover:text-[#ec7258] shadow-sm hover:shadow-md flex items-center justify-center cursor-pointer" style="min-width: 120px; min-height: 32px; text-decoration: none;">OTHER TOOLS</a>

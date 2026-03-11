@@ -324,7 +324,16 @@
 
             <!-- Export Row -->
             <div style="flex-shrink: 0; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.07);">
-                <div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">
+                <div style="display: flex; align-items: center; gap: 6px; justify-content: space-between;">
+                    <!-- Mobile beta pill in panel header -->
+                    <div class="flex sm:hidden items-center">
+                        <span style="font-size:10px;color:rgba(248,250,252,0.85);background:rgba(248,250,252,0.06);border-radius:999px;padding:3px 8px;display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(248,250,252,0.16);">
+                            <span style="font-weight:600;letter-spacing:0.08em;text-transform:uppercase;font-size:9px;color:#eb6f5a;white-space:nowrap;">This tool is in beta</span>
+                            <a href="https://github.com/nicholasxdavis/instatools/issues" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-decoration-style:dotted;color:rgba(248,250,252,0.95);font-weight:500;white-space:nowrap;">
+                                Report
+                            </a>
+                        </span>
+                    </div>
                     <button id="export-btn" class="export-btn-panel" onclick="exportImage()" aria-label="Export image">
                         <i class="bx bx-download" style="font-size: 13px;"></i>
                         <span>EXPORT</span>
@@ -518,8 +527,17 @@
                     </div>
                     <a class="btn border-0" id="menu-btn" title="Toggle Sidebar"><i class="bx bx-chevron-right"></i></a>
                 </div>
-                <!-- Right: Other Tools + Export -->
-                <div class="flex items-center gap-3">
+                <!-- Right: Beta badge + Other Tools + Export -->
+                <div class="flex items-center gap-4">
+                    <!-- Desktop beta pill -->
+                    <div class="hidden sm:flex items-center">
+                        <span style="font-size:11px;color:rgba(248,250,252,0.7);background:rgba(248,250,252,0.06);border-radius:999px;padding:4px 10px;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(248,250,252,0.16);">
+                            <span style="font-weight:600;letter-spacing:0.08em;text-transform:uppercase;font-size:10px;color:#eb6f5a;">This tool is in beta</span>
+                            <a href="https://github.com/nicholasxdavis/instatools/issues" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-decoration-style:dotted;color:rgba(248,250,252,0.9);font-weight:500;white-space:nowrap;">
+                                Report issues
+                            </a>
+                        </span>
+                    </div>
                     <div class="flex bg-black p-1 rounded-lg gap-1 mode-buttons-container">
                         <a href="../other/index.html" class="px-6 py-1.5 text-xs font-bold uppercase rounded-md transition-all-200 bg-white text-black hover:text-[#ec7258] shadow-sm hover:shadow-md flex items-center justify-center cursor-pointer" style="min-width: 120px; min-height: 32px; text-decoration: none;">OTHER TOOLS</a>
                     </div>

@@ -565,7 +565,7 @@
             }
 
             /* ── Touch-friendly sidebar buttons ──────────────────────────── */
-            .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]) {
+            .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]):not(.logo-chip):not(.logo-layout-btn):not(.logo-export-btn):not(.scale-btn):not(.canvas-backdrop-btn):not(.logo-section-header):not(.logo-template-card):not(.font-item):not(.icon-cell) {
                 min-height: 36px !important;
                 padding: 7px 12px !important;
             }
@@ -862,7 +862,7 @@
         }
 
         /* Base button style inside cards / panel */
-        .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]) {
+        .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]):not(.logo-chip):not(.logo-layout-btn):not(.logo-export-btn):not(.scale-btn):not(.canvas-backdrop-btn):not(.logo-section-header):not(.logo-template-card):not(.font-item):not(.icon-cell) {
             background-color: #535353 !important;
             border: none !important;
             color: #dddddd !important;
@@ -879,14 +879,14 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
         }
         
-        .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]):hover {
+        .side-navbar button:not(.btn-light):not(#export-btn):not(#save-btn-panel):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]):not(.logo-chip):not(.logo-layout-btn):not(.logo-export-btn):not(.scale-btn):not(.canvas-backdrop-btn):not(.logo-section-header):not(.logo-template-card):not(.font-item):not(.icon-cell):hover {
             background-color: #5f5f5f !important;
             color: #ffffff !important;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
             transform: none !important;
         }
         
-        .side-navbar button:not(.btn-light):not(#export-btn):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]):active {
+        .side-navbar button:not(.btn-light):not(#export-btn):not(.btn-accent):not(.color-picker-btn):not([aria-label*="color picker" i]):not(.logo-chip):not(.logo-layout-btn):not(.logo-export-btn):not(.scale-btn):not(.canvas-backdrop-btn):not(.logo-section-header):not(.logo-template-card):not(.font-item):not(.icon-cell):active {
             transform: none !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
         }
@@ -1012,7 +1012,7 @@
         }
 
         /* Make sure buttons and inputs are properly sized */
-        .side-navbar button:not(.btn-sm):not(.btn-light):not(#export-btn):not(.btn-accent) {
+        .side-navbar button:not(.btn-sm):not(.btn-light):not(#export-btn):not(.btn-accent):not(.logo-chip):not(.logo-layout-btn):not(.logo-export-btn):not(.scale-btn):not(.canvas-backdrop-btn):not(.logo-section-header):not(.logo-template-card):not(.font-item):not(.icon-cell) {
             padding: 5px 10px !important;
             font-size: 11px !important;
         }
@@ -1883,6 +1883,9 @@
             background-color: #2c2c2c !important;
             border-color: #3e3e3e !important;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+            /* Ensure consistent width for all template color pickers (e.g. template 7 & 8) */
+            width: 16rem !important;      /* match Tailwind w-64 from renderColorPicker */
+            min-width: 16rem !important;
         }
 
         .side-navbar .color-picker-popover button {
