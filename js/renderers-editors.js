@@ -951,12 +951,14 @@ function loadSystemTemplate(id) {
 
     // Reset the specific template's state back to its default so changes apply
     const tId = template.templateId || template.id;
-    if (tId !== 'template1' && window.DEFAULT_TEMPLATE_STATES && window.DEFAULT_TEMPLATE_STATES[tId]) {
-        // e.g. window.state.post.t6 = { ...window.DEFAULT_TEMPLATE_STATES.t6 }
-        const stateKey = tId.replace('template', 't');
-        if (window.state.post[stateKey] && window.DEFAULT_TEMPLATE_STATES[stateKey]) {
-             window.state.post[stateKey] = JSON.parse(JSON.stringify(window.DEFAULT_TEMPLATE_STATES[stateKey]));
-        }
+    const stateKey = tId.replace('template', 't');
+    if (tId !== 'template1' && window.DEFAULT_TEMPLATE_STATES && window.DEFAULT_TEMPLATE_STATES[stateKey]) {
+      // e.g. window.state.post.t6 = { ...window.DEFAULT_TEMPLATE_STATES.t6 }
+      if (window.state.post[stateKey]) {
+        window.state.post[stateKey] = JSON.parse(
+          JSON.stringify(window.DEFAULT_TEMPLATE_STATES[stateKey]),
+        );
+      }
     }
 
     // For template1, merge style settings
@@ -3053,6 +3055,608 @@ function renderTemplate6Editor(container) {
     setTimeout(() => window.initializeIcons(container), 0);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// TEMPLATE 8 EDITOR  (Sports / Hurdels v2 — duplicated from Template 6)
+// ─────────────────────────────────────────────────────────────────────────────
+function renderTemplate8Editor(container) {
+    const t8 = window.state.post.t8;
+    const safeBgUrl    = t8.bgImage     && !t8.bgImage.startsWith('data:')     ? window.escapeHtml(t8.bgImage)     : '';
+    const safeCircleUrl = t8.circleImage && !t8.circleImage.startsWith('data:') ? window.escapeHtml(t8.circleImage) : '';
+
+    container.innerHTML = `
+        <div class="space-y-6 animate-fade-in">
+
+            <!-- ── HEADLINE ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="type" class="w-3 h-3"></i> Headline
+                </label>
+                <textarea
+                    id="t8-headline"
+                    oninput="window.updateT8State('headline', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm font-mono focus:outline-none focus:border-black focus:bg-white transition-all resize-none"
+                    rows="4"
+                    placeholder="Use [WORD] for highlight color…"
+                >${window.escapeHtml(t8.headline)}</textarea>
+                <p class="text-[9px] text-gray-400">Wrap words in <span class="font-mono font-bold">[brackets]</span> to apply the highlight colour.</p>
+            </div>
+
+            <!-- ── HEADLINE COLORS ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Headline Colors</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>${renderColorPicker('Base Text', t8.headlineColor, "window.updateT8State('headlineColor','$VAL')")}</div>
+                    <div>${renderColorPicker('[Highlight]', t8.highlightColor, "window.updateT8State('highlightColor','$VAL')")}</div>
+                </div>
+            </div>
+
+            <!-- ── FONT ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Font Family</label>
+                <div class="grid grid-cols-1 gap-2">
+                    ${["Archivo Black","Anton","Bebas Neue","Oswald","Montserrat","Roboto Condensed","Teko","Inter"].map(font => `
+                        <button
+                            onclick="window.updateT8State('fontFamily','${font}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                            class="flex items-center justify-between px-4 py-3 rounded-lg border transition-all ${t8.fontFamily === font ? 'bg-black border-black text-white shadow-md' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300'}"
+                        >
+                            <span style="font-family:${font}" class="text-lg">Aa</span>
+                            <span class="text-xs uppercase tracking-widest font-bold">${font}</span>
+                        </button>`).join('')}
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Custom Font</label>
+                    <input type="text" id="t8-custom-font"
+                        value="${window.escapeHtml(t8.customFontFamily || '')}"
+                        oninput="window.updateT8State('customFontFamily',this.value); window.debouncedRenderCanvas()"
+                        placeholder="e.g. Impact, 'Times New Roman'"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-black focus:bg-white transition-all">
+                    <p class="text-[8px] text-gray-400 mt-1">Overrides selected font above.</p>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                    <input type="range" min="40" max="180" value="${t8.fontSize}"
+                        oninput="window.updateT8State('fontSize',parseFloat(this.value)); document.getElementById('t8-fs-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t8-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.fontSize}px</div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Font Weight</label>
+                    <div class="grid grid-cols-5 gap-1">
+                        ${[["300","Light"],["400","Regular"],["500","Medium"],["600","Semi"],["700","Bold"],["900","Black"]].map(([w,label]) => `
+                            <button onclick="window.updateT8State('fontWeight',${w}); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                class="py-2 rounded-lg border text-[9px] font-bold transition-all ${String(t8.fontWeight)===w ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400'}"
+                                style="font-weight:${w}">${label}</button>`).join('')}
+                    </div>
+                </div>
+                <!-- ── TEXT ALIGNMENT ── -->
+                <div class="pt-3">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-2">Text Alignment</label>
+                    <div class="grid grid-cols-3 gap-1">
+                        ${[
+                            { val: 'left', icon: 'align-left', label: 'Left' },
+                            { val: 'center', icon: 'align-center', label: 'Center' },
+                            { val: 'right', icon: 'align-right', label: 'Right' }
+                        ].map(({val, icon, label}) => `
+                            <button onclick="window.updateT8State('textAlign','${val}'); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                class="flex flex-col items-center justify-center py-2 rounded-lg border transition-all ${t8.textAlign === val ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-500 hover:border-gray-400'}"
+                                title="${label}">
+                                <i data-lucide="${icon}" class="w-4 h-4 mb-1"></i>
+                                <span class="text-[8px] font-bold uppercase">${label}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Line Height</label>
+                    <input type="range" min="0.7" max="1.5" step="0.01" value="${t8.lineHeight}"
+                        oninput="window.updateT8State('lineHeight',parseFloat(this.value)); document.getElementById('t8-lh-display').textContent=parseFloat(this.value).toFixed(2); window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t8-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.lineHeight}</div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Letter Spacing</label>
+                    <input type="range" min="-0.05" max="0.1" step="0.001" value="${t8.letterSpacing}"
+                        oninput="window.updateT8State('letterSpacing',parseFloat(this.value)); document.getElementById('t8-ls-display').textContent=parseFloat(this.value).toFixed(3)+'em'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t8-ls-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.letterSpacing}em</div>
+                </div>
+                <div class="pt-2">
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Bottom Padding (text clearance)</label>
+                    <input type="range" min="60" max="220" value="${t8.paddingBottom}"
+                        oninput="window.updateT8State('paddingBottom',parseFloat(this.value)); document.getElementById('t8-pb-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t8-pb-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.paddingBottom}px</div>
+                </div>
+            </div>
+
+            <!-- ── BACKGROUND IMAGE ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="image" class="w-3 h-3"></i> Background Image
+                </label>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="t8-bg-url"
+                            class="flex-1 bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="Image URL…"
+                            oninput="window.updateT8State('bgImage',this.value); window.debouncedRenderCanvas()"
+                            value="${safeBgUrl}">
+                        <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload image">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t8Bg')">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Zoom</label>
+                            <input type="range" min="100" max="250" value="${t8.imageScale}"
+                                oninput="window.updateT8State('imageScale',parseFloat(this.value)); document.getElementById('t8-zoom-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-zoom-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.imageScale}%</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                            <input type="range" min="0" max="100" value="${t8.imagePosX}"
+                                oninput="window.updateT8State('imagePosX',parseFloat(this.value)); document.getElementById('t8-posx-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-posx-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.imagePosX}%</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                        <input type="range" min="0" max="100" value="${t8.imagePosY}"
+                            oninput="window.updateT8State('imagePosY',parseFloat(this.value)); document.getElementById('t8-posy-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t8-posy-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.imagePosY}%</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Opacity</label>
+                        <input type="range" min="0" max="1" step="0.01" value="${t8.bgOpacity}"
+                            oninput="window.updateT8State('bgOpacity',parseFloat(this.value)); document.getElementById('t8-bgop-display').textContent=Math.round(this.value*100)+'%'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t8-bgop-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t8.bgOpacity*100)}%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── GRADIENT ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="layers" class="w-3 h-3"></i> Cinematic Gradient
+                </label>
+                <p class="text-[9px] text-gray-400 -mt-1">Controls the dark fade from the bottom of the image.</p>
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Fade Starts At</label>
+                    <input type="range" min="0" max="60" value="${t8.gradientStart}"
+                        oninput="window.updateT8State('gradientStart',parseFloat(this.value)); document.getElementById('t8-gs-display').textContent=this.value+'% from top'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t8-gs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.gradientStart}% from top</div>
+                </div>
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Darkness</label>
+                    <input type="range" min="0.4" max="1" step="0.01" value="${t8.gradientStrength}"
+                        oninput="window.updateT8State('gradientStrength',parseFloat(this.value)); document.getElementById('t8-gs2-display').textContent=Math.round(this.value*100)+'% max darkness'; window.debouncedRenderCanvas()"
+                        class="w-full">
+                    <div id="t8-gs2-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t8.gradientStrength*100)}% max darkness</div>
+                </div>
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Flat Overlay</label>
+                    <div class="flex items-center gap-3">
+                        ${renderColorPicker('Overlay', t8.overlayColor, "window.updateT8State('overlayColor','$VAL')")}
+                        <div class="flex-1">
+                            <input type="range" min="0" max="0.6" step="0.01" value="${t8.overlayOpacity}"
+                                oninput="window.updateT8State('overlayOpacity',parseFloat(this.value)); document.getElementById('t8-ov-display').textContent=Math.round(this.value*100)+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-ov-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${Math.round(t8.overlayOpacity*100)}%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── CIRCLE INSET ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="circle" class="w-3 h-3"></i> Circle Inset
+                    </label>
+                    <button
+                        onclick="window.updateT8State('showCircle', !window.state.post.t8.showCircle); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                        class="text-[9px] font-bold uppercase px-2 py-1 rounded-md border border-gray-300 ${t8.showCircle ? 'bg-white text-gray-800' : 'bg-gray-100 text-gray-500'}"
+                    >
+                        ${t8.showCircle ? 'Hide' : 'Show'}
+                    </button>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div class="flex gap-2 items-center">
+                        <input type="text" id="t8-circle-url"
+                            class="flex-1 bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="Circle image URL…"
+                            oninput="window.updateT8State('circleImage',this.value); window.debouncedRenderCanvas()"
+                            value="${safeCircleUrl}">
+                        <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload circle image">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t8Circle')">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Size</label>
+                            <input type="range" min="80" max="400" value="${t8.circleSize}"
+                                oninput="window.updateT8State('circleSize',parseFloat(this.value)); document.getElementById('t8-circle-size-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-circle-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.circleSize}px</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Border</label>
+                            <input type="range" min="0" max="20" value="${t8.circleBorderWidth}"
+                                oninput="window.updateT8State('circleBorderWidth',parseFloat(this.value)); document.getElementById('t8-circle-border-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-circle-border-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.circleBorderWidth}px</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos X</label>
+                            <input type="range" min="30" max="90" value="${t8.circlePosX}"
+                                oninput="window.updateT8State('circlePosX',parseFloat(this.value)); document.getElementById('t8-circle-x-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-circle-x-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.circlePosX}%</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Pos Y</label>
+                            <input type="range" min="5" max="55" value="${t8.circlePosY}"
+                                oninput="window.updateT8State('circlePosY',parseFloat(this.value)); document.getElementById('t8-circle-y-display').textContent=this.value+'%'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-circle-y-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.circlePosY}%</div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Border Color</label>
+                        ${renderColorPicker('Border', t8.circleBorderColor, "window.updateT8State('circleBorderColor','$VAL')")}
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── BRAND TEXT ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="badge-check" class="w-3 h-3"></i> Brand Tag
+                    </label>
+                    <button
+                        onclick="window.updateT8State('showBrand', !window.state.post.t8.showBrand); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                        class="text-[9px] font-bold uppercase px-2 py-1 rounded-md border border-gray-300 ${t8.showBrand ? 'bg-white text-gray-800' : 'bg-gray-100 text-gray-500'}"
+                    >
+                        ${t8.showBrand ? 'Hide' : 'Show'}
+                    </button>
+                </div>
+                <div class="space-y-2">
+                    <input type="text" id="t8-brand-text"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                        placeholder="INSTATOOLS"
+                        oninput="window.updateT8State('brandText',this.value); window.debouncedRenderCanvas()"
+                        value="${window.escapeHtml(t8.brandText)}">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                            <input type="range" min="14" max="60" value="${t8.brandFontSize}"
+                                oninput="window.updateT8State('brandFontSize',parseFloat(this.value)); document.getElementById('t8-brand-size-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-brand-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.brandFontSize}px</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Style</label>
+                            <button
+                                onclick="window.updateT8State('brandItalic', !window.state.post.t8.brandItalic); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                                class="px-3 py-1.5 rounded-md border text-[9px] font-bold flex items-center justify-center gap-1 ${t8.brandItalic ? 'bg-black border-black text-white' : 'bg-gray-50 border-gray-200 text-gray-600'}"
+                            >
+                                <i class="bx bx-italic text-xs"></i>
+                                <span>${t8.brandItalic ? 'Normal' : 'Italic'}</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Color</label>
+                        ${renderColorPicker('Brand', t8.brandColor, "window.updateT8State('brandColor','$VAL')")}
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SWIPE & DOTS ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                        <i data-lucide="chevrons-right" class="w-3 h-3"></i> Swipe CTA
+                    </label>
+                    <button
+                        onclick="window.updateT8State('showSwipe', !window.state.post.t8.showSwipe); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                        class="text-[9px] font-bold uppercase px-2 py-1 rounded-md border border-gray-300 ${t8.showSwipe ? 'bg-white text-gray-800' : 'bg-gray-100 text-gray-500'}"
+                    >
+                        ${t8.showSwipe ? 'Hide' : 'Show'}
+                    </button>
+                </div>
+                <div class="space-y-2">
+                    <input type="text" id="t8-swipe-text"
+                        class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                        placeholder="SWIPE"
+                        oninput="window.updateT8State('swipeText',this.value); window.debouncedRenderCanvas()"
+                        value="${window.escapeHtml(t8.swipeText)}">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Font Size</label>
+                            <input type="range" min="12" max="60" value="${t8.swipeFontSize}"
+                                oninput="window.updateT8State('swipeFontSize',parseFloat(this.value)); document.getElementById('t8-swipe-size-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-swipe-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.swipeFontSize}px</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Color</label>
+                            ${renderColorPicker('Swipe', t8.swipeColor, "window.updateT8State('swipeColor','$VAL')")}
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-2 pt-2 border-t border-gray-100 mt-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-[9px] uppercase font-bold text-gray-400">Dots</label>
+                        <button
+                            onclick="window.updateT8State('showDots', !window.state.post.t8.showDots); window.debouncedRenderCanvas(); window.renderSidebarContent()"
+                            class="text-[9px] font-bold uppercase px-2 py-1 rounded-md border border-gray-300 ${t8.showDots ? 'bg-white text-gray-800' : 'bg-gray-100 text-gray-500'}"
+                        >
+                            ${t8.showDots ? 'Hide' : 'Show'}
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Count</label>
+                            <input type="range" min="1" max="10" value="${t8.dotCount}"
+                                oninput="window.updateT8State('dotCount',parseInt(this.value,10)); document.getElementById('t8-dot-count-display').textContent=this.value; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-dot-count-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.dotCount}</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Active</label>
+                            <input type="range" min="0" max="${Math.max(0, (t8.dotCount || 1) - 1)}" value="${t8.activeDot}"
+                                oninput="window.updateT8State('activeDot',parseInt(this.value,10)); document.getElementById('t8-dot-active-display').textContent=this.value; window.debouncedRenderCanvas()"
+                                class="w-full">
+                            <div id="t8-dot-active-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t8.activeDot}</div>
+                        </div>
+                        <div>
+                            <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Color</label>
+                            ${renderColorPicker('Dots', t8.dotColor, "window.updateT8State('dotColor','$VAL')")}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    `;
+    setTimeout(() => window.initializeIcons(container), 0);
+}
+
+function renderTemplate7Editor(container) {
+    const t7 = window.state.post.t7;
+    const safeProfileUrl = t7.profileImageUrl && !t7.profileImageUrl.startsWith('data:') ? window.escapeHtml(t7.profileImageUrl) : '';
+
+    container.innerHTML = `
+        <div class="space-y-6 animate-fade-in">
+
+            <!-- ── PROFILE IMAGE ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="user" class="w-3 h-3"></i> Profile Picture
+                </label>
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="t7-profile-image-url"
+                            class="flex-1 bg-white border border-gray-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-black transition-all"
+                            placeholder="Profile image URL…"
+                            oninput="window.updateT7State('profileImageUrl',this.value); window.debouncedRenderCanvas()"
+                            value="${safeProfileUrl}">
+                        <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload image">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t7Profile')">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Size</label>
+                        <input type="range" min="48" max="160" value="${t7.profileImageSize}"
+                            oninput="window.updateT7State('profileImageSize',parseFloat(this.value)); document.getElementById('t7-profile-size-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t7-profile-size-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t7.profileImageSize}px</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── USERNAME & HANDLE ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="at-sign" class="w-3 h-3"></i> Username
+                </label>
+                <input type="text" id="t7-username"
+                    oninput="window.updateT7State('username', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all"
+                    placeholder="erin"
+                    value="${window.escapeHtml(t7.username)}">
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="at-sign" class="w-3 h-3"></i> Handle
+                </label>
+                <input type="text" id="t7-handle"
+                    oninput="window.updateT7State('handle', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all"
+                    placeholder="@ErinSauriol"
+                    value="${window.escapeHtml(t7.handle)}">
+            </div>
+
+            <!-- ── TWEET TEXT ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="message-square" class="w-3 h-3"></i> Tweet Text
+                </label>
+                <textarea
+                    id="t7-tweet-text"
+                    oninput="window.updateT7State('tweetText', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all resize-none"
+                    rows="4"
+                    placeholder="Best friends see each other 3 times a year and have no pictures together"
+                >${window.escapeHtml(t7.tweetText)}</textarea>
+            </div>
+
+            <!-- ── TIMESTAMP & SOURCE ── -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="clock" class="w-3 h-3"></i> Timestamp
+                </label>
+                <input type="text" id="t7-timestamp"
+                    oninput="window.updateT7State('timestamp', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all"
+                    placeholder="5:35 PM · 12/14/21"
+                    value="${window.escapeHtml(t7.timestamp)}">
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                    <i data-lucide="smartphone" class="w-3 h-3"></i> Source
+                </label>
+                <input type="text" id="t7-source"
+                    oninput="window.updateT7State('source', this.value); window.debouncedRenderCanvas()"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-black focus:bg-white transition-all"
+                    placeholder="Twitter for iPhone"
+                    value="${window.escapeHtml(t7.source)}">
+            </div>
+
+            <!-- ── ENGAGEMENT METRICS ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Engagement Metrics</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Retweets</label>
+                        <input type="text" id="t7-retweets"
+                            oninput="window.updateT7State('retweets', this.value); window.debouncedRenderCanvas()"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:outline-none focus:border-black focus:bg-white transition-all"
+                            value="${window.escapeHtml(t7.retweets)}">
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Quote Tweets</label>
+                        <input type="text" id="t7-quote-tweets"
+                            oninput="window.updateT7State('quoteTweets', this.value); window.debouncedRenderCanvas()"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:outline-none focus:border-black focus:bg-white transition-all"
+                            value="${window.escapeHtml(t7.quoteTweets)}">
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Likes</label>
+                        <input type="text" id="t7-likes"
+                            oninput="window.updateT7State('likes', this.value); window.debouncedRenderCanvas()"
+                            class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:outline-none focus:border-black focus:bg-white transition-all"
+                            value="${window.escapeHtml(t7.likes)}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── COLORS ── -->
+            <div class="space-y-3 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Theme</label>
+                <!-- Quick theme presets -->
+                <div class="flex gap-2">
+                    <button onclick="window.applyT7Theme('dark')"
+                        class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all active:scale-95"
+                        style="background:#15202B;color:#E7E9EA;border-color:${t7.bgColor==='#15202B'?'#1D9BF0':'transparent'};">
+                        Twitter
+                    </button>
+                    <button onclick="window.applyT7Theme('black')"
+                        class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all active:scale-95"
+                        style="background:#000000;color:#E7E9EA;border-color:${t7.bgColor==='#000000'?'#1D9BF0':'transparent'};">
+                        Black
+                    </button>
+                    <button onclick="window.applyT7Theme('white')"
+                        class="flex-1 py-2 rounded-lg text-xs font-bold border-2 transition-all active:scale-95"
+                        style="background:#FFFFFF;color:#0F1419;border-color:${t7.bgColor==='#FFFFFF'?'#1D9BF0':'transparent'};">
+                        White
+                    </button>
+                </div>
+                <label class="text-[10px] font-bold text-gray-500 uppercase mt-2 block">Custom Colors</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>${renderColorPicker('Background', t7.bgColor, "window.updateT7State('bgColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Text', t7.textColor, "window.updateT7State('textColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Username', t7.usernameColor, "window.updateT7State('usernameColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Handle', t7.handleColor, "window.updateT7State('handleColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Timestamp', t7.timestampColor, "window.updateT7State('timestampColor','$VAL')")}</div>
+                    <div>${renderColorPicker('Metrics', t7.metricsColor, "window.updateT7State('metricsColor','$VAL')")}</div>
+                </div>
+            </div>
+
+            <!-- ── FONT SETTINGS ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Font Sizes</label>
+                <div class="space-y-2">
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Tweet Text</label>
+                        <input type="range" min="24" max="90" value="${t7.tweetFontSize}"
+                            oninput="window.updateT7State('tweetFontSize',parseFloat(this.value)); document.getElementById('t7-tweet-fs-display').textContent=this.value+'px'; window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t7-tweet-fs-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t7.tweetFontSize}px</div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] uppercase font-bold text-gray-400 block mb-1.5">Line Height</label>
+                        <input type="range" min="1.0" max="2.0" step="0.01" value="${t7.lineHeight}"
+                            oninput="window.updateT7State('lineHeight',parseFloat(this.value)); document.getElementById('t7-lh-display').textContent=parseFloat(this.value).toFixed(2); window.debouncedRenderCanvas()"
+                            class="w-full">
+                        <div id="t7-lh-display" class="text-[10px] text-gray-500 mt-1 text-center font-mono">${t7.lineHeight}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── OPTIONS ── -->
+            <div class="space-y-2 pt-4 border-t border-gray-100">
+                <label class="text-[10px] font-bold text-gray-500 uppercase">Options</label>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="t7-show-engagement-icons"
+                        ${t7.showEngagementIcons ? 'checked' : ''}
+                        onchange="window.updateT7State('showEngagementIcons',this.checked); window.debouncedRenderCanvas()"
+                        class="w-4 h-4">
+                    <label for="t7-show-engagement-icons" class="text-xs text-gray-600">Show Engagement Icons</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="t7-show-verified-badge"
+                        ${t7.showVerifiedBadge ? 'checked' : ''}
+                        onchange="window.updateT7State('showVerifiedBadge',this.checked); window.debouncedRenderCanvas()"
+                        class="w-4 h-4">
+                    <label for="t7-show-verified-badge" class="text-xs text-gray-600">Show Verified Badge</label>
+                </div>
+            </div>
+
+        </div>
+    `;
+    setTimeout(() => window.initializeIcons(container), 0);
+}
+
+// ── Template 7 theme presets ──────────────────────────────────────────────────
+function applyT7Theme(theme) {
+    const t7 = window.state.post.t7;
+    if (theme === 'dark') {
+        Object.assign(t7, {
+            bgColor: '#15202B', textColor: '#E7E9EA', usernameColor: '#E7E9EA',
+            handleColor: '#8B98A5', timestampColor: '#8B98A5', sourceColor: '#1D9BF0',
+            metricsColor: '#8B98A5', borderColor: 'rgba(255,255,255,0.12)', iconColor: '#8B98A5',
+        });
+    } else if (theme === 'black') {
+        Object.assign(t7, {
+            bgColor: '#000000', textColor: '#E7E9EA', usernameColor: '#E7E9EA',
+            handleColor: '#8B98A5', timestampColor: '#8B98A5', sourceColor: '#1D9BF0',
+            metricsColor: '#8B98A5', borderColor: 'rgba(255,255,255,0.15)', iconColor: '#8B98A5',
+        });
+    } else if (theme === 'white') {
+        Object.assign(t7, {
+            bgColor: '#FFFFFF', textColor: '#0F1419', usernameColor: '#0F1419',
+            handleColor: '#536471', timestampColor: '#536471', sourceColor: '#1D9BF0',
+            metricsColor: '#536471', borderColor: 'rgba(0,0,0,0.12)', iconColor: '#536471',
+        });
+    }
+    window.renderApp();
+}
+
 // Make globally available
 if (typeof window !== "undefined") {
   window.buildPresetsHtml = buildPresetsHtml;
@@ -3064,7 +3668,11 @@ if (typeof window !== "undefined") {
   window.renderTemplate3Editor = renderTemplate3Editor;
   window.renderTemplate4Editor = renderTemplate4Editor;
   window.renderTemplate5Editor = renderTemplate5Editor;
+  window.renderTemplate6Editor = renderTemplate6Editor;
+  window.renderTemplate7Editor = renderTemplate7Editor;
+  window.renderTemplate8Editor = renderTemplate8Editor;
   window.renderHighlightEditor = renderHighlightEditor;
   window.renderLibrary = renderLibrary;
   window.loadSystemTemplate = loadSystemTemplate;
+  window.applyT7Theme = applyT7Theme;
 }

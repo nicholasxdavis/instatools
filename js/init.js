@@ -71,14 +71,19 @@ function initializeIcons(container = null) {
     }
 }
 
+function getT7CanvasHeight() {
+    // Template 7 exports square (POST_WIDTH × POST_WIDTH)
+    return window.CONSTANTS.POST_WIDTH;
+}
 function handleResize() {
     if (!window.state || !window.CONSTANTS) return;
     const container = document.getElementById('preview-container');
     const wrapper = document.getElementById('scale-wrapper');
     if (container && wrapper) {
         const isMobile = window.innerWidth <= 768;
+        const isT7 = window.state.mode === 'post' && window.state.post && window.state.post.template === 'template7';
         const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
-        const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+        const targetH = isT7 ? getT7CanvasHeight() : (window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE);
         
         // Mobile: use tighter padding to give more room for the canvas
         const pad = isMobile ? 28 : 40;
@@ -110,8 +115,9 @@ function zoomIn() {
     const wrapper = document.getElementById('scale-wrapper');
     if (!container || !wrapper) return;
     
+    const isT7 = window.state.mode === 'post' && window.state.post && window.state.post.template === 'template7';
     const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
-    const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+    const targetH = isT7 ? getT7CanvasHeight() : (window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE);
     const isMobile = window.innerWidth <= 768;
     const pad = isMobile ? 28 : 40;
     
@@ -143,8 +149,9 @@ function zoomOut() {
     const wrapper = document.getElementById('scale-wrapper');
     if (!container || !wrapper) return;
     
+    const isT7 = window.state.mode === 'post' && window.state.post && window.state.post.template === 'template7';
     const targetW = window.state.mode === 'post' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.HIGHLIGHT_SIZE;
-    const targetH = window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+    const targetH = isT7 ? getT7CanvasHeight() : (window.state.mode === 'post' ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE);
     const isMobile = window.innerWidth <= 768;
     const pad = isMobile ? 28 : 40;
     

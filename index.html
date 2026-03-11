@@ -82,6 +82,31 @@
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Firebase Analytics -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyChtBlTGoFwF--I7kKXribYNRcysL3fCtU",
+        authDomain: "instatools-54cc2.firebaseapp.com",
+        projectId: "instatools-54cc2",
+        storageBucket: "instatools-54cc2.firebasestorage.app",
+        messagingSenderId: "495434365513",
+        appId: "1:495434365513:web:a188d962d71345bec1dd98",
+        measurementId: "G-JHTGMRHMQ4"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
 </head>
     <body class="bg-[#131314] text-gray-900 font-sans flex flex-col h-screen overflow-hidden selection:bg-black selection:text-white">
     
@@ -131,6 +156,23 @@
         </div>
     </div>
 
+    <!-- Support Us Popup -->
+    <div id="support-popup-overlay">
+        <div class="card">
+            <div class="text">
+                <div class="title">
+                    Support Instatools
+                </div>
+                <div class="info">
+                    Instatools doesn't rely on ads or trackers. We keep the platform free and privacy-focused by processing everything locally on your device. If you find Instatools helpful, consider supporting us to help keep it running!
+                </div>
+            </div>
+            <div class="buttons">
+                <div class="button" onclick="closeSupportPopup()">Maybe Later</div>
+                <div class="button button-primary" onclick="window.open('https://buymeacoffee.com/galore', '_blank'); closeSupportPopup();">Support Us</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Handle Bar (full-width, always visible on mobile) -->
     <button id="mobile-toggle-btn" class="mobile-toggle-button" onclick="toggleMobileSidebar()" aria-label="Toggle panel">

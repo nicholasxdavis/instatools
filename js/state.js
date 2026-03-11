@@ -15,7 +15,7 @@ const state = {
 
   // Post State
   post: {
-    template: "template1", // 'template1' | 'template2' | 'template3' | 'template4' | 'template5' | 'template6'
+    template: "template1", // 'template1' | 'template2' | 'template3' | 'template4' | 'template5' | 'template6' | 'template7' | 'template8'
     headline: "OBAMA CLAIMS [ALIENS] ARE {REAL}",
     caption: "He also denied that they're being held at Area 51",
     bgImage:
@@ -56,7 +56,7 @@ const state = {
       rightPosY: 3,
       rightScale: 100,
       imageSplit: 65,
-      fontFamily: "Archivo Black",
+      fontFamily: "Anton",
       customFontFamily: "",
       fontSize: 87,
       fontWeight: 400,
@@ -65,7 +65,7 @@ const state = {
       lineHeight: 0.85,
       letterSpacing: -0.02,
       bgColor: "#000000",
-      textAlign: "left",
+      textAlign: "center",
       paddingH: 20,
       paddingV: 20,
       showWatermark: false,
@@ -140,6 +140,103 @@ const state = {
       dotCount: 4,
       activeDot: 0,
       dotColor: "#FFFFFF",
+    },
+
+    // Template 8 state (Sports / Hurdels v2 — tuned for A.D. trade layout)
+    t8: {
+      headline: "WARRIORS TO LAND [A.D] IN THE [NEXT WEEK]",
+      bgImage:
+        "https://athlonsports.com/.image/w_3840,q_auto:good,c_limit/MjE0MDEzMTY3ODY3NTM3MjQ1/anthony-davis.jpg?arena_f_auto",
+      imagePosX: 31,
+      imagePosY: 14,
+      imageScale: 100,
+      bgOpacity: 1.0,
+      // Cinematic multi-stop gradient (bottom-heavy)
+      gradientStart: 22, // % from top where darkening begins (0-60)
+      gradientStrength: 0.96, // max darkness reached at the very bottom (0-1)
+      // Optional flat dim overlay
+      overlayColor: "#000000",
+      overlayOpacity: 0.08,
+      // Headline
+      headlineColor: "#FFFFFF",
+      highlightColor: "#3B82F6",
+      fontFamily: "Anton",
+      customFontFamily: "",
+      fontSize: 139,
+      fontWeight: 400,
+      textAlign: "center",
+      lineHeight: 1.0,
+      letterSpacing: 0.038,
+      paddingH: 44, // horizontal padding (px)
+      paddingBottom: 114, // bottom padding to leave room for swipe+dots (px)
+      // Brand text (top-left)
+      showBrand: true,
+      brandText: "INSTATOOLS",
+      brandColor: "#FFFFFF",
+      brandFontSize: 28,
+      brandFontFamily: "Archivo Black",
+      brandItalic: true,
+      // Circle inset (top-right area)
+      showCircle: true,
+      circleImage:
+        "https://a.espncdn.com/photo/2024/1226/r1431856_1296x729_16-9.jpg",
+      circlePosX: 77, // % from left (center of circle)
+      circlePosY: 51, // % from top  (center of circle)
+      circleSize: 400, // diameter in px at canvas scale
+      circleBorderColor: "#EAB308",
+      circleBorderWidth: 9,
+      // Swipe CTA (shown by default for this layout)
+      showSwipe: true,
+      swipeText: "SWIPE",
+      swipeColor: "#FFFFFF",
+      swipeFontSize: 30,
+      swipeFontFamily: "Bebas Neue",
+      // Pagination dots
+      showDots: false,
+      dotCount: 4,
+      activeDot: 0,
+      dotColor: "#FFFFFF",
+    },
+
+    // Template 7 state (Twitter/X post style: profile pic, username, handle, tweet text, timestamp, engagement metrics)
+    // Canvas is 1080×1080 square — all sizes are calibrated to fill that canvas.
+    t7: {
+      profileImageUrl: "",
+      username: "erin",
+      handle: "@ErinSauriol",
+      tweetText: "Best friends see each other 3 times a year and have no pictures together",
+      timestamp: "5:35 PM · 12/14/21",
+      source: "Twitter for iPhone",
+      retweets: "27K",
+      quoteTweets: "6,808",
+      likes: "255K",
+      bgColor: "#15202B",
+      textColor: "#E7E9EA",
+      usernameColor: "#E7E9EA",
+      handleColor: "#8B98A5",
+      timestampColor: "#8B98A5",
+      sourceColor: "#1D9BF0",
+      metricsColor: "#8B98A5",
+      borderColor: "rgba(255,255,255,0.12)",
+      fontFamily: "system-ui",
+      customFontFamily: "",
+      usernameFontSize: 36,
+      handleFontSize: 32,
+      tweetFontSize: 62,
+      timestampFontSize: 30,
+      metricsFontSize: 30,
+      usernameFontWeight: 700,
+      tweetFontWeight: 400,
+      lineHeight: 1.47,
+      profileImageSize: 160,
+      paddingH: 60,
+      paddingV: 60,
+      spacingBetweenElements: 24,
+      showVerifiedBadge: true,
+      verifiedBadgeColor: "#1DA1F2",
+      showEngagementIcons: true,
+      iconColor: "#8B98A5",
+      iconHoverColor: "#1DA1F2",
     },
 
     // Template 4 state (Magazine Cover style: XXL-inspired, full bleed + brand badge + swipe + dots)
@@ -416,6 +513,19 @@ const SYSTEM_TEMPLATES = [
     previewImage: "src/ui/templates/template6.png",
     templateId: "template6",
   },
+  {
+    id: "template7",
+    name: "Twitter/X Post",
+    previewImage: "src/ui/templates/template7.png",
+    templateId: "template7",
+  },
+  {
+    id: "template8",
+    name: "Sports (Hurdels 2)",
+    // Dedicated preview image for template8
+    previewImage: "src/ui/templates/template8.png",
+    templateId: "template8",
+  },
 ];
 
 // Icon mapping for highlight generator
@@ -461,6 +571,8 @@ const DEFAULT_TEMPLATE_STATES = {
   t4: JSON.parse(JSON.stringify(state.post.t4)),
   t5: JSON.parse(JSON.stringify(state.post.t5)),
   t6: JSON.parse(JSON.stringify(state.post.t6)),
+  t7: JSON.parse(JSON.stringify(state.post.t7)),
+  t8: JSON.parse(JSON.stringify(state.post.t8)),
 };
 
 // Make globally available

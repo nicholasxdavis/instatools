@@ -2493,6 +2493,112 @@
         }
 
         /* ──────────────────────────────────────────────────────────────────────── */
+        /* SUPPORT POPUP STYLES                                                      */
+        /* ──────────────────────────────────────────────────────────────────────── */
+        #support-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 9998;
+            
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            font-family: "Source Sans Pro", sans-serif;
+            justify-content: center;
+            margin: 0;
+            
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #support-popup-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #support-popup-overlay .card {
+            align-items: center;
+            background-color: #1e1e1e;
+            border-radius: 20px;
+            box-shadow: 0 0.4px 3.6px rgba(0, 0, 0, 0.004),
+                0 1px 8.5px rgba(0, 0, 0, 0.01), 0 1.9px 15.7px rgba(0, 0, 0, 0.019),
+                0 3.4px 28.2px rgba(0, 0, 0, 0.03), 0 6.3px 54.4px rgba(0, 0, 0, 0.047),
+                0 15px 137px rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 353px;
+            padding-top: 24px;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        #support-popup-overlay .text {
+            box-sizing: border-box;
+            padding: 0 20px 20px;
+            width: 100%;
+        }
+
+        #support-popup-overlay .title {
+            align-items: center;
+            color: #ffffff;
+            display: flex;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        #support-popup-overlay .info {
+            color: #dddddd;
+            line-height: 1.4;
+        }
+
+        #support-popup-overlay .buttons {
+            display: flex;
+            margin-top: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #support-popup-overlay .button {
+            align-items: center;
+            background: #535353;
+            color: #dddddd;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            height: 50px;
+            justify-content: center;
+            margin: 0 5px 28px 20px;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.2s, filter 0.2s;
+        }
+
+        #support-popup-overlay .button:hover {
+            background: #666666;
+        }
+
+        #support-popup-overlay .button:last-child {
+            margin: 0 20px 28px 5px;
+        }
+
+        #support-popup-overlay .button-primary {
+            background: linear-gradient(to right, #d53478, #b334a0);
+            color: #fcf5f9;
+        }
+
+        #support-popup-overlay .button-primary:hover {
+            filter: brightness(1.1);
+            background: linear-gradient(to right, #d53478, #b334a0);
+        }
+
+        /* ──────────────────────────────────────────────────────────────────────── */
         /* MOBILE-SPECIFIC POLISH                                                   */
         /* ──────────────────────────────────────────────────────────────────────── */
         @media (max-width: 768px) {
@@ -2505,6 +2611,19 @@
 
             /* Welcome popup buttons – taller touch targets */
             #welcome-popup-overlay .button {
+                height: 52px !important;
+                border-radius: 12px !important;
+                font-size: 15px !important;
+            }
+
+            /* Support popup – full-width card */
+            #support-popup-overlay .card {
+                width: calc(100vw - 32px) !important;
+                max-width: 380px !important;
+            }
+
+            /* Support popup buttons – taller touch targets */
+            #support-popup-overlay .button {
                 height: 52px !important;
                 border-radius: 12px !important;
                 font-size: 15px !important;

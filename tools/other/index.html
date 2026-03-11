@@ -291,6 +291,7 @@
 
       .cta-button:hover {
         background-color: #1a1a1a;
+        color: #d73876;
       }
       
       .cta-button:active {
@@ -475,7 +476,49 @@
             </div>
           </div>
 
-          <!-- ── Card 3: Profile Previewer ── -->
+          <!-- ── Card 3: Instamark (Watermark Tool) ── -->
+          <div class="tool-card">
+            <div class="tool-card-header">
+              <div class="tool-card-header-dots"></div>
+              <!-- Watermark illustration -->
+              <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 90px; height: 90px; background: #1e1e1e; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
+                  <!-- Photo background -->
+                  <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(213,52,120,0.2) 0%, rgba(179,52,160,0.2) 50%, rgba(235,111,90,0.15) 100%);"></div>
+                  <!-- Mock image bars -->
+                  <div style="position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
+                    <div style="height: 60%; background: linear-gradient(160deg, rgba(213,52,120,0.25), rgba(235,111,90,0.2));"></div>
+                    <div style="height: 40%; background: rgba(255,255,255,0.04);"></div>
+                  </div>
+                  <!-- Shield / watermark icon -->
+                  <svg style="position:relative;z-index:1;opacity:0.9;" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d53478" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+              </div>
+            </div>
+            <div class="tool-card-body">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                  <h2 class="tool-card-title">Instamark</h2>
+                  <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(221,221,221,0.35); background: #535353; border-radius: 4px; padding: 2px 7px; line-height: 1.5; flex-shrink: 0;">New</span>
+                </div>
+                <p class="tool-card-desc">Apply custom watermarks to any image. Control opacity, size, and position with a live preview — then export in full resolution.</p>
+              </div>
+              <div class="tool-card-tags">
+                <span class="tool-tag">Watermark</span>
+                <span class="tool-tag">Branding</span>
+                <span class="tool-tag">Export</span>
+              </div>
+              <div class="tool-card-divider"></div>
+              <a href="../instamark/index.html" class="tool-launch-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fcf5f9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+                Open Tool
+              </a>
+            </div>
+          </div>
+
+          <!-- ── Card 4: Profile Previewer ── -->
           <div class="tool-card">
             <div class="tool-card-header">
               <div class="tool-card-header-dots"></div>

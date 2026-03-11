@@ -96,8 +96,8 @@ function renderTabs() {
     let tabs;
     if (window.state.mode === 'post') {
         const tmpl = window.state.post ? window.state.post.template : null;
-        const isT2orT3 = tmpl === 'template2' || tmpl === 'template3' || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6';
-        // T2/T3/T4/T5/T6 have no separate Design tab — everything is in the Editor tab
+        const isT2orT3 = tmpl === 'template2' || tmpl === 'template3' || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6' || tmpl === 'template7' || tmpl === 'template8';
+        // T2/T3/T4/T5/T6/T7/T8 have no separate Design tab — everything is in the Editor tab
         tabs = isT2orT3 ? ['editor', 'templates'] : ['editor', 'design', 'templates'];
     } else {
         // Highlight mode: only Editor tab — no Templates tab needed
@@ -122,7 +122,7 @@ function renderSidebarContent() {
             if (window.state.mode === 'post') {
                 const tmpl = window.state.post.template;
                 const isT2orT3 = tmpl === 'template2' || tmpl === 'template3';
-                const isNoDesignTab = isT2orT3 || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6';
+                const isNoDesignTab = isT2orT3 || tmpl === 'template4' || tmpl === 'template5' || tmpl === 'template6' || tmpl === 'template7' || tmpl === 'template8';
 
                 // Guard: T2/T3/T4/T5 have no Design tab — silently fall back to Editor
                 if (isNoDesignTab && window.state.activeTab === 'design') {
@@ -135,6 +135,8 @@ function renderSidebarContent() {
                     else if (tmpl === 'template4') window.renderTemplate4Editor(container);
                     else if (tmpl === 'template5') window.renderTemplate5Editor(container);
                     else if (tmpl === 'template6') window.renderTemplate6Editor(container);
+                    else if (tmpl === 'template7') window.renderTemplate7Editor(container);
+                    else if (tmpl === 'template8') window.renderTemplate8Editor(container);
                     else window.renderPostEditor(container);
                 }
                 else if (window.state.activeTab === 'templates') window.renderPostTemplates(container);
@@ -242,7 +244,10 @@ function renderCanvas() {
                 }).join('');
 
                 root.style.width = `${window.CONSTANTS.POST_WIDTH}px`;
-                root.style.height = `${window.CONSTANTS.POST_HEIGHT}px`;
+                // Template 7 should be a perfect square (like a real tweet screenshot),
+                // so we force height = width for that template only.
+                const isTemplate7 = window.state.post && window.state.post.template === 'template7';
+                root.style.height = `${isTemplate7 ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.POST_HEIGHT}px`;
 
                 // â”€â”€ TEMPLATE 2 CANVAS (Clean: white top bar + full image + watermark BL) â”€â”€
                 if (window.state.post.template === 'template2') {
@@ -328,9 +333,10 @@ function renderCanvas() {
                 }
 
                 // ── TEMPLATE 5 CANVAS (Dual Image: two side-by-side photos + colored headline + arrow + dots) ──
-                // ── TEMPLATE 6 CANVAS (Sports / Hurdels: full-bleed bg + cinematic gradient + circle inset + brand text + headline + >>> SWIPE >>> + dots) ──
-                if (window.state.post.template === 'template6') {
-            const t6 = window.state.post.t6;
+                // ── TEMPLATE 6/8 CANVAS (Sports / Hurdels: full-bleed bg + cinematic gradient + circle inset + brand text + headline + >>> SWIPE >>> + dots) ──
+                if (window.state.post.template === 'template6' || window.state.post.template === 'template8') {
+            const isT8 = window.state.post.template === 'template8';
+            const t6 = isT8 ? window.state.post.t8 : window.state.post.t6;
             const safeBg = window.escapeHtml(window.getCorsProxyUrl(t6.bgImage));
             const safeCircle = t6.circleImage ? window.escapeHtml(window.getCorsProxyUrl(t6.circleImage)) : '';
 
@@ -371,10 +377,23 @@ function renderCanvas() {
                 ? `<div style="display:flex;align-items:center;justify-content:center;gap:5px;">${t6DotsInner}</div>`
                 : '';
 
-            // ── >>> SWIPE >>> ──
-            // Decorative right-pointing chevrons (›) flank the swipe word
+            // ── SWIPE CTA ──
+            // Template 6 keeps decorative chevrons; template 8 is text-only.
             const decoSize   = Math.round(t6.swipeFontSize * 0.52);
-            const swipeBlock = t6.showSwipe ? `
+            let swipeBlock = "";
+            if (t6.showSwipe) {
+                if (isT8) {
+                    swipeBlock = `
+                <div
+                    data-ctx="swipe"
+                    title="Click to edit swipe text"
+                    ondblclick="window.focusSidebarControl('t8-swipe-text')"
+                    style="display:flex;align-items:center;justify-content:center;cursor:pointer;pointer-events:auto;"
+                >
+                    <span style="font-family:'${t6.swipeFontFamily}',sans-serif;color:${t6.swipeColor};font-size:${t6.swipeFontSize}px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;line-height:1;">${window.escapeHtml(t6.swipeText)}</span>
+                </div>`;
+                } else {
+                    swipeBlock = `
                 <div
                     data-ctx="swipe"
                     title="Click to edit swipe text"
@@ -384,7 +403,9 @@ function renderCanvas() {
                     <span style="color:${t6.swipeColor};opacity:0.45;font-size:${decoSize}px;letter-spacing:5px;font-family:sans-serif;line-height:1;">›&nbsp;›&nbsp;›</span>
                     <span style="font-family:'${t6.swipeFontFamily}',sans-serif;color:${t6.swipeColor};font-size:${t6.swipeFontSize}px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;line-height:1;">${window.escapeHtml(t6.swipeText)}</span>
                     <span style="color:${t6.swipeColor};opacity:0.45;font-size:${decoSize}px;letter-spacing:5px;font-family:sans-serif;line-height:1;">›&nbsp;›&nbsp;›</span>
-                </div>` : '';
+                </div>`;
+                }
+            }
 
                     root.innerHTML = `
                         <div style="position:absolute;inset:0;overflow:hidden;background:#000;">
@@ -428,7 +449,7 @@ function renderCanvas() {
                             <div
                                 data-ctx="brand"
                                 title="Click to edit brand text"
-                                ondblclick="window.focusSidebarControl('t6-brand-text')"
+                                ondblclick="window.focusSidebarControl('${isT8 ? 't8' : 't6'}-brand-text')"
                                 style="position:absolute;top:40px;left:44px;z-index:30;cursor:pointer;"
                             >
                                 <span style="font-family:'${t6.brandFontFamily}',sans-serif;font-size:${t6.brandFontSize}px;font-weight:900;font-style:${t6.brandItalic ? 'italic' : 'normal'};color:${t6.brandColor};letter-spacing:0.03em;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,0.6);">${window.escapeHtml(t6.brandText)}</span>
@@ -440,7 +461,7 @@ function renderCanvas() {
                                 <h1
                                     data-ctx="headline"
                                     title="Click to edit headline"
-                                    ondblclick="window.focusSidebarControl('t6-headline')"
+                                    ondblclick="window.focusSidebarControl('${isT8 ? 't8' : 't6'}-headline')"
                                     style="margin:0;padding:0;align-self:center;font-family:'${t6.customFontFamily || t6.fontFamily}',sans-serif;font-size:${t6.fontSize}px;font-weight:${t6.fontWeight};line-height:${t6.lineHeight};letter-spacing:${t6.letterSpacing}em;text-transform:uppercase;text-align:${t6.textAlign || 'center'};white-space:pre-wrap;text-shadow:0px 4px 15px rgba(0,0,0,0.8);word-break:break-word;cursor:pointer;pointer-events:auto;"
                                 >${t6HeadlineHTML}</h1>
                             </div>
@@ -451,6 +472,104 @@ function renderCanvas() {
                                 ${t6DotsHtml}
                             </div>
 
+                        </div>
+                    `;
+                    return; // Done — skip template1 rendering below
+                }
+
+                // ── TEMPLATE 7 CANVAS (Twitter/X Post: profile pic, username, handle, tweet text, timestamp, engagement metrics) ──
+                if (window.state.post.template === 'template7') {
+                    const t7 = window.state.post.t7;
+                    const safeProfileImg = t7.profileImageUrl ? window.escapeHtml(window.getCorsProxyUrl(t7.profileImageUrl)) : '';
+                    const safeUsername = window.escapeHtml(t7.username);
+                    const safeHandle = window.escapeHtml(t7.handle);
+                    const safeTweetText = window.escapeHtml(t7.tweetText);
+                    const safeTimestamp = window.escapeHtml(t7.timestamp);
+                    const safeSource = window.escapeHtml(t7.source);
+                    
+                    // ── Icons from src/ui SVG files (stroke color injected) ──────────────
+                    const t7BorderColor = t7.borderColor || 'rgba(255,255,255,0.12)';
+                    const iconW = Math.round(t7.metricsFontSize * 1.25);
+                    const ic = t7.iconColor || '#8B98A5';
+                    const retweetIcon = `<svg width="${iconW}" height="${iconW}" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="${ic}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M52.94,42.93V18.3a5.54,5.54,0,0,0-5.54-5.54H11.83"/><path d="M11.83,20.14V44.77a5.54,5.54,0,0,0,5.54,5.54H52.94"/><polyline points="4.15 26.39 12.09 20.14 19.51 26.88"/><polyline points="60.36 36.12 52.91 42.94 45 36.76"/></svg>`;
+                    const likeIcon    = `<svg width="${iconW}" height="${iconW}" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="${ic}" stroke-width="3"><path d="M9.06,25C7.68,17.3,12.78,10.63,20.73,10c7-.55,10.47,7.93,11.17,9.55a.13.13,0,0,0,.25,0c3.25-8.91,9.17-9.29,11.25-9.5C49,9.45,56.51,13.78,55,23.87c-2.16,14-23.12,29.81-23.12,29.81S11.79,40.05,9.06,25Z"/></svg>`;
+                    const shareIcon   = `<svg width="${iconW}" height="${iconW}" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="${ic}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M53.5,34.06V53.33a2.11,2.11,0,0,1-2.12,2.09H12.62a2.11,2.11,0,0,1-2.12-2.09V34.06"/><polyline points="42.61 18.11 32 7.5 21.39 18.11"/><line x1="32" y1="7.5" x2="32" y2="46.39"/></svg>`;
+
+                    // Verified badge: x-badge.png image
+                    const badgeSz = Math.max(1, Math.round(t7.usernameFontSize * 1.1) - 1); // 1px smaller
+                    const verifiedBadgeHtml = t7.showVerifiedBadge
+                        ? `<img src="src/ui/x-badge.png" style="width:${badgeSz}px;height:${badgeSz}px;vertical-align:middle;display:inline-block;margin-left:4px;" alt="verified">`
+                        : '';
+
+                    // sp = spacing between elements  
+                    const sp = t7.spacingBetweenElements || 20;
+                    const smallTopGap = 5;
+                    root.innerHTML = `
+                        <div style="position:absolute;inset:0;background:${t7.bgColor};display:flex;flex-direction:column;padding:${t7.paddingV}px ${t7.paddingH}px;font-family:'${t7.customFontFamily || t7.fontFamily}',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;overflow:hidden;">
+                            
+                            <!-- Header: Profile Picture + Username/Handle (stacked) + Three Dots -->
+                            <div style="display:flex;align-items:center;flex-shrink:0;margin-top:${smallTopGap}px;margin-bottom:${sp}px;">
+                                <!-- Profile Picture -->
+                                <div
+                                    data-ctx="profile-image"
+                                    title="Click to edit profile picture"
+                                    ondblclick="window.focusSidebarControl('t7-profile-image-url')"
+                                    style="width:${t7.profileImageSize}px;height:${t7.profileImageSize}px;border-radius:50%;overflow:hidden;flex-shrink:0;margin-right:16px;cursor:pointer;background:#2D3741;"
+                                >
+                                    ${safeProfileImg 
+                                        ? `<img src="${safeProfileImg}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" alt="Profile">`
+                                        : `<svg width="${t7.profileImageSize}" height="${t7.profileImageSize}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="38" r="22" fill="rgba(255,255,255,0.25)"/><ellipse cx="50" cy="85" rx="35" ry="25" fill="rgba(255,255,255,0.25)"/></svg>`
+                                    }
+                                </div>
+                                <!-- Username + Handle stacked -->
+                                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px;">
+                                    <div style="display:flex;align-items:center;line-height:1.2;">
+                                        <span data-ctx="username" title="Click to edit username" ondblclick="window.focusSidebarControl('t7-username')"
+                                            style="font-size:${t7.usernameFontSize}px;font-weight:${t7.usernameFontWeight};color:${t7.usernameColor};cursor:pointer;"
+                                        >${safeUsername}</span>${verifiedBadgeHtml}
+                                    </div>
+                                    <span data-ctx="handle" title="Click to edit handle" ondblclick="window.focusSidebarControl('t7-handle')"
+                                        style="font-size:${t7.handleFontSize}px;color:${t7.handleColor};cursor:pointer;line-height:1.2;"
+                                    >${safeHandle}</span>
+                                </div>
+                                <!-- Three dots -->
+                                <div style="color:${ic};font-size:${Math.round(t7.usernameFontSize*0.9)}px;letter-spacing:3px;padding-left:12px;line-height:1;user-select:none;font-weight:700;">•••</div>
+                            </div>
+                            
+                            <!-- Tweet Text -->
+                            <div data-ctx="tweet-text" title="Click to edit tweet text" ondblclick="window.focusSidebarControl('t7-tweet-text')"
+                                style="font-size:${t7.tweetFontSize}px;font-weight:${t7.tweetFontWeight};color:${t7.textColor};line-height:${t7.lineHeight};white-space:pre-wrap;word-wrap:break-word;cursor:pointer;margin-bottom:${sp}px;"
+                            >${safeTweetText}</div>
+                            
+                            <!-- Timestamp + Source -->
+                            <div style="display:flex;align-items:center;gap:6px;color:${t7.timestampColor};font-size:${t7.timestampFontSize}px;flex-shrink:0;margin-top:5px;margin-bottom:${sp}px;">
+                                <span data-ctx="timestamp" title="Click to edit timestamp" ondblclick="window.focusSidebarControl('t7-timestamp')" style="cursor:pointer;">${safeTimestamp}</span>
+                                <span>·</span>
+                                <span data-ctx="source" title="Click to edit source" ondblclick="window.focusSidebarControl('t7-source')" style="color:${t7.sourceColor};text-decoration:underline;cursor:pointer;">${safeSource}</span>
+                            </div>
+                            
+                            <!-- Engagement Metrics: bold numbers + gray labels -->
+                            <div style="display:flex;align-items:center;gap:24px;padding-top:${Math.round(sp*0.7)+5}px;padding-bottom:${Math.round(sp*0.7)}px;border-top:1px solid ${t7BorderColor};flex-shrink:0;">
+                                <span style="font-size:${t7.metricsFontSize}px;">
+                                    <strong style="color:${t7.textColor};font-weight:700;">${window.escapeHtml(t7.retweets)}</strong><span style="color:${t7.metricsColor};"> Retweets</span>
+                                </span>
+                                <span style="font-size:${t7.metricsFontSize}px;">
+                                    <strong style="color:${t7.textColor};font-weight:700;">${window.escapeHtml(t7.quoteTweets)}</strong><span style="color:${t7.metricsColor};"> Quote Tweets</span>
+                                </span>
+                                <span style="font-size:${t7.metricsFontSize}px;">
+                                    <strong style="color:${t7.textColor};font-weight:700;">${window.escapeHtml(t7.likes)}</strong><span style="color:${t7.metricsColor};"> Likes</span>
+                                </span>
+                            </div>
+                            
+                            <!-- Action Icons row -->
+                            ${t7.showEngagementIcons ? `
+                            <div style="display:flex;align-items:center;justify-content:space-around;padding-top:${Math.round(sp*0.7)}px;border-top:1px solid ${t7BorderColor};flex-shrink:0;">
+                                <img src="src/ui/comment.png" alt="Reply" style="width:${iconW}px;height:${iconW}px;filter:brightness(0) saturate(100%) invert(73%) sepia(6%) saturate(356%) hue-rotate(172deg) brightness(91%) contrast(88%);">
+                                ${retweetIcon}
+                                ${likeIcon}
+                                ${shareIcon}
+                            </div>` : ''}
+                            
                         </div>
                     `;
                     return; // Done — skip template1 rendering below

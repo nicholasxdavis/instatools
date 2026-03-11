@@ -1081,9 +1081,10 @@ async function exportT5(ctx, state, W, H) {
     }
 }
 
-// ─── TEMPLATE 6 (Sports / Hurdels) ───────────────────────────────────────────
+// ─── TEMPLATE 6 / 8 (Sports / Hurdels variants) ─────────────────────────────
 async function exportT6(ctx, state, W, H) {
-    const t6 = state.post.t6;
+    const isT8 = state.post.template === 'template8';
+    const t6 = isT8 ? state.post.t8 : state.post.t6;
     const PAD_H    = t6.paddingH    ?? 44;
     const PAD_BOT  = t6.paddingBottom ?? 120;
 
@@ -1281,26 +1282,34 @@ async function exportT6(ctx, state, W, H) {
         ctx.textBaseline = 'top';
         ctx.textAlign    = 'center';
 
-        // Left deco (faded)
-        ctx.save();
-        ctx.globalAlpha = 0.45;
-        ctx.font        = `${decoSz}px sans-serif`;
-        setLS(ctx, 5);
-        ctx.fillText(decoTxt, W / 2 - 80, navY6 + (SW_FS6 - decoSz) / 2);
-        ctx.restore();
+        if (isT8) {
+            // Template 8: text-only SWIPE CTA (no chevrons)
+            ctx.font = `700 ${SW_FS6}px "${swFF}", sans-serif`;
+            setLS(ctx, 0.22 * SW_FS6);
+            ctx.fillText((t6.swipeText || 'SWIPE').toUpperCase(), W / 2, navY6);
+        } else {
+            // Template 6: SWIPE with decorative chevrons on both sides
+            // Left deco (faded)
+            ctx.save();
+            ctx.globalAlpha = 0.45;
+            ctx.font        = `${decoSz}px sans-serif`;
+            setLS(ctx, 5);
+            ctx.fillText(decoTxt, W / 2 - 80, navY6 + (SW_FS6 - decoSz) / 2);
+            ctx.restore();
 
-        // Center swipe word
-        ctx.font = `700 ${SW_FS6}px "${swFF}", sans-serif`;
-        setLS(ctx, 0.22 * SW_FS6);
-        ctx.fillText((t6.swipeText || 'SWIPE').toUpperCase(), W / 2, navY6);
+            // Center swipe word
+            ctx.font = `700 ${SW_FS6}px "${swFF}", sans-serif`;
+            setLS(ctx, 0.22 * SW_FS6);
+            ctx.fillText((t6.swipeText || 'SWIPE').toUpperCase(), W / 2, navY6);
 
-        // Right deco (faded)
-        ctx.save();
-        ctx.globalAlpha = 0.45;
-        ctx.font        = `${decoSz}px sans-serif`;
-        setLS(ctx, 5);
-        ctx.fillText(decoTxt, W / 2 + 80, navY6 + (SW_FS6 - decoSz) / 2);
-        ctx.restore();
+            // Right deco (faded)
+            ctx.save();
+            ctx.globalAlpha = 0.45;
+            ctx.font        = `${decoSz}px sans-serif`;
+            setLS(ctx, 5);
+            ctx.fillText(decoTxt, W / 2 + 80, navY6 + (SW_FS6 - decoSz) / 2);
+            ctx.restore();
+        }
 
         ctx.restore();
         navY6 += SW_H6 + (t6.showDots ? 10 : 0);
@@ -1310,6 +1319,208 @@ async function exportT6(ctx, state, W, H) {
         const cnt6 = Math.max(1, Math.min(10, t6.dotCount  || 4));
         const act6 = Math.max(0, Math.min(cnt6 - 1, t6.activeDot || 0));
         drawDots(ctx, W / 2, navY6, cnt6, act6, DOT_H6, 20, 7, 5, t6.dotColor || '#FFF', 1, 0.45);
+    }
+}
+
+// ─── Load an SVG string as a canvas-drawable Image ────────────────────────────
+async function loadSvgImg(svgStr) {
+    return new Promise(resolve => {
+        const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const img  = new Image();
+        img.onload  = () => { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+        img.src = url;
+    });
+}
+
+// ─── TEMPLATE 7 (Twitter/X Post — 1080×1080 square) ──────────────────────────
+async function exportT7(ctx, state, W, H) {
+    const t7 = state.post.t7;
+
+    const profileImg = t7.profileImageUrl ? await loadImg(t7.profileImageUrl) : null;
+
+    const ff = t7.customFontFamily || t7.fontFamily || 'system-ui';
+    const ffs = `"${ff}",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif`;
+    await Promise.all([
+        loadFont(`${t7.usernameFontWeight} ${t7.usernameFontSize}px ${ffs}`),
+        loadFont(`${t7.tweetFontWeight} ${t7.tweetFontSize}px ${ffs}`),
+        loadFont(`${t7.timestampFontSize}px ${ffs}`),
+        loadFont(`${t7.metricsFontSize}px ${ffs}`),
+    ]);
+
+    const PAD_H       = t7.paddingH         || 60;
+    const PAD_V       = t7.paddingV         || 60;
+    const PROF        = t7.profileImageSize  || 160;
+    const U_FS        = t7.usernameFontSize  || 36;
+    const U_FW        = t7.usernameFontWeight|| 700;
+    const H_FS        = t7.handleFontSize    || 32;
+    const TW_FS       = t7.tweetFontSize     || 62;
+    const TW_FW       = t7.tweetFontWeight   || 400;
+    const TW_LH       = t7.lineHeight        || 1.47;
+    const TS_FS       = t7.timestampFontSize || 30;
+    const M_FS        = t7.metricsFontSize   || 30;
+    const SP          = t7.spacingBetweenElements || 24;
+    const borderColor = t7.borderColor       || 'rgba(255,255,255,0.12)';
+    const ic          = t7.iconColor         || '#8B98A5';
+    const iconDrawH   = Math.round(M_FS * 1.25);
+    const ICON_PAD    = Math.round(SP * 0.7);
+
+    // ── Load icon SVGs from src/ui files (colored with iconColor) ────────────
+    const coloredRetweetSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="${ic}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M52.94,42.93V18.3a5.54,5.54,0,0,0-5.54-5.54H11.83"/><path d="M11.83,20.14V44.77a5.54,5.54,0,0,0,5.54,5.54H52.94"/><polyline points="4.15 26.39 12.09 20.14 19.51 26.88"/><polyline points="60.36 36.12 52.91 42.94 45 36.76"/></svg>`;
+    const coloredHeartSvg   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="${ic}" stroke-width="3"><path d="M9.06,25C7.68,17.3,12.78,10.63,20.73,10c7-.55,10.47,7.93,11.17,9.55a.13.13,0,0,0,.25,0c3.25-8.91,9.17-9.29,11.25-9.5C49,9.45,56.51,13.78,55,23.87c-2.16,14-23.12,29.81-23.12,29.81S11.79,40.05,9.06,25Z"/></svg>`;
+    const coloredShareSvg   = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="${ic}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M53.5,34.06V53.33a2.11,2.11,0,0,1-2.12,2.09H12.62a2.11,2.11,0,0,1-2.12-2.09V34.06"/><polyline points="42.61 18.11 32 7.5 21.39 18.11"/><line x1="32" y1="7.5" x2="32" y2="46.39"/></svg>`;
+
+    const [retweetIconImg, heartIconImg, shareIconImg, commentIconImg, xBadgeImg] = await Promise.all([
+        loadSvgImg(coloredRetweetSvg),
+        loadSvgImg(coloredHeartSvg),
+        loadSvgImg(coloredShareSvg),
+        loadImg('src/ui/comment.png'),
+        t7.showVerifiedBadge ? loadImg('src/ui/x-badge.png') : Promise.resolve(null),
+    ]);
+
+    // ── Background ────────────────────────────────────────────────────────────
+    ctx.fillStyle = t7.bgColor || '#15202B';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.textBaseline = 'top';
+    let y = PAD_V + 5; // small top gap above profile/username/dots
+
+    // ── 1. Header ─────────────────────────────────────────────────────────────
+    const uLineH  = Math.round(U_FS * 1.3);
+    const hLineH  = Math.round(H_FS * 1.3);
+    const headerH = Math.max(PROF, uLineH + hLineH);
+
+    // Profile circle
+    const profileCX = PAD_H + PROF / 2;
+    const profileCY = y + headerH / 2;
+    if (profileImg) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(profileCX, profileCY, PROF / 2, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(profileImg, PAD_H, profileCY - PROF / 2, PROF, PROF);
+        ctx.restore();
+    } else {
+        ctx.save();
+        ctx.fillStyle = '#2D3741';
+        ctx.beginPath();
+        ctx.arc(profileCX, profileCY, PROF / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.beginPath(); ctx.arc(profileCX, profileCY - PROF * 0.12, PROF * 0.22, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(profileCX, profileCY + PROF * 0.25, PROF * 0.32, PROF * 0.22, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+    }
+
+    // Username + handle + verified badge
+    const nameX        = PAD_H + PROF + 16;
+    const textBlockTop = profileCY - (uLineH + hLineH) / 2;
+    ctx.save();
+    ctx.textBaseline = 'top';
+    ctx.font = `${U_FW} ${U_FS}px ${ffs}`;
+    ctx.fillStyle = t7.usernameColor || '#E7E9EA';
+    ctx.fillText(t7.username || 'erin', nameX, textBlockTop);
+    // x-badge.png for verified badge
+    if (t7.showVerifiedBadge && xBadgeImg) {
+        const bSz = Math.max(1, Math.round(U_FS * 1.1) - 1); // 1px smaller
+        const usernameW = ctx.measureText(t7.username || 'erin').width;
+        ctx.drawImage(xBadgeImg, nameX + usernameW + 6, textBlockTop, bSz, bSz);
+    }
+    ctx.font = `${H_FS}px ${ffs}`;
+    ctx.fillStyle = t7.handleColor || '#8B98A5';
+    ctx.fillText(t7.handle || '@ErinSauriol', nameX, textBlockTop + uLineH + 5); // Added 5px gap here too to match preview
+    // Three dots (top-right)
+    ctx.font = `700 ${Math.round(U_FS * 0.9)}px ${ffs}`;
+    ctx.fillStyle = ic;
+    ctx.textAlign = 'right';
+    ctx.fillText('•••', W - PAD_H, textBlockTop);
+    ctx.textAlign = 'left';
+    ctx.restore();
+
+    y += headerH + SP;
+
+    // ── 2. Tweet Text ──────────────────────────────────────────────────────────
+    ctx.save();
+    ctx.font = `${TW_FW} ${TW_FS}px ${ffs}`;
+    ctx.fillStyle = t7.textColor || '#E7E9EA';
+    const tweetLines = wrapSimple(ctx, t7.tweetText || '', W - PAD_H * 2);
+    const tweetLineH = Math.round(TW_FS * TW_LH);
+    for (const line of tweetLines) { ctx.fillText(line, PAD_H, y); y += tweetLineH; }
+    ctx.restore();
+    y += SP;
+
+    // ── 3. Timestamp + Source ──────────────────────────────────────────────────
+    y += 5; // 5px padding on top of timestamp
+    ctx.save();
+    ctx.font = `${TS_FS}px ${ffs}`;
+    const timestamp = t7.timestamp || '5:35 PM · 12/14/21';
+    const source    = t7.source    || 'Twitter for iPhone';
+    ctx.fillStyle = t7.timestampColor || '#8B98A5';
+    ctx.fillText(timestamp, PAD_H, y);
+    const tsW  = ctx.measureText(timestamp).width;
+    const dot  = ' · ';
+    ctx.fillText(dot, PAD_H + tsW, y);
+    const dotW = ctx.measureText(dot).width;
+    ctx.fillStyle = t7.sourceColor || '#1D9BF0';
+    const srcX = PAD_H + tsW + dotW;
+    ctx.fillText(source, srcX, y);
+    const srcW = ctx.measureText(source).width;
+    ctx.strokeStyle = t7.sourceColor || '#1D9BF0';
+    ctx.lineWidth = Math.max(1, Math.round(TS_FS / 20));
+    ctx.beginPath(); ctx.moveTo(srcX, y + TS_FS + 2); ctx.lineTo(srcX + srcW, y + TS_FS + 2); ctx.stroke();
+    ctx.restore();
+    y += Math.round(TS_FS * 1.3) + SP;
+
+    // ── 4. Metrics row (divider + bold num + gray label) ─────────────────────
+    ctx.save();
+    ctx.strokeStyle = borderColor; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(PAD_H, y); ctx.lineTo(W - PAD_H, y); ctx.stroke();
+    ctx.restore();
+    y += 1 + ICON_PAD + 5; // 5px padding on top of metrics
+
+    ctx.save();
+    ctx.textBaseline = 'top';
+    const mData = [
+        { v: t7.retweets    || '27K',   l: ' Retweets' },
+        { v: t7.quoteTweets || '6,808', l: ' Quote Tweets' },
+        { v: t7.likes       || '255K',  l: ' Likes' },
+    ];
+    let mx = PAD_H;
+    for (const m of mData) {
+        ctx.font = `700 ${M_FS}px ${ffs}`; ctx.fillStyle = t7.textColor || '#E7E9EA';
+        ctx.fillText(m.v, mx, y); const vW = ctx.measureText(m.v).width;
+        ctx.font = `${M_FS}px ${ffs}`; ctx.fillStyle = t7.metricsColor || '#8B98A5';
+        ctx.fillText(m.l, mx + vW, y); mx += vW + ctx.measureText(m.l).width + 24;
+    }
+    ctx.restore();
+    y += Math.round(M_FS * 1.3) + ICON_PAD;
+
+    // ── 5. Icons row (divider + SVG icons from src/ui) ────────────────────────
+    if (t7.showEngagementIcons) {
+        ctx.save();
+        ctx.strokeStyle = borderColor; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(PAD_H, y); ctx.lineTo(W - PAD_H, y); ctx.stroke();
+        ctx.restore();
+        y += 1 + ICON_PAD;
+
+        const iSz  = iconDrawH;
+        const iPos = [W * 0.15, W * 0.38, W * 0.62, W * 0.85];
+
+        if (commentIconImg) {
+            // Draw colored comment icon using offscreen canvas composite
+            const offC = document.createElement('canvas');
+            offC.width = iSz; offC.height = iSz;
+            const offCtx = offC.getContext('2d');
+            offCtx.drawImage(commentIconImg, 0, 0, iSz, iSz);
+            offCtx.globalCompositeOperation = 'source-in';
+            offCtx.fillStyle = ic;
+            offCtx.fillRect(0, 0, iSz, iSz);
+            ctx.drawImage(offC, iPos[0] - iSz / 2, y);
+        }
+        if (retweetIconImg) ctx.drawImage(retweetIconImg, iPos[1] - iSz / 2, y, iSz, iSz);
+        if (heartIconImg)   ctx.drawImage(heartIconImg,   iPos[2] - iSz / 2, y, iSz, iSz);
+        if (shareIconImg)   ctx.drawImage(shareIconImg,   iPos[3] - iSz / 2, y, iSz, iSz);
     }
 }
 
@@ -1343,8 +1554,13 @@ async function exportCanvas() {
 
     try {
         const isPost = state.mode === 'post';
-        const W = isPost ? window.CONSTANTS.POST_WIDTH  : window.CONSTANTS.HIGHLIGHT_SIZE;
-        const H = isPost ? window.CONSTANTS.POST_HEIGHT : window.CONSTANTS.HIGHLIGHT_SIZE;
+        const tmpl   = isPost && state.post ? state.post.template : null;
+        const W      = isPost ? window.CONSTANTS.POST_WIDTH  : window.CONSTANTS.HIGHLIGHT_SIZE;
+        // Template 7 exports as a perfect square (tweet-style screenshot),
+        // all other post templates keep the standard 4:5 post height.
+        const H      = isPost
+            ? (tmpl === 'template7' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.POST_HEIGHT)
+            : window.CONSTANTS.HIGHLIGHT_SIZE;
 
         // Create offscreen canvas at native 1:1 resolution
         const canvas  = document.createElement('canvas');
@@ -1352,13 +1568,14 @@ async function exportCanvas() {
         canvas.height = H;
         const ctx = canvas.getContext('2d');
 
-        if (isPost) {
+            if (isPost) {
             const tmpl = state.post.template;
             if      (tmpl === 'template2') await exportT2(ctx, state, W, H);
             else if (tmpl === 'template3') await exportT3(ctx, state, W, H);
             else if (tmpl === 'template4') await exportT4(ctx, state, W, H);
             else if (tmpl === 'template5') await exportT5(ctx, state, W, H);
-            else if (tmpl === 'template6') await exportT6(ctx, state, W, H);
+            else if (tmpl === 'template6' || tmpl === 'template8') await exportT6(ctx, state, W, H);
+            else if (tmpl === 'template7') await exportT7(ctx, state, W, H);
             else                           await exportT1(ctx, state, W, H);
         } else {
             await exportHighlight(ctx, state, W);
@@ -1373,10 +1590,22 @@ async function exportCanvas() {
                 link.href     = url;
                 link.download = `instatools-${state.mode}-${Date.now()}.png`;
         document.body.appendChild(link);
-        link.click();
+                link.click();
         document.body.removeChild(link);
                 URL.revokeObjectURL(url);
                 notify('Image exported successfully!', 'success');
+                
+                // Increment download count and check if we should show support popup
+                var downloadCount = parseInt(localStorage.getItem('instatoolsDownloadCount') || '0', 10);
+                downloadCount += 1;
+                localStorage.setItem('instatoolsDownloadCount', downloadCount.toString());
+                
+                // Check if we should show the support popup (every 10 downloads)
+                if (typeof window.checkSupportPopup === 'function') {
+                    setTimeout(function() {
+                        window.checkSupportPopup();
+                    }, 500); // Small delay to let the export notification show first
+                }
             }, 'image/png');
         } catch (secErr) {
             if (secErr.name === 'SecurityError') {

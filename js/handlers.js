@@ -55,6 +55,22 @@ function updateT6State(key, value) {
     }
 }
 
+function updateT7State(key, value) {
+    if (!window.state) return;
+    window.state.post.t7[key] = value;
+    if (window.debouncedRenderCanvas) {
+        window.debouncedRenderCanvas();
+    }
+}
+
+function updateT8State(key, value) {
+  if (!window.state) return;
+  window.state.post.t8[key] = value;
+  if (window.debouncedRenderCanvas) {
+    window.debouncedRenderCanvas();
+  }
+}
+
 // Helper function to update style and display value in real-time
 function updatePostStyleWithDisplay(key, value, displayId, format = 'number') {
     if (!window.state) return;
@@ -374,6 +390,18 @@ function handleFileUpload(event, type) {
                 if (window.debouncedRenderCanvas) {
                     window.debouncedRenderCanvas();
                 }
+      } else if (type === 't8Bg') {
+        window.state.post.t8.bgImage = res;
+        if (window.debouncedRenderCanvas) {
+          window.debouncedRenderCanvas();
+        }
+      } else if (type === 't8Circle') {
+        window.state.post.t8.circleImage = res;
+        if (window.debouncedRenderCanvas) {
+          window.debouncedRenderCanvas();
+        }
+            } else if (type === 't7Profile') {
+                window.updateT7State('profileImageUrl', res);
             } else if (type === 'highlightIcon') {
                 window.state.highlight.customIconUrl = res;
                 window.state.highlight.iconType = 'custom';
@@ -640,8 +668,8 @@ async function loadPreset(id) {
                 // This ensures if a preset was saved before a field existed (like t6.textAlign),
                 // it gets the new sensible default instead of undefined/legacy values.
                 const tId = sp.template;
-                if (tId !== 'template1' && window.DEFAULT_TEMPLATE_STATES && window.DEFAULT_TEMPLATE_STATES[tId]) {
-                    const stateKey = tId.replace('template', 't');
+                const stateKey = tId.replace('template', 't');
+                if (tId !== 'template1' && window.DEFAULT_TEMPLATE_STATES && window.DEFAULT_TEMPLATE_STATES[stateKey]) {
                     if (window.state.post[stateKey]) {
                         // Apply default first
                         window.state.post[stateKey] = JSON.parse(JSON.stringify(window.DEFAULT_TEMPLATE_STATES[stateKey]));
@@ -807,6 +835,30 @@ function closeWelcomePopup() {
     localStorage.setItem('hasSeenWelcome', 'true');
 }
 
+function checkSupportPopup() {
+    var downloadCount = parseInt(localStorage.getItem('instatoolsDownloadCount') || '0', 10);
+    var lastShownCount = parseInt(localStorage.getItem('instatoolsSupportPopupLastShown') || '0', 10);
+    
+    // Show popup every 10 downloads (at 10, 20, 30, etc.)
+    if (downloadCount > 0 && downloadCount % 10 === 0 && downloadCount !== lastShownCount) {
+        var popup = document.getElementById('support-popup-overlay');
+        if (popup) {
+            popup.classList.add('show');
+            localStorage.setItem('instatoolsSupportPopupLastShown', downloadCount.toString());
+        }
+    }
+}
+
+function closeSupportPopup() {
+    var popup = document.getElementById('support-popup-overlay');
+    if (popup) {
+        popup.classList.remove('show');
+        setTimeout(function() {
+            popup.classList.remove('show');
+        }, 500);
+    }
+}
+
 // Make globally available
 if (typeof window !== 'undefined') {
     window._presetsForStorage = _presetsForStorage;
@@ -816,6 +868,8 @@ if (typeof window !== 'undefined') {
     window.updateT4State = updateT4State;
     window.updateT5State = updateT5State;
     window.updateT6State = updateT6State;
+    window.updateT7State = updateT7State;
+  window.updateT8State = updateT8State;
     window.updatePostStyleWithDisplay = updatePostStyleWithDisplay;
     window.updateHighlightStateWithDisplay = updateHighlightStateWithDisplay;
     window.setWatermarkPosition = setWatermarkPosition;
@@ -833,4 +887,7 @@ if (typeof window !== 'undefined') {
     window.toggleMobileSidebar = toggleMobileSidebar;
     window.checkWelcomePopup = checkWelcomePopup;
     window.closeWelcomePopup = closeWelcomePopup;
+    window.checkSupportPopup = checkSupportPopup;
+    window.closeSupportPopup = closeSupportPopup;
+    window.updateT7State = updateT7State;
 }
