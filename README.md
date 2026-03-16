@@ -21,3 +21,38 @@ The core focus of this tool is privacy and speed: all image processing happens c
   <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-three.png?raw=true" width="49%" alt="Instatools Example 3">
   <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-four.png?raw=true" width="49%" alt="Instatools Example 4">
 </p>
+
+##
+
+## Comparison with Instatools
+
+
+<table>
+<tr>
+<td align="center">
+
+### Before Using Instatools
+![Before](https://github.com/nicholasxdavis/instatools/blob/main/example/bf.jpg?raw=true)
+
+Orphaned Posts  
+Low reach & engagement
+
+</td>
+
+<td align="center">
+
+### After Using Instatools
+![After](https://github.com/nicholasxdavis/instatools/blob/main/example/af.jpg?raw=true)
+
+Adopted Posts  
+
+**13× more likes**  
+**4.7× more shares**
+
+</td>
+</tr>
+</table>
+
+---
+
+Instatools helps turn **ignored posts into high-performing content** by improving how your content is structured and presented for social media.
