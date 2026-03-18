@@ -1,4 +1,4 @@
-# ![Instatools Logo](https://github.com/nicholasxdavis/instatools/blob/main/src/ui/mobile-logo.png?raw=true)
+# ![Instatools Logo](https://github.com/nicholasxdavis/instatools/blob/main/tool/src/ui/logo.png?raw=true)
 
 
 Instatools is a web-based Instagram post and highlight generator. It lets you design posts with custom typography and precise layouts directly in your browser. 
