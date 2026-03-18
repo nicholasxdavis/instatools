@@ -208,6 +208,22 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
+        /* Mobile menu slide-in */
+        @keyframes mobileMenuSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .mobile-menu-panel {
+            animation: mobileMenuSlideIn 0.28s ease-out;
+        }
+
         /* Mobile‑first tweaks */
         @media (max-width: 640px) {
             nav {
@@ -235,7 +251,7 @@
             }
 
             #suite h2 {
-                font-size: 1.9rem;
+                font-size: 2.4rem;
                 line-height: 1.1;
             }
 
@@ -310,8 +326,8 @@
             }
 
             #mobile-menu {
-                top: 70px;
-                border-radius: 1.75rem;
+                top: 0;
+                border-radius: 0;
             }
 
             #mobile-menu a {
@@ -372,16 +388,36 @@
 
     <div
         id="mobile-menu"
-        class="lg:hidden hidden fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 w-[94%] max-w-6xl bg-black rounded-3xl border border-white/10 shadow-xl z-[99]">
-        <div class="p-4">
-            <div class="flex flex-col items-center text-center">
-                <div class="w-full">
-                    <a href="#tools" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Tools</a>
-                    <a href="privacy.html" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Privacy</a>
-                    <a href="terms.html" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Terms</a>
-                    <a href="#engineered" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Workspace</a>
-                    <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">GitHub</a>
-                    <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Support Us</a>
+        class="lg:hidden hidden fixed top-0 right-0 bottom-0 left-0 z-[140] bg-black w-screen h-[100dvh] min-h-[100dvh]">
+        <div class="w-full h-full flex justify-end">
+            <div class="mobile-menu-panel h-full w-full max-w-full bg-black flex flex-col">
+                <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/10">
+                    <img
+                        src="tool/src/ui/logo.png"
+                        alt="Instatools logo"
+                        class="h-[28px] w-auto object-contain" />
+                    <button
+                        type="button"
+                        aria-label="Close menu"
+                        class="inline-flex items-center justify-center rounded-full border border-white/20 text-white/80 hover:text-white hover:border-white w-9 h-9"
+                        onclick="document.getElementById('mobile-menu-toggle')?.click()">
+                        <span class="text-xl leading-none">&times;</span>
+                    </button>
+                </div>
+                <nav class="flex-1 flex flex-col justify-center gap-4 px-8">
+                    <a href="#suite" class="text-xl font-semibold text-white hover:text-white/70 transition-colors">Overview</a>
+                    <a href="#tools" class="text-xl font-semibold text-white hover:text-white/70 transition-colors">Tools</a>
+                    <a href="privacy.html" class="text-xl font-semibold text-white hover:text-white/70 transition-colors">Privacy</a>
+                    <a href="terms.html" class="text-xl font-semibold text-white hover:text-white/70 transition-colors">Terms</a>
+                    <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer" class="text-xl font-semibold text-white hover:text-white/70 transition-colors">GitHub</a>
+                    <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="text-xl font-semibold text-white hover:text-white/70 transition-colors">Support Us</a>
+                </nav>
+                <div class="px-6 pb-8 pt-4 border-t border-white/10">
+                    <a
+                        href="tool/index.html"
+                        class="w-full inline-flex items-center justify-center rounded-full bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white text-sm font-bold py-3">
+                        Open Instatools
+                    </a>
                 </div>
             </div>
         </div>
@@ -575,9 +611,9 @@
         </h2>
             <a
                 href="tool/index.html"
-                class="btn-ring bg-white text-black px-10 sm:px-14 py-5 sm:py-6 rounded-full font-black text-lg sm:text-xl hover:bg-gradient-to-r hover:from-[#FCAF45] hover:via-[#E1306C] hover:to-[#833AB4] hover:text-white transition-all shadow-2xl mb-10 sm:mb-12 inline-flex items-center justify-center w-full max-w-xs sm:max-w-none mx-auto">
-            Start designing with Instatools
-        </a>
+                class="btn-ring bg-white text-black w-full sm:w-auto px-10 sm:px-14 py-5 sm:py-6 rounded-full font-black text-lg sm:text-xl hover:bg-gradient-to-r hover:from-[#FCAF45] hover:via-[#E1306C] hover:to-[#833AB4] hover:text-white transition-all shadow-2xl mb-10 sm:mb-12 inline-flex items-center justify-center mx-auto">
+                Start designing with Instatools
+            </a>
         <div class="mt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
             <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors font-bold">
                 Support Us
@@ -624,6 +660,15 @@
                 menu.classList.toggle('hidden', !open);
                 btn.setAttribute('aria-expanded', open ? 'true' : 'false');
                 btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+
+                // Prevent scroll-through of the page while the mobile menu is open.
+                if (open) {
+                    document.documentElement.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.documentElement.style.overflow = '';
+                    document.body.style.overflow = '';
+                }
             };
 
             const close = () => setOpen(false);
@@ -645,6 +690,11 @@
                 if (!isOpen) return;
                 if (menu.contains(e.target) || btn.contains(e.target)) return;
                 close();
+            });
+
+            // Close with Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') close();
             });
         })();
     </script>
