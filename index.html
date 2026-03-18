@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Instatools is a browser-based Instagram design suite. Create scroll‑stopping posts, highlight covers, and profile photos with local-only image processing that stays on your device.">
+    <meta name="theme-color" content="#000000">
+    <meta property="og:title" content="Instatools | Instagram Design Suite">
+    <meta property="og:description" content="Create scroll‑stopping Instagram posts with privacy‑friendly, local-only processing.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Instatools | Instagram Design Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        :root {
+            --insta-pink: #E1306C;
+            --insta-orange: #FCAF45;
+            --insta-purple: #833AB4;
+            --by-red: #E1306C;
+            --by-red-hover: #C1275E;
+            --by-black: #0f0f0f;
+            --by-dark-gray: #111827;
+            --by-bg: #050816;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--by-bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--insta-pink); }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #0f172a;
+            letter-spacing: -0.025em;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.12;
+            mix-blend-mode: soft-light;
+            background-image:
+                radial-gradient(circle at 0 0, rgba(15,23,42,0.08) 0, transparent 55%),
+                radial-gradient(circle at 100% 0, rgba(15,23,42,0.06) 0, transparent 55%),
+                repeating-linear-gradient(45deg, rgba(148,163,184,0.15) 0, rgba(148,163,184,0.15) 1px, transparent 1px, transparent 3px);
+            z-index: -1;
+        }
+
+        /* Legacy hero styles removed – hero section no longer used */
+
+        .btn-primary {
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-position 0.25s ease;
+            background-size: 200% 200%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+            background-position: 100% 0;
+        }
+        .btn-primary:active {
+            transform: translateY(0) scale(0.99);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .btn-ring:focus-visible {
+            outline: 2px solid #ffffff;
+            outline-offset: 3px;
+        }
+
+        /* Entrance animations */
+        @keyframes sectionFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.985);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .section-animate {
+            opacity: 0;
+            animation: sectionFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .section-delay-1 { animation-delay: 0.08s; }
+        .section-delay-2 { animation-delay: 0.16s; }
+        .section-delay-3 { animation-delay: 0.24s; }
+
+        @keyframes primaryPulse {
+            0%   { box-shadow: 0 18px 45px rgba(0,0,0,0.35); }
+            50%  { box-shadow: 0 22px 55px rgba(0,0,0,0.45); }
+            100% { box-shadow: 0 18px 45px rgba(0,0,0,0.35); }
+        }
+        .btn-primary {
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-position 0.25s ease;
+            background-size: 200% 200%;
+            animation: primaryPulse 2.4s ease-in-out infinite;
+        }
+        .btn-primary:hover {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 22px 55px rgba(0,0,0,0.45);
+            background-position: 100% 0;
+        }
+        .btn-primary:active {
+            transform: translateY(0) scale(0.99);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .section-animate,
+            .btn-primary {
+                animation: none !important;
+                transition: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+        }
+        .by-card {
+            border-radius: 48px;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .by-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 32px 90px -30px rgba(0,0,0,0.7);
+        }
+
+        .sticker {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        .sticker:hover {
+            transform: translateY(-4px) rotate(-1deg);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+        }
+
+        /* Subtle card glows / overlays */
+        .card-shell {
+            position: relative;
+            overflow: hidden;
+        }
+        .card-shell::before {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background:
+                radial-gradient(circle at top left, rgba(239,68,68,0.14), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(59,130,246,0.12), transparent 55%);
+            opacity: 0.65;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+        .card-shell > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-noise {
+            position: relative;
+        }
+        .card-noise::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.16;
+            mix-blend-mode: soft-light;
+            background-image:
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px),
+                repeating-linear-gradient(-45deg, rgba(0,0,0,0.4) 0, rgba(0,0,0,0.4) 1px, transparent 1px, transparent 4px);
+            pointer-events: none;
+        }
+
+        /* UI Elements */
+        .yt-toggle {
+            width: 44px;
+            height: 24px;
+            background: #111827;
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+        }
+        .yt-toggle::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .yt-toggle.active { background: linear-gradient(135deg, var(--insta-purple), var(--insta-pink)); }
+        .yt-toggle.active::after { left: 24px; }
+
+        .player-mock {
+            background: radial-gradient(circle at top, #111827, #020617);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden">
+    <a
+        href="#content"
+        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-1/2 focus:-translate-x-1/2 bg-black text-white px-4 py-2 rounded-full z-[200]">
+        Skip to content
+    </a>
+
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[94%] max-w-6xl bg-black rounded-full px-4 sm:px-8 py-2 sm:py-4 z-[100] shadow-xl border border-white/10 relative grid grid-cols-[auto_1fr_auto] items-center">
+        <div class="flex items-center gap-3 group justify-self-start">
+            <img src="tool/src/ui/logo.png" alt="Instatools logo" class="w-24 sm:w-28 h-[40px] sm:h-[44px] rounded-2xl shadow-lg transform group-hover:rotate-3 transition-transform bg-black object-contain p-1">
+        </div>
+        
+        <!-- Center area reserved for future nav (desktop links hidden for now) -->
+        <div class="justify-self-center flex items-center justify-center w-full"></div>
+
+        <div class="justify-self-end flex items-center gap-3">
+            <a href="tool/index.html" class="btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-6 sm:px-8 py-3 rounded-full font-bold text-sm shadow-lg shadow-pink-500/30 inline-flex items-center justify-center whitespace-nowrap">
+            Open Instatools
+            </a>
+            <button
+                id="mobile-menu-toggle"
+                class="lg:hidden inline-flex items-center justify-center text-white/80 hover:text-white border border-white/10 rounded-full px-4 py-2"
+                type="button"
+                aria-label="Open menu"
+                aria-controls="mobile-menu"
+                aria-expanded="false">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 6h16"></path>
+                    <path d="M4 12h16"></path>
+                    <path d="M4 18h16"></path>
+                </svg>
+        </button>
+            <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex hover:text-white transition-colors text-white/80 font-bold text-sm">
+                Support Us
+            </a>
+        </div>
+    </nav>
+
+    <div
+        id="mobile-menu"
+        class="lg:hidden hidden fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 w-[94%] max-w-6xl bg-black rounded-3xl border border-white/10 shadow-xl z-[99]">
+        <div class="p-4">
+            <div class="flex flex-col items-center text-center">
+                <div class="w-full">
+                    <a href="#tools" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Tools</a>
+                    <a href="privacy.html" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Privacy</a>
+                    <a href="terms.html" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Terms</a>
+                    <a href="#engineered" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Workspace</a>
+                    <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">GitHub</a>
+                    <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="block w-full py-3 text-sm font-bold text-white/80 hover:text-white transition-colors">Support Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="sr-only"></div>
+
+    <section id="suite" class="py-28 sm:py-40 text-center px-6 bg-white">
+        <h2 class="text-4xl sm:text-5xl md:text-8xl font-black text-black leading-tight mb-10 sm:mb-14 tracking-tighter">
+            Total control <br> <span class="text-black">over your <span class="relative inline-block">Instagram.<span class="absolute left-0 -bottom-1 w-full h-[10px] bg-[#df306d] rounded-full -z-10"></span></span></span>
+        </h2>
+        <a href="#suite-grid" class="btn-ring bg-gray-100 hover:bg-gray-200 text-gray-900 px-12 py-5 rounded-full font-extrabold flex items-center gap-3 mx-auto text-lg transition-all border border-gray-300 inline-flex">
+            Explore the Instatools Suite <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+    </section>
+
+    <section id="suite-grid" class="max-w-7xl mx-auto px-6 pb-20 sm:pb-36 section-animate section-delay-1">
+        <div class="card-shell card-noise bg-black rounded-[60px] p-12 md:p-24 flex flex-col md:flex-row items-center gap-16 relative overflow-hidden border border-white/10 text-white">
+            <div class="relative z-10 flex-1">
+                <h2 class="text-4xl sm:text-5xl md:text-7xl font-black leading-tight mb-8">Everything in <br> one canvas.</h2>
+                <p class="text-gray-300 text-lg mb-12 max-w-md font-medium">
+                    Instatools keeps your entire Instagram workflow in a single, focused interface. Switch between post layouts, highlight covers, and profile photos without leaving the browser.
+                </p>
+            </div>
+            
+            <div class="flex-1 w-full flex justify-center">
+                <div class="bg-white/5 backdrop-blur-xl rounded-[40px] p-2 w-full max-w-xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500 border border-white/10 overflow-hidden">
+                    <img src="example/Screenshot 2026-03-04 190418.png" alt="Instatools editor workspace screenshot" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" class="max-w-7xl mx-auto px-6 pb-32 sm:pb-40 scroll-mt-32 section-animate section-delay-2">
+        <div class="card-shell card-noise bg-black rounded-[60px] p-8 sm:p-12 md:p-24 border border-white/10 text-white">
+            <div class="mb-10">
+                <h2 class="text-4xl sm:text-5xl font-black leading-tight tracking-tighter">
+                    Tools built to ship.
+                </h2>
+                <p class="text-gray-300 text-base sm:text-lg mt-4 max-w-3xl">
+                    Pick a tool, design in your browser, and export in high resolution. Everything stays local to your device.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Post Generator -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Post Generator</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white">
+                            Main
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Design professional Instagram posts with custom typography, photo layouts, overlays, and high-resolution export.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Typography</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Layouts</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Export</span>
+                    </div>
+                    <a href="tool/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
+                        Open Tool
+                    </a>
+                </div>
+
+                <!-- Highlight Creator -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Highlight Creator</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            New
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Create and customize Instagram highlight covers with matching icons, colors, and gradient rings.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Story Covers</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Icons</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Gradients</span>
+                    </div>
+                    <a href="tool/tools/highlight/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
+                        Open Tool
+                    </a>
+                </div>
+
+                <!-- Instamark -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Instamark</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            New
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Apply custom watermarks to any image. Control opacity, size, and position with a live preview — then export in full resolution.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Watermark</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Branding</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Export</span>
+                    </div>
+                    <a href="tool/tools/instamark/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
+                        Open Tool
+                    </a>
+                </div>
+
+                <!-- Profile Previewer -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Profile Previewer</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            New
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Preview your full Instagram profile — bio, highlights, photo grid and action buttons — before going live.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Bio</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Highlights</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Preview</span>
+                    </div>
+                    <a href="tool/tools/pfp/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
+                        Open Tool
+                    </a>
+                </div>
+
+                <!-- AI Carousel Maker -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">AI Carousel Maker</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            AI
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Generate LinkedIn-style carousels with AI, then refine slides, typography, and export‑ready layouts in a focused editor.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">AI</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Carousels</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Slides</span>
+                    </div>
+                    <a href="tool/tools/carousel/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
+                        Open Tool
+                    </a>
+                </div>
+
+                <!-- Logo Maker -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Logo Maker</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            Coming soon
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Wordmark-style logo maker is nearly ready. Check back soon to design clean text logos with Google Fonts and export presets.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Logos</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Google Fonts</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Branding</span>
+                    </div>
+                    <button type="button" disabled class="w-full bg-white/5 border border-white/10 text-white/50 px-4 py-3 rounded-2xl font-bold text-sm cursor-not-allowed inline-flex items-center justify-center">
+                        Open Tool
+                    </button>
+                </div>
+
+                <!-- Reeltools -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Reeltools</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            Coming soon
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Smart tools for planning and formatting Instagram Reels — from hooks to captions and cover frames.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Reels</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Video</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Planning</span>
+                    </div>
+                    <button type="button" disabled class="w-full bg-white/5 border border-white/10 text-white/50 px-4 py-3 rounded-2xl font-bold text-sm cursor-not-allowed inline-flex items-center justify-center">
+                        Open Tool
+                    </button>
+                </div>
+
+                <!-- Story Generator -->
+                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Story Generator</h3>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
+                            Coming soon
+                        </span>
+                    </div>
+                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                        Generate on-brand Instagram Stories with templated layouts, text prompts, and export-ready sequences.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Stories</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Templates</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Scheduling</span>
+                    </div>
+                    <button type="button" disabled class="w-full bg-white/5 border border-white/10 text-white/50 px-4 py-3 rounded-2xl font-bold text-sm cursor-not-allowed inline-flex items-center justify-center">
+                        Open Tool
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 section-animate section-delay-1">
+        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 mb-10">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">See the Instatools workspace.</h2>
+                    <p class="text-gray-300 max-w-xl">
+                        These screenshots are captured directly from the live editor – no mockups. Everything you see here runs fully in your browser.
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/Screenshot 2026-03-04 190418.png" alt="Instatools workspace screenshot 1" class="w-full h-full object-cover">
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/Screenshot 2026-03-04 190449.png" alt="Instatools workspace screenshot 2" class="w-full h-full object-cover">
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/Screenshot 2026-03-04 190513.png" alt="Instatools workspace screenshot 3" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 section-animate section-delay-2">
+        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 mb-10">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Real posts made with Instatools.</h2>
+                    <p class="text-gray-300 max-w-xl">
+                        Four example posts designed inside the editor, exported as high‑resolution PNGs, ready to publish to Instagram.
+                    </p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/post.png" alt="Instagram post example 1" class="w-full h-full object-cover">
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/post-two.png" alt="Instagram post example 2" class="w-full h-full object-cover">
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/post-three.png" alt="Instagram post example 3" class="w-full h-full object-cover">
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                    <img src="example/post-four.png" alt="Instagram post example 4" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 section-animate section-delay-3">
+        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
+            <div class="mb-10">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Before &amp; after with Instatools.</h2>
+                <p class="text-gray-300 max-w-2xl">
+                    Start from a flat, unstructured idea and end with a polished, grid‑aligned Instagram post. All edits are done locally in the browser.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-gray-100 text-xs font-semibold tracking-[0.16em] uppercase text-gray-600">
+                        Before
+                    </span>
+                    <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
+                        <img src="example/bf.jpg" alt="Before Instatools edit" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.16em] uppercase text-[#fbab46] bg-[#fbab46]/10">
+                        After with Instatools
+                    </span>
+                    <div class="rounded-3xl overflow-hidden border border-[#fbab46]/40 shadow-sm bg-white/5">
+                        <img src="example/af.jpg" alt="After Instatools edit" class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="privacy" class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 scroll-mt-32 section-animate section-delay-1">
+        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
+            <div class="mb-10">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Privacy-first by design.</h2>
+                <p class="text-gray-300 max-w-2xl">
+                    We prioritize your privacy: all image processing is performed locally on your device. No data is uploaded to any server, and Instatools doesn’t rely on ads or trackers.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5 p-6">
+                    <h3 class="text-lg font-extrabold mb-2">Local-only processing</h3>
+                    <p class="text-gray-300">
+                        Your images stay in your browser while you design—no external calls required.
+                    </p>
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5 p-6">
+                    <h3 class="text-lg font-extrabold mb-2">No uploads</h3>
+                    <p class="text-gray-300">
+                        Instatools doesn’t upload your content to servers during edits or export.
+                    </p>
+                </div>
+                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5 p-6">
+                    <h3 class="text-lg font-extrabold mb-2">No ads or trackers</h3>
+                    <p class="text-gray-300">
+                        Privacy-friendly by default, so the experience stays focused on your work.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="engineered" class="max-w-7xl mx-auto px-6 pb-24 sm:pb-40 scroll-mt-32">
+        <div class="bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
+            <div class="mb-10">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Workspace built for speed &amp; precision.</h2>
+                <p class="text-gray-300 max-w-2xl">
+                    Everything you need to create Instagram-ready content: advanced layout tools, pro typography controls, and high-resolution export.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="rounded-3xl bg-white/5 border border-white/10 shadow-sm p-6">
+                    <h3 class="text-lg font-extrabold text-white mb-2">Post Generator</h3>
+                    <p class="text-gray-300">
+                        Build high-impact feed posts with precise placement and typography controls.
+                    </p>
+                </div>
+                <div class="rounded-3xl bg-white/5 border border-white/10 shadow-sm p-6">
+                    <h3 class="text-lg font-extrabold text-white mb-2">Highlight Covers</h3>
+                    <p class="text-gray-300">
+                        Design story cover icons and styles that match your brand.
+                    </p>
+                </div>
+                <div class="rounded-3xl bg-white/5 border border-white/10 shadow-sm p-6">
+                    <h3 class="text-lg font-extrabold text-white mb-2">Profile Photos</h3>
+                    <p class="text-gray-300">
+                        Frame, style, and export professional-grade profile images.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <a
+                    href="tool/index.html"
+                    class="bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-12 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30 inline-flex items-center justify-center">
+                    Open Instatools
+                </a>
+                <a
+                    href="https://github.com/nicholasxdavis/instatools"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-12 py-4 rounded-full font-bold text-lg transition-all inline-flex items-center justify-center">
+                    View GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-24 sm:mt-32 py-48 bg-black text-center px-6 rounded-t-[80px] border-t border-white/10">
+        <h2 class="text-6xl md:text-9xl font-black text-white mb-16 tracking-tighter leading-none">
+            Built for creators, <br><span class="bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] bg-clip-text text-transparent">open for everyone.</span>
+        </h2>
+            <a href="tool/index.html" class="btn-ring bg-white text-black px-14 py-6 rounded-full font-black text-xl hover:bg-gradient-to-r hover:from-[#FCAF45] hover:via-[#E1306C] hover:to-[#833AB4] hover:text-white transition-all shadow-2xl mb-12 inline-flex items-center justify-center">
+            Start designing with Instatools
+        </a>
+        <div class="mt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+            <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors font-bold">
+                Support Us
+            </a>
+            <a href="privacy.html" class="text-gray-400 hover:text-white transition-colors font-bold">
+                Privacy
+            </a>
+            <a href="terms.html" class="text-gray-400 hover:text-white transition-colors font-bold">
+                Terms
+            </a>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-gray-400">
+            <a href="tool/index.html" class="hover:text-white transition-colors">
+                Instatools
+            </a>
+            <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+                GitHub
+            </a>
+            <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+                Support
+            </a>
+            <a href="privacy.html" class="hover:text-white transition-colors">
+                Privacy
+            </a>
+            <a href="terms.html" class="hover:text-white transition-colors">
+                Terms
+            </a>
+        </div>
+        <p class="pt-4 text-gray-500 font-bold uppercase tracking-widest text-xs">
+            © 2026 Instatools by
+            <a href="https://www.blacnova.net" target="_blank" rel="noopener noreferrer" class="underline hover:text-gray-300">
+                Blacnova Development
+            </a>
+        </p>
+    </footer>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('mobile-menu-toggle');
+            const menu = document.getElementById('mobile-menu');
+            if (!btn || !menu) return;
+
+            const setOpen = (open) => {
+                menu.classList.toggle('hidden', !open);
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            };
+
+            const close = () => setOpen(false);
+            const open = () => setOpen(true);
+
+            btn.addEventListener('click', () => {
+                const isOpen = !menu.classList.contains('hidden');
+                setOpen(!isOpen);
+            });
+
+            // Close when clicking a link
+            menu.querySelectorAll('a').forEach((a) => {
+                a.addEventListener('click', () => close());
+            });
+
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                const isOpen = !menu.classList.contains('hidden');
+                if (!isOpen) return;
+                if (menu.contains(e.target) || btn.contains(e.target)) return;
+                close();
+            });
+        })();
+    </script>
+
+</body>
+</html>
+
