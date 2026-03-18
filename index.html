@@ -32,7 +32,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #ffffff;
+            background-color: #ffffff;
+            background-image: url("https://www.transparenttextures.com/patterns/white-diamond-dark.png");
             color: #0f172a;
             letter-spacing: -0.025em;
             position: relative;
@@ -206,6 +207,126 @@
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
+
+        /* Mobile‑first tweaks */
+        @media (max-width: 640px) {
+            nav {
+                top: 10px;
+                border-radius: 9999px;
+                padding: 4px 10px;
+            }
+
+            nav img {
+                width: 80px;
+                height: 34px;
+            }
+
+            .btn-primary,
+            .btn-ring {
+                font-size: 0.78rem;
+                padding-top: 0.55rem;
+                padding-bottom: 0.55rem;
+                border-radius: 9999px;
+            }
+
+            section {
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+            }
+
+            #suite h2 {
+                font-size: 1.9rem;
+                line-height: 1.1;
+            }
+
+            #suite-grid .card-shell,
+            #tools .card-shell,
+            footer {
+                border-radius: 1.875rem;
+            }
+
+            #suite-grid .card-shell,
+            #tools .card-shell {
+                padding: 1.25rem;
+            }
+
+            #tools {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            #tools .grid {
+                gap: 1.1rem;
+            }
+
+            #tools .rounded-\[40px\] {
+                border-radius: 1.5rem;
+                padding: 1.1rem;
+            }
+
+            #tools h3 {
+                font-size: 0.95rem;
+            }
+
+            #tools p {
+                font-size: 0.78rem;
+            }
+
+            #tools a.btn-primary {
+                width: 100%;
+            }
+
+            #engineered h2,
+            #privacy h2 {
+                font-size: 1.25rem;
+            }
+
+            #engineered p,
+            #privacy p {
+                font-size: 0.78rem;
+            }
+
+            .grid {
+                row-gap: 1.1rem;
+            }
+
+            footer {
+                padding-top: 2.5rem;
+                padding-bottom: 3rem;
+                border-radius: 2rem 2rem 0 0;
+            }
+
+            footer h2 {
+                font-size: 2rem;
+                line-height: 1.1;
+            }
+
+            footer a.btn-ring {
+                width: 100%;
+                max-width: 20rem;
+                padding-top: 0.9rem;
+                padding-bottom: 0.9rem;
+                font-size: 1rem;
+            }
+
+            #mobile-menu {
+                top: 70px;
+                border-radius: 1.75rem;
+            }
+
+            #mobile-menu a {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+
+            /* Prevent horizontal scroll from large radii & shadows */
+            .card-shell,
+            .card-noise,
+            .rounded-\[60px\],
+            .rounded-\[40px\] {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body class="antialiased overflow-x-hidden">
@@ -224,7 +345,10 @@
         <div class="justify-self-center flex items-center justify-center w-full"></div>
 
         <div class="justify-self-end flex items-center gap-3">
-            <a href="tool/index.html" class="btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-6 sm:px-8 py-3 rounded-full font-bold text-sm shadow-lg shadow-pink-500/30 inline-flex items-center justify-center whitespace-nowrap">
+            <a
+                href="tool/index.html"
+                class="btn-primary btn-ring text-white px-6 sm:px-8 py-3 rounded-full font-bold text-sm shadow-lg shadow-pink-500/30 inline-flex items-center justify-center whitespace-nowrap"
+                style="background-image: linear-gradient(90deg, #FCAF45 0%, #fbab46 25%, #E1306C 50%, #833AB4 75%, #833AB4 100%); background-size: 200% 200%; background-position: 50% 50%;">
             Open Instatools
             </a>
             <button
@@ -265,33 +389,28 @@
 
     <div id="content" class="sr-only"></div>
 
-    <section id="suite" class="py-28 sm:py-40 text-center px-6 bg-white">
-        <h2 class="text-4xl sm:text-5xl md:text-8xl font-black text-black leading-tight mb-10 sm:mb-14 tracking-tighter">
-            Total control <br> <span class="text-black">over your <span class="relative inline-block">Instagram.<span class="absolute left-0 -bottom-1 w-full h-[10px] bg-[#df306d] rounded-full -z-10"></span></span></span>
+    <section id="suite" class="py-24 sm:py-40 text-center px-6">
+        <h2 class="text-3xl sm:text-5xl md:text-7xl font-black text-black leading-tight mb-8 sm:mb-14 tracking-tighter">
+            Total control <br>
+            <span class="text-black">
+                over your
+                <span class="relative inline-block">
+                    Instagram.
+                    <span
+                        class="absolute left-0 -bottom-1 w-full h-[10px] rounded-full -z-10"
+                        style="background-image: linear-gradient(90deg, #FCAF45 0%, #fbab46 25%, #E1306C 50%, #833AB4 75%, #833AB4 100%);">
+                    </span>
+                </span>
+            </span>
         </h2>
-        <a href="#suite-grid" class="btn-ring bg-gray-100 hover:bg-gray-200 text-gray-900 px-12 py-5 rounded-full font-extrabold flex items-center gap-3 mx-auto text-lg transition-all border border-gray-300 inline-flex">
-            Explore the Instatools Suite <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        <a
+            href="tool/index.html"
+            class="btn-ring bg-white text-black px-14 py-6 rounded-full font-black text-xl hover:bg-gradient-to-r hover:from-[#FCAF45] hover:via-[#E1306C] hover:to-[#833AB4] hover:text-white transition-all shadow-2xl inline-flex items-center justify-center mx-auto">
+            Try the Beta
         </a>
     </section>
 
-    <section id="suite-grid" class="max-w-7xl mx-auto px-6 pb-20 sm:pb-36 section-animate section-delay-1">
-        <div class="card-shell card-noise bg-black rounded-[60px] p-12 md:p-24 flex flex-col md:flex-row items-center gap-16 relative overflow-hidden border border-white/10 text-white">
-            <div class="relative z-10 flex-1">
-                <h2 class="text-4xl sm:text-5xl md:text-7xl font-black leading-tight mb-8">Everything in <br> one canvas.</h2>
-                <p class="text-gray-300 text-lg mb-12 max-w-md font-medium">
-                    Instatools keeps your entire Instagram workflow in a single, focused interface. Switch between post layouts, highlight covers, and profile photos without leaving the browser.
-                </p>
-            </div>
-            
-            <div class="flex-1 w-full flex justify-center">
-                <div class="bg-white/5 backdrop-blur-xl rounded-[40px] p-2 w-full max-w-xl shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500 border border-white/10 overflow-hidden">
-                    <img src="example/Screenshot 2026-03-04 190418.png" alt="Instatools editor workspace screenshot" class="w-full h-full object-cover">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="tools" class="max-w-7xl mx-auto px-6 pb-32 sm:pb-40 scroll-mt-32 section-animate section-delay-2">
+    <section id="tools" class="max-w-7xl mx-auto px-6 pb-32 sm:pb-40 scroll-mt-32 section-animate section-delay-1">
         <div class="card-shell card-noise bg-black rounded-[60px] p-8 sm:p-12 md:p-24 border border-white/10 text-white">
             <div class="mb-10">
                 <h2 class="text-4xl sm:text-5xl font-black leading-tight tracking-tighter">
@@ -302,342 +421,161 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 <!-- Post Generator -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Post Generator</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white">
-                            Main
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                    <p class="text-gray-300 text-sm leading-relaxed">
                         Design professional Instagram posts with custom typography, photo layouts, overlays, and high-resolution export.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Typography</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Layouts</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Export</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Typography</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Layouts</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Export</span>
                     </div>
-                    <a href="tool/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
-                        Open Tool
+                    <a href="tool/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
+                        Try now
                     </a>
                 </div>
 
                 <!-- Highlight Creator -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Highlight Creator</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            New
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                    <p class="text-gray-300 text-sm leading-relaxed">
                         Create and customize Instagram highlight covers with matching icons, colors, and gradient rings.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Story Covers</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Icons</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Gradients</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Story Covers</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Icons</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Gradients</span>
                     </div>
-                    <a href="tool/tools/highlight/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
-                        Open Tool
+                    <a href="tool/tools/highlight/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
+                        Try now
                     </a>
                 </div>
 
                 <!-- Instamark -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Instamark</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            New
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
-                        Apply custom watermarks to any image. Control opacity, size, and position with a live preview — then export in full resolution.
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        Apply custom watermarks to any image. Control opacity, size, and position with a live preview, then export in full resolution.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Watermark</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Branding</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Export</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Watermark</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Branding</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Export</span>
                     </div>
-                    <a href="tool/tools/instamark/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
-                        Open Tool
+                    <a href="tool/tools/instamark/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
+                        Try now
                     </a>
                 </div>
 
                 <!-- Profile Previewer -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Profile Previewer</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            New
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
-                        Preview your full Instagram profile — bio, highlights, photo grid and action buttons — before going live.
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        Preview your full Instagram profile with bio, highlights, photo grid and action buttons before going live.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Bio</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Highlights</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Preview</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Bio</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Highlights</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Preview</span>
                     </div>
-                    <a href="tool/tools/pfp/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
-                        Open Tool
+                    <a href="tool/tools/pfp/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
+                        Try now
                     </a>
                 </div>
 
-                <!-- AI Carousel Maker -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <!-- Carousel Maker -->
+                <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">AI Carousel Maker</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            AI
-                        </span>
+                        <h3 class="text-xl font-black">Carousel Maker</h3>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
-                        Generate LinkedIn-style carousels with AI, then refine slides, typography, and export‑ready layouts in a focused editor.
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        Generate LinkedIn-style carousels, then refine slides, typography, and export-ready layouts in a focused editor.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">AI</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Carousels</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Slides</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Carousels</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Slides</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Layouts</span>
                     </div>
-                    <a href="tool/tools/carousel/index.html" class="w-full btn-primary btn-ring bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-4 py-3 rounded-2xl font-bold text-sm inline-flex items-center justify-center">
-                        Open Tool
+                    <a href="tool/tools/carousel/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
+                        Try now
                     </a>
                 </div>
 
                 <!-- Logo Maker -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/50 p-5 sm:p-6 flex flex-col justify-between gap-4">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Logo Maker</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            Coming soon
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                    <p class="text-gray-400 text-sm leading-relaxed">
                         Wordmark-style logo maker is nearly ready. Check back soon to design clean text logos with Google Fonts and export presets.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Logos</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Google Fonts</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Branding</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Logos</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Google Fonts</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Branding</span>
                     </div>
-                    <button type="button" disabled class="w-full bg-white/5 border border-white/10 text-white/50 px-4 py-3 rounded-2xl font-bold text-sm cursor-not-allowed inline-flex items-center justify-center">
-                        Open Tool
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
                     </button>
                 </div>
 
                 <!-- Reeltools -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/50 p-5 sm:p-6 flex flex-col justify-between gap-4">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Reeltools</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            Coming soon
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
-                        Smart tools for planning and formatting Instagram Reels — from hooks to captions and cover frames.
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Smart tools for planning and formatting Instagram Reels, from hooks to captions and cover frames.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Reels</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Video</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Planning</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Reels</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Video</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Planning</span>
                     </div>
-                    <button type="button" disabled class="w-full bg-white/5 border border-white/10 text-white/50 px-4 py-3 rounded-2xl font-bold text-sm cursor-not-allowed inline-flex items-center justify-center">
-                        Open Tool
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
                     </button>
                 </div>
 
                 <!-- Story Generator -->
-                <div class="rounded-[40px] border border-white/10 bg-white/5 p-6 transition-all hover:-translate-y-1">
+                <div class="group rounded-3xl border border-white/10 bg-white/5/50 p-5 sm:p-6 flex flex-col justify-between gap-4">
                     <div class="flex items-start justify-between gap-4 mb-3">
                         <h3 class="text-xl font-black">Story Generator</h3>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/10">
-                            Coming soon
-                        </span>
                     </div>
-                    <p class="text-gray-200 text-sm leading-relaxed mb-4">
+                    <p class="text-gray-400 text-sm leading-relaxed">
                         Generate on-brand Instagram Stories with templated layouts, text prompts, and export-ready sequences.
                     </p>
-                    <div class="flex flex-wrap gap-2 mb-5">
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Stories</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Templates</span>
-                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white/90 border border-white/10">Scheduling</span>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Stories</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Templates</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Scheduling</span>
                     </div>
-                    <button type="button" disabled class="w-full bg-white/5 border border-white/10 text-white/50 px-4 py-3 rounded-2xl font-bold text-sm cursor-not-allowed inline-flex items-center justify-center">
-                        Open Tool
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
                     </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 section-animate section-delay-1">
-        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 mb-10">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">See the Instatools workspace.</h2>
-                    <p class="text-gray-300 max-w-xl">
-                        These screenshots are captured directly from the live editor – no mockups. Everything you see here runs fully in your browser.
-                    </p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/Screenshot 2026-03-04 190418.png" alt="Instatools workspace screenshot 1" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/Screenshot 2026-03-04 190449.png" alt="Instatools workspace screenshot 2" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/Screenshot 2026-03-04 190513.png" alt="Instatools workspace screenshot 3" class="w-full h-full object-cover">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 section-animate section-delay-2">
-        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 mb-10">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Real posts made with Instatools.</h2>
-                    <p class="text-gray-300 max-w-xl">
-                        Four example posts designed inside the editor, exported as high‑resolution PNGs, ready to publish to Instagram.
-                    </p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/post.png" alt="Instagram post example 1" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/post-two.png" alt="Instagram post example 2" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/post-three.png" alt="Instagram post example 3" class="w-full h-full object-cover">
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                    <img src="example/post-four.png" alt="Instagram post example 4" class="w-full h-full object-cover">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 section-animate section-delay-3">
-        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
-            <div class="mb-10">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Before &amp; after with Instatools.</h2>
-                <p class="text-gray-300 max-w-2xl">
-                    Start from a flat, unstructured idea and end with a polished, grid‑aligned Instagram post. All edits are done locally in the browser.
-                </p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-4">
-                    <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-gray-100 text-xs font-semibold tracking-[0.16em] uppercase text-gray-600">
-                        Before
-                    </span>
-                    <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5">
-                        <img src="example/bf.jpg" alt="Before Instatools edit" class="w-full h-full object-cover">
-                    </div>
-                </div>
-                <div class="space-y-4">
-                    <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-semibold tracking-[0.16em] uppercase text-[#fbab46] bg-[#fbab46]/10">
-                        After with Instatools
-                    </span>
-                    <div class="rounded-3xl overflow-hidden border border-[#fbab46]/40 shadow-sm bg-white/5">
-                        <img src="example/af.jpg" alt="After Instatools edit" class="w-full h-full object-cover">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="privacy" class="max-w-7xl mx-auto px-6 pb-20 sm:pb-32 scroll-mt-32 section-animate section-delay-1">
-        <div class="card-shell card-noise bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
-            <div class="mb-10">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Privacy-first by design.</h2>
-                <p class="text-gray-300 max-w-2xl">
-                    We prioritize your privacy: all image processing is performed locally on your device. No data is uploaded to any server, and Instatools doesn’t rely on ads or trackers.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5 p-6">
-                    <h3 class="text-lg font-extrabold mb-2">Local-only processing</h3>
-                    <p class="text-gray-300">
-                        Your images stay in your browser while you design—no external calls required.
-                    </p>
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5 p-6">
-                    <h3 class="text-lg font-extrabold mb-2">No uploads</h3>
-                    <p class="text-gray-300">
-                        Instatools doesn’t upload your content to servers during edits or export.
-                    </p>
-                </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 shadow-sm bg-white/5 p-6">
-                    <h3 class="text-lg font-extrabold mb-2">No ads or trackers</h3>
-                    <p class="text-gray-300">
-                        Privacy-friendly by default, so the experience stays focused on your work.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="engineered" class="max-w-7xl mx-auto px-6 pb-24 sm:pb-40 scroll-mt-32">
-        <div class="bg-black rounded-[40px] border border-white/10 p-10 md:p-14 text-white">
-            <div class="mb-10">
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-black mb-3">Workspace built for speed &amp; precision.</h2>
-                <p class="text-gray-300 max-w-2xl">
-                    Everything you need to create Instagram-ready content: advanced layout tools, pro typography controls, and high-resolution export.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="rounded-3xl bg-white/5 border border-white/10 shadow-sm p-6">
-                    <h3 class="text-lg font-extrabold text-white mb-2">Post Generator</h3>
-                    <p class="text-gray-300">
-                        Build high-impact feed posts with precise placement and typography controls.
-                    </p>
-                </div>
-                <div class="rounded-3xl bg-white/5 border border-white/10 shadow-sm p-6">
-                    <h3 class="text-lg font-extrabold text-white mb-2">Highlight Covers</h3>
-                    <p class="text-gray-300">
-                        Design story cover icons and styles that match your brand.
-                    </p>
-                </div>
-                <div class="rounded-3xl bg-white/5 border border-white/10 shadow-sm p-6">
-                    <h3 class="text-lg font-extrabold text-white mb-2">Profile Photos</h3>
-                    <p class="text-gray-300">
-                        Frame, style, and export professional-grade profile images.
-                    </p>
-                </div>
-            </div>
-
-            <div class="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center">
-                <a
-                    href="tool/index.html"
-                    class="bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] text-white px-12 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all shadow-lg shadow-pink-500/30 inline-flex items-center justify-center">
-                    Open Instatools
-                </a>
-                <a
-                    href="https://github.com/nicholasxdavis/instatools"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-12 py-4 rounded-full font-bold text-lg transition-all inline-flex items-center justify-center">
-                    View GitHub
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <footer class="mt-24 sm:mt-32 py-48 bg-black text-center px-6 rounded-t-[80px] border-t border-white/10">
-        <h2 class="text-6xl md:text-9xl font-black text-white mb-16 tracking-tighter leading-none">
+    <footer class="mt-16 sm:mt-24 py-20 sm:py-36 bg-black text-center px-5 sm:px-6 rounded-t-[60px] sm:rounded-t-[80px] border-t border-white/10">
+        <h2 class="text-4xl sm:text-6xl md:text-9xl font-black text-white mb-10 sm:mb-16 tracking-tighter leading-tight sm:leading-none">
             Built for creators, <br><span class="bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#833AB4] bg-clip-text text-transparent">open for everyone.</span>
         </h2>
-            <a href="tool/index.html" class="btn-ring bg-white text-black px-14 py-6 rounded-full font-black text-xl hover:bg-gradient-to-r hover:from-[#FCAF45] hover:via-[#E1306C] hover:to-[#833AB4] hover:text-white transition-all shadow-2xl mb-12 inline-flex items-center justify-center">
+            <a
+                href="tool/index.html"
+                class="btn-ring bg-white text-black px-10 sm:px-14 py-5 sm:py-6 rounded-full font-black text-lg sm:text-xl hover:bg-gradient-to-r hover:from-[#FCAF45] hover:via-[#E1306C] hover:to-[#833AB4] hover:text-white transition-all shadow-2xl mb-10 sm:mb-12 inline-flex items-center justify-center w-full max-w-xs sm:max-w-none mx-auto">
             Start designing with Instatools
         </a>
         <div class="mt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
