@@ -46,6 +46,54 @@ function getHostname(url) {
     }
 }
 
+function isVideoSource(src) {
+    if (!src || typeof src !== 'string') return false;
+    const value = src.trim().toLowerCase();
+    if (!value) return false;
+    if (value.startsWith('data:video/')) return true;
+    // Blob URLs may point to video files; detect common extensions when present.
+    return /\.(mp4|webm|mov|m4v|ogv|ogg)(\?|#|$)/i.test(value);
+}
+
+function hydrateCanvasMedia(container) {
+    if (!container) return;
+    const imgs = container.querySelectorAll('img[src]');
+    imgs.forEach((img) => {
+        const src = img.getAttribute('src') || '';
+        if (!isVideoSource(src)) return;
+
+        const postStyle = (window.state && window.state.post && window.state.post.style)
+            ? window.state.post.style
+            : {};
+        const showAudio = postStyle.showVideoAudio === true;
+        const volume = Math.max(0, Math.min(1, Number(postStyle.videoVolume ?? 0.85)));
+
+        const video = document.createElement('video');
+        video.src = src;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = !showAudio;
+        video.volume = showAudio ? volume : 0;
+        video.controls = false;
+        video.playsInline = true;
+        video.preload = 'metadata';
+
+        if (img.className) video.className = img.className;
+        if (img.getAttribute('style')) video.setAttribute('style', img.getAttribute('style'));
+        if (img.getAttribute('title')) video.setAttribute('title', img.getAttribute('title'));
+        if (img.getAttribute('data-ctx')) video.setAttribute('data-ctx', img.getAttribute('data-ctx'));
+
+        video.onloadedmetadata = () => {
+            const p = video.play();
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+        };
+        video.onerror = () => {
+            video.style.display = 'none';
+        };
+        img.replaceWith(video);
+    });
+}
+
 function showNotification(message, type = 'success') {
     // Toast notification matching panel styling
     const notification = document.createElement('div');
@@ -203,6 +251,8 @@ if (typeof window !== 'undefined') {
     window.debounceResize = debounceResize;
     window.escapeHtml = escapeHtml;
     window.getHostname = getHostname;
+    window.isVideoSource = isVideoSource;
+    window.hydrateCanvasMedia = hydrateCanvasMedia;
     window.showNotification = showNotification;
     window.showConfirmPopup = showConfirmPopup;
     window.closeConfirmPopup = closeConfirmPopup;

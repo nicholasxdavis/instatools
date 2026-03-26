@@ -223,7 +223,7 @@ function renderPostEditor(container) {
                         >
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload background image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'postBg')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 'postBg')">
                         </label>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-4">
@@ -319,7 +319,7 @@ function renderPostEditor(container) {
                         >
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload overlay image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'postOverlay')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 'postOverlay')">
                         </label>
                     </div>
                     ${
@@ -725,7 +725,7 @@ function renderPostEditor(container) {
                         >
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload watermark">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'postWatermark')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 'postWatermark')">
                         </label>
                     </div>
                     ${
@@ -1205,7 +1205,7 @@ function renderTemplate2Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload image">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't2Bg')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 't2Bg')">
                             </label>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
@@ -1263,7 +1263,7 @@ function renderTemplate2Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload watermark">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="(e => { const f=e.target.files[0]; if(!f) return; e.target.value=''; const r=new FileReader(); r.onload=ev=>{window.state.post.t2.watermarkUrl=ev.target.result; window.state.post.t2.showWatermark=true; window.debouncedRenderCanvas();}; r.readAsDataURL(f); })(event)">
+                                <input type="file" hidden accept="image/*,video/*" onchange="(e => { const f=e.target.files[0]; if(!f) return; e.target.value=''; const r=new FileReader(); r.onload=ev=>{window.state.post.t2.watermarkUrl=ev.target.result; window.state.post.t2.showWatermark=true; window.debouncedRenderCanvas();}; r.readAsDataURL(f); })(event)">
                             </label>
                         </div>
                         ${
@@ -1475,7 +1475,7 @@ function renderTemplate3Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload image">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't3Bg')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 't3Bg')">
                             </label>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
@@ -1695,7 +1695,7 @@ function renderHighlightEditor(container) {
                                 <i data-lucide="upload" class="w-4 h-4 mb-0.5"></i>
                                 <span class="text-xs font-bold leading-none uppercase">Upload</span>
                                 <span class="text-[9px] opacity-70 leading-none uppercase">Custom PNG</span>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'highlightIcon')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 'highlightIcon')">
                             </label>
                         </div>
 
@@ -1756,7 +1756,7 @@ function renderHighlightEditor(container) {
                             >
                             <label class="bg-[#1e1e1e] hover:bg-[#323232] p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload background image">
                                 <i data-lucide="upload" class="w-3.5 h-3.5 text-gray-400"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 'highlightBg')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 'highlightBg')">
                             </label>
                         </div>
 
@@ -2083,7 +2083,7 @@ function renderTemplate4Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload image">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't4Bg')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 't4Bg')">
                             </label>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
@@ -2432,7 +2432,7 @@ function renderTemplate5Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload left image">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't5Left')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 't5Left')">
                             </label>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2">
@@ -2478,7 +2478,7 @@ function renderTemplate5Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload right image">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't5Right')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 't5Right')">
                             </label>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2">
@@ -2575,7 +2575,7 @@ function renderTemplate5Editor(container) {
                             >
                             <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all-200 active:scale-95" aria-label="Upload watermark">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event, 't5Watermark')">
+                                <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event, 't5Watermark')">
                             </label>
                         </div>
                         ${t5.watermarkUrl ? `
@@ -2794,7 +2794,7 @@ function renderTemplate6Editor(container) {
                             value="${safeBgUrl}">
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t6Bg')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event,'t6Bg')">
                         </label>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -2933,7 +2933,7 @@ function renderTemplate6Editor(container) {
                             value="${safeCircleUrl}">
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload circle image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t6Circle')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event,'t6Circle')">
                         </label>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -3183,7 +3183,7 @@ function renderTemplate8Editor(container) {
                             value="${safeBgUrl}">
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t8Bg')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event,'t8Bg')">
                         </label>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -3275,7 +3275,7 @@ function renderTemplate8Editor(container) {
                             value="${safeCircleUrl}">
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload circle image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t8Circle')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event,'t8Circle')">
                         </label>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
@@ -3454,7 +3454,7 @@ function renderTemplate7Editor(container) {
                             value="${safeProfileUrl}">
                         <label class="bg-gray-100 hover:bg-gray-200 p-2.5 rounded-lg cursor-pointer transition-all active:scale-95" title="Upload image">
                             <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <input type="file" hidden accept="image/*" onchange="window.handleFileUpload(event,'t7Profile')">
+                            <input type="file" hidden accept="image/*,video/*" onchange="window.handleFileUpload(event,'t7Profile')">
                         </label>
                     </div>
                     <div>
@@ -3689,7 +3689,7 @@ function renderTemplate9Editor(container) {
                             <i data-lucide="upload-cloud" class="w-6 h-6 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
                             <span class="text-[10px] text-gray-400 group-hover:text-gray-200">Click to Upload</span>
                         </div>
-                        <input type="file" id="t9-bg-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't9Bg')">
+                        <input type="file" id="t9-bg-upload" class="hidden" accept="image/*,video/*" onchange="window.handleFileUpload(event, 't9Bg')">
                     </div>
                     <input type="text" 
                         class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
@@ -3734,7 +3734,7 @@ function renderTemplate9Editor(container) {
                             <i data-lucide="upload" class="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
                             <span class="text-[9px] text-gray-400 group-hover:text-gray-200">Upload Logo</span>
                         </div>
-                        <input type="file" id="t9-logo-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't9Logo')">
+                        <input type="file" id="t9-logo-upload" class="hidden" accept="image/*,video/*" onchange="window.handleFileUpload(event, 't9Logo')">
                     </div>
                     <input type="text" 
                         class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
@@ -3855,7 +3855,7 @@ function renderTemplate10Editor(container) {
                             <i data-lucide="upload-cloud" class="w-6 h-6 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
                             <span class="text-[10px] text-gray-400 group-hover:text-gray-200">Click to Upload</span>
                         </div>
-                        <input type="file" id="t10-bg-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't10Bg')">
+                        <input type="file" id="t10-bg-upload" class="hidden" accept="image/*,video/*" onchange="window.handleFileUpload(event, 't10Bg')">
                     </div>
                     <input type="text" 
                         class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"
@@ -3899,7 +3899,7 @@ function renderTemplate10Editor(container) {
                             <i data-lucide="upload" class="w-4 h-4 text-gray-400 mb-1 group-hover:text-[#d53478]"></i>
                             <span class="text-[9px] text-gray-400 group-hover:text-gray-200">Upload Watermark</span>
                         </div>
-                        <input type="file" id="t10-watermark-upload" class="hidden" accept="image/*" onchange="window.handleFileUpload(event, 't10Watermark')">
+                        <input type="file" id="t10-watermark-upload" class="hidden" accept="image/*,video/*" onchange="window.handleFileUpload(event, 't10Watermark')">
                     </div>
                     <input type="text" 
                         class="w-full bg-[#1e1e1e] border border-gray-700 rounded-md p-1.5 text-xs text-gray-200 focus:border-[#d53478] outline-none"

@@ -440,6 +440,9 @@ const state = {
       watermarkPosY: 0,
       watermarkOpacity: 0.8,
       showWatermark: true,
+      // Video playback controls (applies to any template media slot)
+      showVideoAudio: false,
+      videoVolume: 0.85,
     },
     sources: { bg: "GITHUB", overlay: "GITHUB", watermark: "GITHUB" },
   },

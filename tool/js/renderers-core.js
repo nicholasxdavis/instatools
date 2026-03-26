@@ -151,6 +151,74 @@ function renderSidebarContent() {
                 window.state.activeTab = 'editor';
                 window.renderHighlightEditor(container);
             }
+
+            // Video audio controls (preview only): show only when a video source exists for the active template
+            if (window.state.mode === 'post' && window.state.activeTab === 'editor') {
+                try {
+                    const post = window.state.post;
+                    const style = (post && post.style) ? post.style : {};
+                    const isVideo = (v) => (typeof window.isVideoSource === 'function') ? window.isVideoSource(v) : false;
+
+                    const tmpl = post && post.template;
+                    const hasVideo =
+                        isVideo(post && post.bgImage) ||
+                        isVideo(style.overlayImgUrl) ||
+                        isVideo(style.logoUrl) ||
+                        isVideo(style.watermarkUrl) ||
+                        (tmpl === 'template2' && isVideo(post.t2 && post.t2.bgImage)) ||
+                        (tmpl === 'template3' && isVideo(post.t3 && post.t3.bgImage)) ||
+                        (tmpl === 'template4' && isVideo(post.t4 && post.t4.bgImage)) ||
+                        (tmpl === 'template5' && (isVideo(post.t5 && post.t5.imageLeft) || isVideo(post.t5 && post.t5.imageRight))) ||
+                        ((tmpl === 'template6' || tmpl === 'template8') && (isVideo(post.t6 && post.t6.bgImage) || isVideo(post.t6 && post.t6.circleImage) || isVideo(post.t8 && post.t8.bgImage) || isVideo(post.t8 && post.t8.circleImage))) ||
+                        (tmpl === 'template7' && isVideo(post.t7 && post.t7.profileImageUrl)) ||
+                        (tmpl === 'template9' && (isVideo(post.t9 && post.t9.bgImage) || isVideo(post.t9 && post.t9.logoUrl))) ||
+                        (tmpl === 'template10' && (isVideo(post.t10 && post.t10.bgImage) || isVideo(post.t10 && post.t10.watermarkUrl)));
+
+                    if (hasVideo) {
+                        const existing = container.querySelector('#video-audio-controls');
+                        if (existing) existing.remove();
+                        const checked = style.showVideoAudio === true;
+                        const vol = Math.max(0, Math.min(1, Number(style.videoVolume ?? 0.85)));
+                        const volPct = Math.round(vol * 100) + '%';
+
+                        container.insertAdjacentHTML('beforeend', `
+                            <div id="video-audio-controls" class="space-y-3 pt-6 border-t border-gray-100 animate-fade-in">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-2">
+                                        <i data-lucide="volume-2" class="w-3 h-3"></i> Video Audio
+                                    </label>
+                                    <input type="checkbox"
+                                        id="video-audio-enable"
+                                        ${checked ? 'checked' : ''}
+                                        onchange="window.updatePostStyle('showVideoAudio', this.checked); window.renderSidebarContent();"
+                                        class="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
+                                        aria-label="Enable video audio">
+                                </div>
+
+                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
+                                    <div>
+                                        <div class="flex justify-between items-center gap-3 mb-2">
+                                            <label class="text-[9px] uppercase font-bold text-gray-400 block">Volume</label>
+                                            <div id="video-volume-display" class="text-[10px] text-gray-500 font-mono">${volPct}</div>
+                                        </div>
+                                        <input type="range"
+                                            min="0"
+                                            max="1"
+                                            step="0.01"
+                                            value="${vol}"
+                                            ${checked ? '' : 'disabled'}
+                                            oninput="window.updatePostStyleWithDisplay('videoVolume', parseFloat(this.value), 'video-volume-display', 'percent')"
+                                            class="w-full"
+                                            aria-label="Video volume">
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    }
+                } catch (e) {
+                    console.warn('Video audio controls render failed:', e);
+                }
+            }
             
             // Initialize Lucide icons after rendering content - target the container specifically
             setTimeout(() => {
@@ -222,6 +290,12 @@ function renderCanvas() {
     
     const root = document.getElementById('canvas-root');
             if (!root) return;
+    function setCanvasHtml(html) {
+        root.innerHTML = html;
+        if (window.hydrateCanvasMedia) {
+            window.hydrateCanvasMedia(root);
+        }
+    }
 
             if (window.state.mode === 'post') {
         const s = window.state.post.style;
@@ -289,7 +363,7 @@ function renderCanvas() {
                         t2WmLeft = `${t2PosX}%`;
                     }
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;">
                             <!-- White top bar with headline -->
                             <div
@@ -330,7 +404,7 @@ function renderCanvas() {
                                 ` : ''}
                             </div>
                         </div>
-                    `;
+                    `);
                     return; // Done â€” skip template1 rendering below
                 }
 
@@ -409,7 +483,7 @@ function renderCanvas() {
                 }
             }
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;overflow:hidden;background:#000;">
 
                             <!-- ① Background image -->
@@ -475,7 +549,7 @@ function renderCanvas() {
                             </div>
 
                         </div>
-                    `;
+                    `);
                     return; // Done — skip template1 rendering below
                 }
 
@@ -506,7 +580,7 @@ function renderCanvas() {
                     // sp = spacing between elements  
                     const sp = t7.spacingBetweenElements || 20;
                     const smallTopGap = 5;
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;background:${t7.bgColor};display:flex;flex-direction:column;padding:${t7.paddingV}px ${t7.paddingH}px;font-family:'${t7.customFontFamily || t7.fontFamily}',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;overflow:hidden;">
                             
                             <!-- Header: Profile Picture + Username/Handle (stacked) + Three Dots -->
@@ -573,7 +647,7 @@ function renderCanvas() {
                             </div>` : ''}
                             
                         </div>
-                    `;
+                    `);
                     return; // Done — skip template1 rendering below
                 }
 
@@ -628,7 +702,7 @@ function renderCanvas() {
             // Separator between images
             const sepStyle = t5.imageSeparator ? `border-left:${t5.separatorWidth}px solid ${t5.separatorColor};` : '';
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;">
 
                             <!-- TOP: two images side by side -->
@@ -704,7 +778,7 @@ function renderCanvas() {
 
                         </div>
 
-                    `;
+                    `);
                     return; // Done — skip template1 rendering below
                 }
 
@@ -729,7 +803,7 @@ function renderCanvas() {
                 return `<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;">${dots}</div>`;
             })() : '';
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;background:#000;overflow:hidden;">
 
                             <!-- BACKGROUND IMAGE -->
@@ -806,7 +880,7 @@ function renderCanvas() {
                             </div>
 
                         </div>
-                    `;
+                    `);
                     return; // Done — skip template1 rendering below
                 }
 
@@ -822,7 +896,7 @@ function renderCanvas() {
                     // Fading divider line: gradient from transparent â†’ color â†’ transparent
             const dividerLine = `background:linear-gradient(to right, transparent 0%, ${t3.brandColor} 20%, ${t3.brandColor} 80%, transparent 100%);height:1.5px;flex:1;`;
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;background:${showBg ? t3.bgColor : '#000'};overflow:hidden;">
 
                             <!-- LAYER 1: Image â€” full canvas when bg disabled, cropped when enabled -->
@@ -881,7 +955,7 @@ function renderCanvas() {
 
 
                         </div>
-                    `;
+                    `);
                     return; // Done â€” skip template1 rendering below
                 }
 
@@ -900,7 +974,7 @@ function renderCanvas() {
                         return `<span style="color:${t9.headlineColor}">${window.escapeHtml(part)}</span>`;
                     }).join('');
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;background:#000;overflow:hidden;">
                             
                             <!-- Background Image -->
@@ -944,7 +1018,7 @@ function renderCanvas() {
                             </div>
 
                         </div>
-                    `;
+                    `);
                     return; // Done
                 }
 
@@ -1000,7 +1074,7 @@ function renderCanvas() {
                     const glowHeightPct = Math.max(0, Math.min(100, t10.glowHeight || 40));
                     const glowOpacity = Math.max(0, Math.min(1, t10.glowOpacity != null ? t10.glowOpacity : 0.8));
 
-                    root.innerHTML = `
+                    setCanvasHtml(`
                         <div style="position:absolute;inset:0;background:#f4f4f4;overflow:hidden;">
 
                             <!-- Background Image -->
@@ -1138,7 +1212,7 @@ function renderCanvas() {
                             ` : ''}
 
                         </div>
-                    `;
+                    `);
                     return; // Done
                 }
 
@@ -1200,7 +1274,7 @@ function renderCanvas() {
                 }
 
                 // Classic template layout (single, flexible template)
-                root.innerHTML = `
+                setCanvasHtml(`
                     <div class="absolute inset-0 z-0 bg-black overflow-hidden" data-ctx="background" title="Click to edit background" ondblclick="window.focusSidebarControl('input-bg-image')" style="cursor:pointer;">
                         <img 
                             src="${safeBgImage}" 
@@ -1294,7 +1368,7 @@ function renderCanvas() {
                             >
                         </div>
                     ` : ''}
-                `;
+                `);
             } else {
                 // Highlight
         const h = window.state.highlight;
@@ -1316,7 +1390,7 @@ function renderCanvas() {
 
                 const safeBgImage = (h.showBgImage && h.bgImage) ? window.escapeHtml(window.getCorsProxyUrl(h.bgImage)) : '';
 
-                root.innerHTML = `
+                setCanvasHtml(`
                     <div class="relative w-full h-full flex items-center justify-center overflow-hidden">
                         ${safeBgImage ? `
                             <div class="absolute inset-0 z-0">
@@ -1331,7 +1405,7 @@ function renderCanvas() {
                         <div class="absolute rounded-full border-solid box-border" data-ctx="highlight-ring" title="Click to edit ring" style="width: 90%; height: 90%; border-color: ${h.ringColor}; border-width: ${h.ringWidth}px; cursor:pointer; z-index: 5;"></div>
                         <div class="flex items-center justify-center z-10" data-ctx="highlight-icon" title="Click to edit icon" style="cursor:pointer;">${iconHTML}</div>
                     </div>
-                `;
+                `);
             }
         }
 

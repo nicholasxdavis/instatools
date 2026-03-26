@@ -320,9 +320,7 @@ function handleFileUpload(event, type) {
     // Reset input
     event.target.value = '';
     
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        const res = ev.target.result;
+    const processFileResult = (res) => {
         try {
             if (type === 'postBg') {
                 window.state.post.bgImage = res;
@@ -560,6 +558,17 @@ function handleFileUpload(event, type) {
             console.error('File upload error:', e);
             window.showNotification('Failed to process file', 'error');
         }
+    };
+
+    // Videos are better stored as blob URLs (lighter than base64 data URLs).
+    if (type !== 'import' && file.type && file.type.startsWith('video/')) {
+        processFileResult(URL.createObjectURL(file));
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        processFileResult(ev.target.result);
     };
     
     reader.onerror = () => {

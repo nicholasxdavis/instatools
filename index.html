@@ -53,6 +53,24 @@
             z-index: -1;
         }
 
+        .icon-pattern-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -2;
+            overflow: hidden;
+        }
+        .icon-pattern-item {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            filter: grayscale(1) contrast(0.9);
+            mix-blend-mode: multiply;
+            transform-origin: center;
+            user-select: none;
+        }
+
         /* Legacy hero styles removed – hero section no longer used */
 
         .btn-primary {
@@ -346,6 +364,8 @@
     </style>
 </head>
 <body class="antialiased overflow-x-hidden">
+    <div class="icon-pattern-bg" aria-hidden="true"></div>
+
     <a
         href="#content"
         class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-1/2 focus:-translate-x-1/2 bg-black text-white px-4 py-2 rounded-full z-[200]">
@@ -458,10 +478,10 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-                <!-- Post Generator -->
+                <!-- Post Tool -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Post Generator</h3>
+                        <h3 class="text-xl font-black">Post Tool</h3>
                     </div>
                     <p class="text-gray-300 text-sm leading-relaxed">
                         Design professional Instagram posts with custom typography, photo layouts, overlays, and high-resolution export.
@@ -476,10 +496,10 @@
                     </a>
                 </div>
 
-                <!-- Highlight Creator -->
+                <!-- Highlights -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Highlight Creator</h3>
+                        <h3 class="text-xl font-black">Highlights</h3>
                     </div>
                     <p class="text-gray-300 text-sm leading-relaxed">
                         Create and customize Instagram highlight covers with matching icons, colors, and gradient rings.
@@ -489,15 +509,15 @@
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Icons</span>
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Gradients</span>
                     </div>
-                    <a href="tool/tools/highlight/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
-                        Try now
-                    </a>
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
+                    </button>
                 </div>
 
-                <!-- Instamark -->
+                <!-- Watermark -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Instamark</h3>
+                        <h3 class="text-xl font-black">Watermark</h3>
                     </div>
                     <p class="text-gray-300 text-sm leading-relaxed">
                         Apply custom watermarks to any image. Control opacity, size, and position with a live preview, then export in full resolution.
@@ -507,15 +527,15 @@
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Branding</span>
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Export</span>
                     </div>
-                    <a href="tool/tools/instamark/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
-                        Try now
-                    </a>
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
+                    </button>
                 </div>
 
-                <!-- Profile Previewer -->
+                <!-- Profiletools -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Profile Previewer</h3>
+                        <h3 class="text-xl font-black">Profiletools</h3>
                     </div>
                     <p class="text-gray-300 text-sm leading-relaxed">
                         Preview your full Instagram profile with bio, highlights, photo grid and action buttons before going live.
@@ -525,15 +545,15 @@
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Highlights</span>
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Preview</span>
                     </div>
-                    <a href="tool/tools/pfp/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
-                        Try now
-                    </a>
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
+                    </button>
                 </div>
 
-                <!-- Carousel Maker -->
+                <!-- Carouseltools -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/80 p-5 sm:p-6 flex flex-col justify-between gap-4 transition-colors hover:bg-white/10">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Carousel Maker</h3>
+                        <h3 class="text-xl font-black">Carouseltools</h3>
                     </div>
                     <p class="text-gray-300 text-sm leading-relaxed">
                         Generate LinkedIn-style carousels, then refine slides, typography, and export-ready layouts in a focused editor.
@@ -543,15 +563,33 @@
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Slides</span>
                         <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/80 border border-white/5">Layouts</span>
                     </div>
-                    <a href="tool/tools/carousel/index.html" class="w-full btn-ring bg-[#df306d] hover:bg-[#c32a5f] text-white text-xs font-semibold px-4 py-2.5 rounded-2xl inline-flex items-center justify-center transition-colors">
-                        Try now
-                    </a>
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
+                    </button>
                 </div>
 
-                <!-- Logo Maker -->
+                <!-- Brandtools -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/50 p-5 sm:p-6 flex flex-col justify-between gap-4">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Logo Maker</h3>
+                        <h3 class="text-xl font-black">Brandtools</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Create Instagram posts that match your existing brand style, including your colors, fonts, tone, and visual identity.
+                    </p>
+                    <div class="flex flex-wrap gap-1.5 mt-3 mb-4">
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Brand Style</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Post Design</span>
+                        <span class="px-2.5 py-1 rounded-full text-[0.7rem] font-medium bg-white/5 text-white/70 border border-white/5">Consistency</span>
+                    </div>
+                    <button type="button" disabled class="w-full bg-white/5/40 border border-white/10 text-white/40 px-4 py-2.5 rounded-2xl text-xs font-semibold cursor-not-allowed inline-flex items-center justify-center">
+                        Coming soon
+                    </button>
+                </div>
+
+                <!-- Logotools -->
+                <div class="group rounded-3xl border border-white/10 bg-white/5/50 p-5 sm:p-6 flex flex-col justify-between gap-4">
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h3 class="text-xl font-black">Logotools</h3>
                     </div>
                     <p class="text-gray-400 text-sm leading-relaxed">
                         Wordmark-style logo maker is nearly ready. Check back soon to design clean text logos with Google Fonts and export presets.
@@ -584,10 +622,10 @@
                     </button>
                 </div>
 
-                <!-- Story Generator -->
+                <!-- Storytools -->
                 <div class="group rounded-3xl border border-white/10 bg-white/5/50 p-5 sm:p-6 flex flex-col justify-between gap-4">
                     <div class="flex items-start justify-between gap-4 mb-3">
-                        <h3 class="text-xl font-black">Story Generator</h3>
+                        <h3 class="text-xl font-black">Storytools</h3>
                     </div>
                     <p class="text-gray-400 text-sm leading-relaxed">
                         Generate on-brand Instagram Stories with templated layouts, text prompts, and export-ready sequences.
@@ -642,7 +680,7 @@
                 Terms
             </a>
         </div>
-        <p class="pt-4 text-gray-500 font-bold uppercase tracking-widest text-xs">
+        <p class="pt-4 text-gray-400 font-bold text-xs">
             © 2026 Instatools by
             <a href="https://www.blacnova.net" target="_blank" rel="noopener noreferrer" class="underline hover:text-gray-300">
                 Blacnova Development
@@ -652,6 +690,62 @@
 
     <script>
         (function () {
+            const iconLayer = document.querySelector('.icon-pattern-bg');
+            if (iconLayer) {
+                const iconPaths = [
+                    'src/iconarmy/camera-svgrepo-com.svg',
+                    'src/iconarmy/favorite-svgrepo-com.svg',
+                    'src/iconarmy/flash-svgrepo-com.svg',
+                    'src/iconarmy/instagram-167-svgrepo-com.svg',
+                    'src/iconarmy/tools-svgrepo-com.svg'
+                ];
+
+                const random = (min, max) => Math.random() * (max - min) + min;
+
+                const paintIconPattern = () => {
+                    iconLayer.innerHTML = '';
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+                    const cellSize = 190;
+                    const cols = Math.ceil(viewportWidth / cellSize);
+                    const rows = Math.ceil(viewportHeight / cellSize);
+                    const fragment = document.createDocumentFragment();
+
+                    for (let row = 0; row < rows; row += 1) {
+                        for (let col = 0; col < cols; col += 1) {
+                            if (Math.random() < 0.18) continue;
+
+                            const icon = document.createElement('span');
+                            const x = (col + 0.5) * cellSize + random(-35, 35);
+                            const y = (row + 0.5) * cellSize + random(-35, 35);
+                            const size = random(112, 138);
+                            const tilt = random(-28, 28);
+                            const opacity = random(0.06, 0.13);
+
+                            icon.className = 'icon-pattern-item';
+                            icon.style.left = `${x - size / 2}px`;
+                            icon.style.top = `${y - size / 2}px`;
+                            icon.style.width = `${size}px`;
+                            icon.style.height = `${size}px`;
+                            icon.style.opacity = opacity.toFixed(3);
+                            icon.style.transform = `rotate(${tilt.toFixed(1)}deg)`;
+                            icon.style.backgroundImage = `url("${iconPaths[(row * cols + col) % iconPaths.length]}")`;
+                            fragment.appendChild(icon);
+                        }
+                    }
+
+                    iconLayer.appendChild(fragment);
+                };
+
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    window.clearTimeout(resizeTimer);
+                    resizeTimer = window.setTimeout(paintIconPattern, 140);
+                });
+
+                paintIconPattern();
+            }
+
             const btn = document.getElementById('mobile-menu-toggle');
             const menu = document.getElementById('mobile-menu');
             if (!btn || !menu) return;

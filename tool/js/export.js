@@ -20,6 +20,7 @@ const _CORS_PROXIES = [
     u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
     u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
 ];
+let _exportSession = null;
 
 // ─── Normalise GitHub blob-viewer URLs to raw.githubusercontent.com ────────────
 // github.com/blob/… does NOT send CORS headers.
@@ -38,28 +39,233 @@ function _normalizeImgUrl(src) {
     return src;
 }
 
+function _isVideoSource(src) {
+    if (!src || typeof src !== 'string') return false;
+    const value = src.trim().toLowerCase();
+    if (!value) return false;
+    if (value.startsWith('data:video/')) return true;
+    return /\.(mp4|webm|mov|m4v|ogv|ogg)(\?|#|$)/i.test(value);
+}
+
+function _extFromVideoSource(src) {
+    const low = (src || '').toLowerCase();
+    if (low.includes('.webm')) return 'webm';
+    if (low.includes('.mov')) return 'mov';
+    if (low.includes('.m4v')) return 'm4v';
+    if (low.includes('.ogv') || low.includes('.ogg')) return 'ogv';
+    return 'mp4';
+}
+
+function _activeVideoSourceFromPost(post) {
+    if (!post) return null;
+    const t = post.template;
+    const s = post.style || {};
+    const checks = [];
+    if (t === 'template2') checks.push(post.t2 && post.t2.bgImage);
+    else if (t === 'template3') checks.push(post.t3 && post.t3.bgImage);
+    else if (t === 'template4') checks.push(post.t4 && post.t4.bgImage);
+    else if (t === 'template5') checks.push(post.t5 && post.t5.imageLeft, post.t5 && post.t5.imageRight);
+    else if (t === 'template6') checks.push(post.t6 && post.t6.bgImage, post.t6 && post.t6.circleImage);
+    else if (t === 'template7') checks.push(post.t7 && post.t7.profileImageUrl);
+    else if (t === 'template8') checks.push(post.t8 && post.t8.bgImage, post.t8 && post.t8.circleImage);
+    else if (t === 'template9') checks.push(post.t9 && post.t9.bgImage, post.t9 && post.t9.logoUrl);
+    else if (t === 'template10') checks.push(post.t10 && post.t10.bgImage, post.t10 && post.t10.watermarkUrl);
+    else checks.push(post.bgImage, s.overlayImgUrl, s.logoUrl, s.watermarkUrl);
+    return checks.find(v => _isVideoSource(v)) || null;
+}
+
+async function _downloadSourceFile(src, filenameBase) {
+    let blob = null;
+    if (src.startsWith('data:')) {
+        const res = await fetch(src);
+        blob = await res.blob();
+    } else {
+        const objUrl = await _fetchAsBlobUrl(src);
+        if (!objUrl) return false;
+        try {
+            const res = await fetch(objUrl);
+            blob = await res.blob();
+        } finally {
+            URL.revokeObjectURL(objUrl);
+        }
+    }
+
+    if (!blob) return false;
+    const outUrl = URL.createObjectURL(blob);
+    const ext = _extFromVideoSource(src);
+    const link = document.createElement('a');
+    link.href = outUrl;
+    link.download = `${filenameBase}.${ext}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(outUrl);
+    return true;
+}
+
+function _loadImageElement(src) {
+    return new Promise(resolve => {
+        const el   = new Image();
+        el.onload  = () => resolve(el);
+        el.onerror = () => resolve(null);
+        el.src     = src;
+        setTimeout(() => resolve(null), 8000);
+    });
+}
+
+function _fetchableCandidates(src) {
+    const normalized = _normalizeImgUrl(src);
+    const candidates = [normalized];
+    if (normalized !== src) candidates.push(src);
+    _CORS_PROXIES.forEach(fn => candidates.push(fn(normalized)));
+    return candidates;
+}
+
+async function _fetchAsBlobUrl(src) {
+    const candidates = _fetchableCandidates(src);
+    for (const url of candidates) {
+        try {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 8000);
+            const resp = await fetch(url, {
+                mode: 'cors',
+                credentials: 'omit',
+                cache: 'no-cache',
+                signal: controller.signal,
+            });
+            clearTimeout(tid);
+            if (!resp.ok) continue;
+            const blob = await resp.blob();
+            return URL.createObjectURL(blob);
+        } catch (_) {
+            // Try next candidate.
+        }
+    }
+    return null;
+}
+
+async function loadVideoFrame(src) {
+    if (!src) return null;
+    const direct = src.startsWith('data:') || src.startsWith('blob:');
+    let objectUrl = null;
+    let videoSrc = src;
+
+    if (!direct) {
+        objectUrl = await _fetchAsBlobUrl(src);
+        if (!objectUrl) {
+            console.warn('[export] Could not load video (all attempts failed):', src);
+            return null;
+        }
+        videoSrc = objectUrl;
+    }
+
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+
+    try {
+        await new Promise((resolve) => {
+            let done = false;
+            const finish = () => {
+                if (done) return;
+                done = true;
+                resolve();
+            };
+            const fail = () => {
+                if (done) return;
+                done = true;
+                resolve();
+            };
+            video.onloadeddata = finish;
+            video.onerror = fail;
+            video.src = videoSrc;
+            setTimeout(fail, 9000);
+        });
+
+        const vW = video.videoWidth || 0;
+        const vH = video.videoHeight || 0;
+        if (!vW || !vH) return null;
+        const frame = document.createElement('canvas');
+        frame.width = vW;
+        frame.height = vH;
+        const fctx = frame.getContext('2d');
+        fctx.drawImage(video, 0, 0, vW, vH);
+        return frame;
+    } finally {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+    }
+}
+
+async function loadVideoElement(src) {
+    if (!src) return null;
+    const direct = src.startsWith('data:') || src.startsWith('blob:');
+    let objectUrl = null;
+    let videoSrc = src;
+
+    if (!direct) {
+        objectUrl = await _fetchAsBlobUrl(src);
+        if (!objectUrl) return null;
+        videoSrc = objectUrl;
+    }
+
+    const video = document.createElement('video');
+    const wantAudio = (_exportSession && _exportSession.showVideoAudio === true);
+    const volume = Math.max(0, Math.min(1, Number((_exportSession && _exportSession.videoVolume != null) ? _exportSession.videoVolume : 0.85)));
+    video.muted = !wantAudio;
+    video.volume = wantAudio ? volume : 0;
+    video.controls = false;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.crossOrigin = 'anonymous';
+
+    await new Promise((resolve) => {
+        let done = false;
+        const finish = () => {
+            if (done) return;
+            done = true;
+            resolve();
+        };
+        video.onloadedmetadata = finish;
+        video.onerror = finish;
+        video.src = videoSrc;
+        setTimeout(finish, 9000);
+    });
+
+    if (!video.videoWidth || !video.videoHeight) {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        return null;
+    }
+
+    if (_exportSession && objectUrl) {
+        _exportSession.cleanupUrls.push(objectUrl);
+    } else if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+    }
+    return video;
+}
+
 async function loadImg(src) {
     if (!src) return null;
+    if (_exportSession && _exportSession.cache.has(src)) {
+        return _exportSession.cache.get(src);
+    }
+    if (_isVideoSource(src)) {
+        const out = (_exportSession && _exportSession.videoMode)
+            ? await loadVideoElement(src)
+            : await loadVideoFrame(src);
+        if (_exportSession) _exportSession.cache.set(src, out);
+        return out;
+    }
 
     // Data / blob URLs are always same-origin — load directly, no CORS needed.
     if (src.startsWith('data:') || src.startsWith('blob:')) {
-        return new Promise(resolve => {
-            const el   = new Image();
-            el.onload  = () => resolve(el);
-            el.onerror = () => resolve(null);
-            el.src     = src;
-            setTimeout(() => resolve(null), 8000);
-        });
+        const out = await _loadImageElement(src);
+        if (_exportSession) _exportSession.cache.set(src, out);
+        return out;
     }
 
-    // Normalise the URL first (e.g. convert GitHub blob viewer → raw CDN)
-    const normalized = _normalizeImgUrl(src);
-
-    // Build candidate list: normalised URL first, then CORS proxies.
-    // (If normalised === src we still try src, just without the bad redirect.)
-    const candidates = [normalized];
-    if (normalized !== src) candidates.push(src); // also try original as last resort
-    _CORS_PROXIES.forEach(fn => candidates.push(fn(normalized)));
+    const candidates = _fetchableCandidates(src);
 
     for (const url of candidates) {
         try {
@@ -87,7 +293,10 @@ async function loadImg(src) {
                 el.src     = blobUrl;
             });
 
-            if (img) return img;
+            if (img) {
+                if (_exportSession) _exportSession.cache.set(src, img);
+                return img;
+            }
         } catch (_) {
             // fetch failed (CORS rejection, network error, or abort timeout)
             // → try the next candidate
@@ -98,13 +307,64 @@ async function loadImg(src) {
     return null;
 }
 
+function _postTemplateSize(state) {
+    const tmpl = state.post ? state.post.template : null;
+    const W = window.CONSTANTS.POST_WIDTH;
+    const H = tmpl === 'template7' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.POST_HEIGHT;
+    return { W, H, tmpl };
+}
+
+async function _renderPostToCtx(ctx, state, W, H) {
+    const tmpl = state.post.template;
+    if      (tmpl === 'template2')                     await exportT2(ctx, state, W, H);
+    else if (tmpl === 'template3')                     await exportT3(ctx, state, W, H);
+    else if (tmpl === 'template4')                     await exportT4(ctx, state, W, H);
+    else if (tmpl === 'template5')                     await exportT5(ctx, state, W, H);
+    else if (tmpl === 'template6' || tmpl === 'template8')
+                                                      await exportT6(ctx, state, W, H);
+    else if (tmpl === 'template7')                     await exportT7(ctx, state, W, H);
+    else if (tmpl === 'template9')                     await exportT9(ctx, state, W, H);
+    else if (tmpl === 'template10')                    await exportT10(ctx, state, W, H);
+    else                                               await exportT1(ctx, state, W, H);
+}
+
+function _collectSessionVideos() {
+    if (!_exportSession) return [];
+    const out = [];
+    for (const value of _exportSession.cache.values()) {
+        if (value && value.tagName === 'VIDEO') out.push(value);
+    }
+    return out;
+}
+
+async function _seekVideoTo(video, timeSec) {
+    if (!video || !Number.isFinite(timeSec)) return;
+    const safeTime = Math.max(0, Math.min(timeSec, Math.max(0, (video.duration || timeSec) - 0.02)));
+    await new Promise((resolve) => {
+        let done = false;
+        const finish = () => {
+            if (done) return;
+            done = true;
+            resolve();
+        };
+        video.onseeked = finish;
+        video.onerror = finish;
+        try {
+            video.currentTime = safeTime;
+        } catch (_) {
+            finish();
+        }
+        setTimeout(finish, 1200);
+    });
+}
+
 // ─── Object-fit: cover + object-position + CSS-scale ──────────────────────────
 // Mirrors:  width:100%; height:100%; object-fit:cover;
 //           object-position: posX% posY%; transform:scale(scale)
 function drawCover(ctx, img, dx, dy, dw, dh, posX, posY, scale) {
     if (!img) return;
-    const iW = img.naturalWidth  || img.width;
-    const iH = img.naturalHeight || img.height;
+    const iW = img.naturalWidth  || img.videoWidth || img.width;
+    const iH = img.naturalHeight || img.videoHeight || img.height;
     if (!iW || !iH) return;
 
     posX  = posX  ?? 50;
@@ -2025,12 +2285,10 @@ async function exportCanvas() {
     try {
         const isPost = state.mode === 'post';
         const tmpl   = isPost && state.post ? state.post.template : null;
-        const W      = isPost ? window.CONSTANTS.POST_WIDTH  : window.CONSTANTS.HIGHLIGHT_SIZE;
-        // Template 7 exports as a perfect square (tweet-style screenshot),
-        // all other post templates keep the standard 4:5 post height.
-        const H      = isPost
-            ? (tmpl === 'template7' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.POST_HEIGHT)
-            : window.CONSTANTS.HIGHLIGHT_SIZE;
+        const postSize = isPost ? _postTemplateSize(state) : null;
+        const W      = isPost ? postSize.W : window.CONSTANTS.HIGHLIGHT_SIZE;
+        const H      = isPost ? postSize.H : window.CONSTANTS.HIGHLIGHT_SIZE;
+        const videoSrc = isPost ? _activeVideoSourceFromPost(state.post) : null;
 
         // Create offscreen canvas at native 1:1 resolution
         const canvas  = document.createElement('canvas');
@@ -2038,18 +2296,182 @@ async function exportCanvas() {
         canvas.height = H;
         const ctx = canvas.getContext('2d');
 
+        if (isPost && videoSrc) {
+            const style = (state.post && state.post.style) ? state.post.style : {};
+            const showVideoAudio = style.showVideoAudio === true;
+            const videoVolume = Math.max(0, Math.min(1, Number(style.videoVolume != null ? style.videoVolume : 0.85)));
+            _exportSession = {
+                cache: new Map(),
+                videoMode: true,
+                cleanupUrls: [],
+                showVideoAudio,
+                videoVolume,
+                audioCtx: null,
+            };
+            const primary = await loadImg(videoSrc);
+            if (!primary || primary.tagName !== 'VIDEO') {
+                notify('Video export failed: could not decode video source.', 'error');
+                return;
+            }
+            const videos = _collectSessionVideos();
+            const duration = Math.max(0.1, Math.min(60, Number.isFinite(primary.duration) ? primary.duration : 8));
+            const fps = 24;
+
+            if (typeof MediaRecorder === 'undefined') {
+                notify('Video export is not supported in this browser.', 'error');
+                return;
+            }
+            const canvasStream = canvas.captureStream(fps);
+            let stream = canvasStream;
+            const chunks = [];
+            // Prefer MP4 when supported; otherwise fall back to WebM.
+            const mp4Candidates = [
+                'video/mp4;codecs=avc1.42E01E',
+                'video/mp4;codecs=avc1',
+                'video/mp4',
+            ];
+            const webmCandidates = [
+                'video/webm;codecs=vp9',
+                'video/webm;codecs=vp8',
+                'video/webm',
+            ];
+            let mime = null;
+            let outExt = 'webm';
+            for (const c of mp4Candidates) {
+                try {
+                    if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(c)) {
+                        mime = c;
+                        outExt = 'mp4';
+                        break;
+                    }
+                } catch (_) {}
+            }
+            if (!mime) {
+                for (const c of webmCandidates) {
+                    try {
+                        if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(c)) {
+                            mime = c;
+                            outExt = 'webm';
+                            break;
+                        }
+                    } catch (_) {}
+                }
+            }
+            if (!mime) {
+                // Last resort: let the browser pick a default.
+                mime = '';
+                outExt = 'webm';
+                try { notify('MP4 not supported here; exporting in browser default format.', 'error'); } catch (_) {}
+            } else if (outExt !== 'mp4') {
+                try { notify('MP4 not supported here; exporting in WebM instead.', 'error'); } catch (_) {}
+            }
+
+            // Higher bitrate improves quality (best-effort; actual encoding depends on browser).
+            // Canvas is ~1080x1350; 24fps. 20Mbps tends to produce noticeably better quality.
+            const videoBitsPerSecond = 20_000_000;
+
+            // Optional audio: mix all video element audio tracks into a single audio track.
+            // Note: some browsers may refuse audio mixing for cross-origin media.
+            if (showVideoAudio) {
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) {
+                        const audioCtx = new AudioCtx();
+                        _exportSession.audioCtx = audioCtx;
+                        await audioCtx.resume().catch(() => {});
+                        const dest = audioCtx.createMediaStreamDestination();
+                        for (const v of videos) {
+                            try {
+                                const srcNode = audioCtx.createMediaElementSource(v);
+                                const gain = audioCtx.createGain();
+                                gain.gain.value = videoVolume;
+                                srcNode.connect(gain).connect(dest);
+                            } catch (e) {
+                                // createMediaElementSource can throw if called multiple times for the same element.
+                                // We'll just skip those videos' audio tracks.
+                                console.warn('[export] audio mix skipped for one video:', e);
+                            }
+                        }
+                        const aTracks = dest.stream.getAudioTracks();
+                        if (aTracks && aTracks.length) {
+                            const mixed = new MediaStream();
+                            canvasStream.getVideoTracks().forEach(t => mixed.addTrack(t));
+                            aTracks.forEach(t => mixed.addTrack(t));
+                            stream = mixed;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[export] video audio export failed, falling back to video-only.', e);
+                    stream = canvasStream;
+                }
+            }
+            const recorder = new MediaRecorder(stream, {
+                mimeType: mime,
+                videoBitsPerSecond,
+            });
+            recorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) chunks.push(e.data);
+            };
+
+            const stopped = new Promise((resolve) => {
+                recorder.onstop = resolve;
+            });
+
+            // Start all video layers in sync and capture in real-time to keep
+            // temporal pacing stable (prevents speed-up/slow-down artifacts).
+            for (const v of videos) {
+                try {
+                    v.pause();
+                    v.currentTime = 0;
+                    v.playbackRate = 1;
+                } catch (_) {}
+            }
+            await Promise.all(videos.map(async (v) => {
+                try {
+                    const p = v.play();
+                    if (p && typeof p.then === 'function') await p;
+                } catch (_) {}
+            }));
+
+            recorder.start();
+            const frameMs = 1000 / fps;
+            const startMs = performance.now();
+            let nextFrameMs = startMs;
+            while ((performance.now() - startMs) < (duration * 1000)) {
+                const now = performance.now();
+                if (now >= nextFrameMs) {
+                    ctx.clearRect(0, 0, W, H);
+                    await _renderPostToCtx(ctx, state, W, H);
+                    nextFrameMs += frameMs;
+                }
+                await new Promise((r) => requestAnimationFrame(r));
+            }
+            for (const v of videos) {
+                try { v.pause(); } catch (_) {}
+            }
+            recorder.stop();
+            await stopped;
+
+            const blobType = mime || (outExt === 'mp4' ? 'video/mp4' : 'video/webm');
+            const blob = new Blob(chunks, { type: blobType });
+            if (!blob.size) {
+                notify('Video export failed: no output frames recorded.', 'error');
+                return;
+            }
+            const outUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = outUrl;
+            link.download = `instatools-post-${Date.now()}.${outExt}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(outUrl);
+            notify('Video exported successfully!', 'success');
+            return;
+        }
+
         if (isPost) {
-            const tmpl = state.post.template;
-            if      (tmpl === 'template2')                     await exportT2(ctx, state, W, H);
-            else if (tmpl === 'template3')                     await exportT3(ctx, state, W, H);
-            else if (tmpl === 'template4')                     await exportT4(ctx, state, W, H);
-            else if (tmpl === 'template5')                     await exportT5(ctx, state, W, H);
-            else if (tmpl === 'template6' || tmpl === 'template8')
-                                                              await exportT6(ctx, state, W, H);
-            else if (tmpl === 'template7')                     await exportT7(ctx, state, W, H);
-            else if (tmpl === 'template9')                     await exportT9(ctx, state, W, H);
-            else if (tmpl === 'template10')                    await exportT10(ctx, state, W, H);
-            else                                               await exportT1(ctx, state, W, H);
+            await _renderPostToCtx(ctx, state, W, H);
         } else {
             await exportHighlight(ctx, state, W);
         }
@@ -2092,6 +2514,15 @@ async function exportCanvas() {
         console.error('Export error:', err);
         notify('Export failed: ' + (err.message || 'Unknown error'), 'error');
     } finally {
+        if (_exportSession && Array.isArray(_exportSession.cleanupUrls)) {
+            _exportSession.cleanupUrls.forEach((u) => {
+                try { URL.revokeObjectURL(u); } catch (_) {}
+            });
+        }
+        if (_exportSession && _exportSession.audioCtx && typeof _exportSession.audioCtx.close === 'function') {
+            try { _exportSession.audioCtx.close(); } catch (_) {}
+        }
+        _exportSession = null;
         const wait = Math.max(0, MIN_DISPLAY - (Date.now() - t0));
         setTimeout(() => {
             if (overlay)    overlay.classList.add('hidden');
