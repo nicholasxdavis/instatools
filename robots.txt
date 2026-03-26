@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://instatools.app/sitemap.xml
+Sitemap: https://www.useinstatools.com/sitemap.xml
