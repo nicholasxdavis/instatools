@@ -8,6 +8,9 @@ const iconLayer = ref(null)
 let resizeTimer = 0
 const year = new Date().getFullYear()
 const faqs = HOME_PAGE.faqs
+const base = import.meta.env.BASE_URL
+const privacyHref = `${base}privacy.html`
+const termsHref = `${base}terms.html`
 
 function blurb(theme) {
   const text = theme.description || ''
