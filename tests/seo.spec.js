@@ -34,6 +34,8 @@ test.describe('static documents', () => {
     expect(response.ok()).toBeTruthy()
     const body = await response.text()
     expect(body).toContain('User-agent: *')
+    expect(body).toContain('Allow: /')
+    expect(body).toContain('Allow: /themes/')
     expect(body).toContain('Disallow: /404')
     expect(body).toContain('Disallow: /app')
     expect(body).toContain(`Sitemap: ${absoluteUrl('/sitemap.xml')}`)

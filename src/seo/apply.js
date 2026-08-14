@@ -89,7 +89,8 @@ export function applySeo(page) {
   upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt', content: SITE.ogImage.alt })
 
   upsertLink('canonical', url)
-  upsertLink('manifest', '/site.webmanifest')
+  upsertLink('manifest', `${import.meta.env.BASE_URL || '/'}site.webmanifest`)
+  upsertLink('sitemap', absoluteUrl('/sitemap.xml'), { type: 'application/xml' })
 
   let json = document.getElementById('ld-json')
   if (!json) {

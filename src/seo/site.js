@@ -13,9 +13,10 @@ export const SITE = {
   ],
   ogImage: {
     path: '/og.png',
+    sharePath: '/share.png',
     width: 1200,
     height: 630,
-    alt: 'Instatools free Instagram post maker with ready-to-edit layouts',
+    alt: 'Instatools free Instagram post maker with ready-to-edit layouts on a light marketing canvas',
     type: 'image/png',
   },
 }

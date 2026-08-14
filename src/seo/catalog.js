@@ -369,6 +369,7 @@ export function headTagsForPage(page) {
   const image = absoluteUrl(SITE.ogImage.path)
   const robots = page.robots
   const jsonLd = JSON.stringify(jsonLdForPage(page))
+  const assetBase = process.env.GITHUB_PAGES === 'true' ? '/instatools/' : '/'
   return `    <title>${escapeHtml(page.title)}</title>
     <meta name="description" content="${escapeHtml(page.description)}" />
     <meta name="keywords" content="${escapeHtml(page.keywords || '')}" />
@@ -383,7 +384,8 @@ export function headTagsForPage(page) {
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="canonical" href="${url}" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="manifest" href="${assetBase}site.webmanifest" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="${absoluteUrl('/sitemap.xml')}" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="${escapeHtml(SITE.name)}" />
     <meta property="og:locale" content="${SITE.locale}" />
@@ -450,8 +452,11 @@ ${urls}
 export function robotsTxt() {
   return `User-agent: *
 Allow: /
+Allow: /themes/
 Disallow: /404
+Disallow: /404/
 Disallow: /app
+Disallow: /app/
 
 Sitemap: ${absoluteUrl('/sitemap.xml')}
 `

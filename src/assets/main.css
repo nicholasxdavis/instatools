@@ -79,6 +79,20 @@ body {
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+html.shell-marketing,
+html.shell-marketing body,
+html.shell-marketing #app {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
+  background: transparent;
+}
+
+html.shell-marketing body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 button,
 input,
 textarea,

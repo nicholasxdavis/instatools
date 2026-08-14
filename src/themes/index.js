@@ -13,6 +13,7 @@ import Template13Preview from './template13/Preview.vue'
 import Template14Preview from './template14/Preview.vue'
 import { THEME_CATALOG } from '@/seo/catalog'
 import { THEME_FIELDS } from './fields'
+import { publicUrl } from '@/utils/publicUrl'
 
 const PREVIEWS = {
   template1: { component: Template1Preview, fields: THEME_FIELDS.template1 },
@@ -45,11 +46,13 @@ const PREVIEWS = {
 
 export const THEMES = THEME_CATALOG.map((theme) => ({
   ...theme,
-  previewImage: `/themes/${theme.id}.png`,
-  cardImage: `/themes/cards/${theme.id}.webp`,
-  cardImageFallback: `/themes/cards/${theme.id}.png`,
+  previewImage: publicUrl(`themes/${theme.id}.png`),
+  cardImage: publicUrl(`themes/cards/${theme.id}.webp`),
+  cardImageFallback: publicUrl(`themes/cards/${theme.id}.png`),
   ...PREVIEWS[theme.id],
 }))
+
+export { THEME_CARDS, themePath } from './cards'
 
 export function getTheme(id) {
   return THEMES.find((theme) => theme.id === id) || THEMES[0]
@@ -57,8 +60,4 @@ export function getTheme(id) {
 
 export function getThemeBySlug(slug) {
   return THEMES.find((theme) => theme.slug === slug)
-}
-
-export function themePath(theme) {
-  return `/themes/${theme.slug}/`
 }

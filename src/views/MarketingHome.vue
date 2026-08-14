@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { HOME_PAGE } from '@/seo/catalog'
-import { THEMES, themePath } from '@/themes'
+import { THEME_CARDS, themePath } from '@/themes/cards'
+import { publicUrl } from '@/utils/publicUrl'
 import '@/assets/marketing.css'
 
 const iconLayer = ref(null)
@@ -11,6 +12,7 @@ const faqs = HOME_PAGE.faqs
 const base = import.meta.env.BASE_URL
 const privacyHref = `${base}privacy.html`
 const termsHref = `${base}terms.html`
+const logoSrc = publicUrl('logo.png')
 
 function blurb(theme) {
   const text = theme.description || ''
@@ -27,11 +29,11 @@ function paintIcons() {
   }
 
   const iconPaths = [
-    '/iconarmy/camera-svgrepo-com.svg',
-    '/iconarmy/favorite-svgrepo-com.svg',
-    '/iconarmy/flash-svgrepo-com.svg',
-    '/iconarmy/instagram-167-svgrepo-com.svg',
-    '/iconarmy/tools-svgrepo-com.svg',
+    publicUrl('iconarmy/camera-svgrepo-com.svg'),
+    publicUrl('iconarmy/favorite-svgrepo-com.svg'),
+    publicUrl('iconarmy/flash-svgrepo-com.svg'),
+    publicUrl('iconarmy/instagram-167-svgrepo-com.svg'),
+    publicUrl('iconarmy/tools-svgrepo-com.svg'),
   ]
   const random = (min, max) => Math.random() * (max - min) + min
   layer.innerHTML = ''
@@ -85,7 +87,7 @@ onBeforeUnmount(() => {
 
     <header class="m-nav" aria-label="Primary">
       <router-link class="m-nav-logo" to="/" aria-label="Instatools home">
-        <img src="/logo.png" width="120" height="44" alt="Instatools" decoding="async" />
+        <img :src="logoSrc" width="120" height="44" alt="Instatools" decoding="async" />
       </router-link>
       <nav class="m-nav-center" aria-label="Page">
         <a href="#templates">Layouts</a>
@@ -129,7 +131,7 @@ onBeforeUnmount(() => {
           </div>
           <div class="m-grid">
             <router-link
-              v-for="(theme, index) in THEMES"
+              v-for="(theme, index) in THEME_CARDS"
               :key="theme.id"
               class="m-card"
               :to="themePath(theme)"
@@ -176,11 +178,13 @@ onBeforeUnmount(() => {
       </h2>
       <router-link class="btn-try btn-try-lg" to="/app">Try now</router-link>
       <nav class="m-footer-links" aria-label="Footer">
-        <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer">Support Us</a>
-        <a href="/privacy.html">Privacy</a>
-        <a href="/terms.html">Terms</a>
+        <a href="#templates">Layouts</a>
+        <a href="#faq">FAQ</a>
+        <a :href="privacyHref">Privacy</a>
+        <a :href="termsHref">Terms</a>
         <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer">GitHub</a>
         <router-link to="/app">Open maker</router-link>
+        <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer">Support Us</a>
       </nav>
       <p class="m-copy">
         © {{ year }} Instatools by

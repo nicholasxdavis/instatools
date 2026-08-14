@@ -9,6 +9,7 @@ import { useConfirm } from '@/composables/useConfirm'
 import { useSidebarDrag, useSplitDrag } from '@/composables/useSplitDrag'
 import { pageForRoute } from '@/seo/pages'
 import { THEMES, getThemeBySlug } from '@/themes'
+import { publicUrl } from '@/utils/publicUrl'
 import BrandMark from '@/components/brand/BrandMark.vue'
 import EditorPanel from '@/components/editor/EditorPanel.vue'
 import CanvasStage from '@/components/canvas/CanvasStage.vue'
@@ -37,7 +38,7 @@ onMounted(() => {
   if (document.getElementById('support-toast-script')) return
   const script = document.createElement('script')
   script.id = 'support-toast-script'
-  script.src = '/SupportToast.js'
+  script.src = publicUrl('SupportToast.js')
   script.defer = true
   document.body.appendChild(script)
 })

@@ -4,9 +4,11 @@ import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import CoverImage from '../shared/CoverImage.vue'
 import { TWEET_ICONS } from './icons'
+import { publicUrl } from '@/utils/publicUrl'
 
 const { post } = storeToRefs(useEditorStore())
 const t7 = computed(() => post.value.t7)
+const badgeSrc = publicUrl('ui/x-badge.png')
 const iconW = computed(() => Math.round((t7.value.metricsFontSize || 30) * 1.85))
 const moreW = computed(() => Math.round((t7.value.usernameFontSize || 36) * 0.72))
 const badgeSz = computed(() => Math.max(1, Math.round(t7.value.usernameFontSize * 1.05)))
@@ -39,7 +41,7 @@ const fontStack = computed(() =>
       <div class="meta">
         <div class="name-row">
           <span :style="{ fontSize: `${t7.usernameFontSize}px`, fontWeight: t7.usernameFontWeight, color: t7.usernameColor, letterSpacing: `${t7.usernameLetterSpacing ?? 0}em` }">{{ t7.username }}</span>
-          <img v-if="t7.showVerifiedBadge" src="/ui/x-badge.png" alt="verified" :style="{ width: `${badgeSz}px`, height: `${badgeSz}px` }" />
+          <img v-if="t7.showVerifiedBadge" :src="badgeSrc" alt="verified" :style="{ width: `${badgeSz}px`, height: `${badgeSz}px` }" />
         </div>
         <span class="handle" :style="{ fontSize: `${t7.handleFontSize}px`, color: t7.handleColor }">{{ t7.handle }}</span>
       </div>

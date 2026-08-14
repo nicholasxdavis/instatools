@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "seo:assets": "node scripts/generate-seo-assets.mjs",
     "thumbs": "node scripts/optimize-theme-thumbs.mjs",
+    "share": "node scripts/render-share-card.mjs",
     "test:seo": "playwright test",
     "audit:lighthouse": "node scripts/lighthouse-audit.mjs",
     "seo": "npm run build && npm run test:seo && npm run audit:lighthouse"

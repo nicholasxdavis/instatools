@@ -1,8 +1,13 @@
 <template>
   <router-link class="brand-link" to="/" aria-label="Instatools home">
-    <img class="brand" src="/logo.png" width="190" height="26" alt="Instatools" />
+    <img class="brand" :src="logoSrc" width="190" height="26" alt="Instatools" />
   </router-link>
 </template>
+
+<script setup>
+import { publicUrl } from '@/utils/publicUrl'
+const logoSrc = publicUrl('logo.png')
+</script>
 
 <style scoped>
 .brand-link {

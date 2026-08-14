@@ -1,10 +1,10 @@
+import { publicUrl } from '@/utils/publicUrl'
+
 /** Public CDN for default demo media (CORS-friendly via jsDelivr). */
 export const CDN_ORIGIN = 'https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src'
 
 /** Local Vite public path used in development for faster offline editing. */
-const LOCAL_HOLDER = '/holder'
-
-const H = import.meta.env.DEV ? LOCAL_HOLDER : `${CDN_ORIGIN}/holder`
+const H = import.meta.env.DEV ? publicUrl('holder') : `${CDN_ORIGIN}/holder`
 
 export const MEDIA = {
   obama: `${H}/obama.jpg`,

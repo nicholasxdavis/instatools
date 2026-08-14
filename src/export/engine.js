@@ -1837,7 +1837,7 @@ async function exportT7(ctx, state, W, H) {
         loadSvgImg(tweetIconSvg('like', ic)),
         loadSvgImg(tweetIconSvg('share', ic)),
         loadSvgImg(tweetIconSvg('more', ic)),
-        t7.showVerifiedBadge ? loadImg('/ui/x-badge.png') : Promise.resolve(null),
+        t7.showVerifiedBadge ? loadImg(`${import.meta.env.BASE_URL || '/'}ui/x-badge.png`) : Promise.resolve(null),
     ]);
 
     // ── Background ────────────────────────────────────────────────────────────
