@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html, body { margin: 0; }
+      .card {
+        width: 1200px;
+        height: 630px;
+        background: #111;
+        color: #fff;
+        font-family: Inter, Segoe UI, sans-serif;
+        position: relative;
+        overflow: hidden;
+      }
+      .glow {
+        position: absolute;
+        inset: -20% auto auto -10%;
+        width: 70%;
+        height: 90%;
+        background: radial-gradient(circle at 30% 30%, rgba(221, 42, 123, 0.35), transparent 58%),
+          radial-gradient(circle at 80% 20%, rgba(81, 91, 212, 0.28), transparent 52%);
+      }
+      .bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 8px;
+        background: linear-gradient(90deg, #515bd4, #8134af, #dd2a7b, #f58529);
+      }
+      .inner {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        padding: 72px 80px 64px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .brand {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+      }
+      h1 {
+        margin: 0;
+        font-size: 72px;
+        line-height: 0.95;
+        letter-spacing: -0.045em;
+        max-width: 900px;
+      }
+      .meta {
+        display: flex;
+        gap: 18px;
+        color: #d4d4d4;
+        font-size: 22px;
+        font-weight: 600;
+      }
+      .dot { opacity: 0.45; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="glow"></div>
+      <div class="bar"></div>
+      <div class="inner">
+        <div class="brand">Instatools</div>
+        <h1>Instagram post generator</h1>
+        <div class="meta">
+          <span>14 layouts</span>
+          <span class="dot">•</span>
+          <span>Local export</span>
+          <span class="dot">•</span>
+          <span>Free in the browser</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

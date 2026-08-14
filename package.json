@@ -1,0 +1,31 @@
+{
+  "name": "instatools-v2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/seo-prerender.mjs",
+    "preview": "vite preview",
+    "seo:assets": "node scripts/generate-seo-assets.mjs",
+    "thumbs": "node scripts/optimize-theme-thumbs.mjs",
+    "test:seo": "playwright test",
+    "audit:lighthouse": "node scripts/lighthouse-audit.mjs",
+    "seo": "npm run build && npm run test:seo && npm run audit:lighthouse"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.30.0",
+    "@phosphor-icons/vue": "^2.2.1",
+    "pinia": "^4.0.2",
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "chrome-launcher": "^1.2.0",
+    "lighthouse": "^12.8.0",
+    "sharp": "^0.35.3",
+    "vite": "^8.2.0"
+  }
+}
