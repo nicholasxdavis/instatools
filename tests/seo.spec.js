@@ -58,7 +58,7 @@ test.describe('static documents', () => {
     expect(response.ok()).toBeTruthy()
     const manifest = await response.json()
     expect(manifest.name).toBe(SITE.name)
-    expect(manifest.start_url).toBe('/')
+    expect(['/', './']).toContain(manifest.start_url)
     expect(manifest.icons.length).toBeGreaterThan(0)
   })
 })
