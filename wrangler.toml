@@ -1,0 +1,8 @@
+# Cloudflare Pages project settings (also set in dashboard if using Git integration).
+# Build command: npm ci && npm run build
+# Build output: dist
+# Do NOT set GITHUB_PAGES here (production base must be /).
+
+name = "instatools"
+compatibility_date = "2026-08-01"
+pages_build_output_dir = "dist"
