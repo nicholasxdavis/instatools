@@ -1,58 +1,23 @@
-# Instatools
+# ![Instatools Logo](https://github.com/nicholasxdavis/instatools/blob/main/src/ui/mobile-logo.png?raw=true)
 
-Free Instagram post maker in your browser. Pick a layout, edit the photo and headline, export HD PNG locally. No signup.
 
-**Live:** [www.useinstatools.com](https://www.useinstatools.com)
+Instatools is a web-based Instagram post and highlight generator. It lets you design posts with custom typography and precise layouts directly in your browser. 
 
-**CDN:** [nicholasxdavis/instatools-cdn](https://github.com/nicholasxdavis/instatools-cdn)
+The core focus of this tool is privacy and speed: all image processing happens completely locally on your device. Nothing is ever uploaded to a server.
 
-## Features
+## Tools
+- **Post Generator:** The primary design workspace for creating high-impact Instagram feed posts with advanced typography and layout controls.
+- **Highlight Covers:** A specialized tool located in /tools/highlight/ for designing and exporting Instagram Story highlight covers.
+- **Profile Pictures:** A dedicated tool in /tools/pfp/ specifically designed to frame, style, and export professional-grade profile pictures.
 
-- 14 ready-to-edit Instagram layouts (news, sports, finance, tweets, fashion, and more)
-- Vue 3 editor with live canvas preview
-- Native Canvas 2D export (pixel-perfect, local-only)
-- Presets you can save and import as JSON
-- Marketing homepage + deep links per layout for SEO
+## Made with Instatools
 
-## Stack
+<p align="center">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post.png?raw=true" width="49%" alt="Instatools Example 1">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-two.png?raw=true" width="49%" alt="Instatools Example 2">
+</p>
 
-- Vue 3 + Vite + Pinia + Vue Router
-- Catalog-driven SEO with prerendered theme routes
-- Demo media served from the public CDN in production
-
-## Develop
-
-```bash
-npm install
-npm run dev
-```
-
-App: `http://127.0.0.1:5173`  
-Maker: `http://127.0.0.1:5173/app`
-
-Local defaults load from `/public/holder`. Production builds load demo photos from jsDelivr:
-
-```text
-https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/
-```
-
-## Build
-
-```bash
-npm run build
-```
-
-Output is `dist/` (Vite build + SEO prerender).
-
-## Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `npm run dev` | Local Vite server |
-| `npm run build` | Production build + prerender |
-| `npm run seo` | Build, Playwright SEO tests, Lighthouse |
-| `npm run thumbs` | Regenerate WebP layout cards |
-
-## License
-
-MIT
+<p align="center">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-three.png?raw=true" width="49%" alt="Instatools Example 3">
+  <img src="https://github.com/nicholasxdavis/instatools/blob/main/example/post-four.png?raw=true" width="49%" alt="Instatools Example 4">
+</p>

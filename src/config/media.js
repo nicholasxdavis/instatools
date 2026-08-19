@@ -5,6 +5,29 @@ export const CDN_ORIGIN = 'https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools
 
 /** Local Vite public path used in development for faster offline editing. */
 const H = import.meta.env.DEV ? publicUrl('holder') : `${CDN_ORIGIN}/holder`
+const T = import.meta.env.DEV ? publicUrl('textures') : `${CDN_ORIGIN}/textures`
+
+export const TEXTURES = {
+  brickwall: `${T}/brickwall.png`,
+  crosslineDots: `${T}/crossline-dots.png`,
+  diagonales: `${T}/diagonales_decalees.png`,
+  doubleBubble: `${T}/double-bubble.png`,
+  hypnotize: `${T}/hypnotize.webp`,
+  niceSnow: `${T}/nice_snow.webp`,
+  pipes: `${T}/pipes.png`,
+  repeatedSquare: `${T}/repeated-square.png`,
+  ripples: `${T}/ripples.png`,
+  sports: `${T}/sports.png`,
+  stripesLight: `${T}/stripes-light.png`,
+  swirl: `${T}/swirl_pattern.png`,
+  tinySquares: `${T}/tiny-squares.png`,
+  whatTheHex: `${T}/what-the-hex.webp`,
+  whiteWaves: `${T}/white-waves.webp`,
+}
+
+export function textureUrl(id) {
+  return TEXTURES[id] || ''
+}
 
 export const MEDIA = {
   obama: `${H}/obama.jpg`,
@@ -30,4 +53,8 @@ export const MEDIA = {
   yeat1: `${H}/yeat1.png`,
   yeat2: `${H}/yeat2.png`,
   yeat3: `${H}/yeat3.png`,
+  allM8Logo: `${H}/all-m8-logo.png`,
+  allM8Dashboard: `${H}/all-m8-dashboard.webp`,
+  store: `${H}/store.jpg`,
+  randomCeoLady: `${H}/random-ceo-lady.webp`,
 }

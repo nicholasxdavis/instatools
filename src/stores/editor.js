@@ -152,7 +152,7 @@ export const useEditorStore = defineStore('editor', {
           preset.post.template || preset.post.t2 || preset.post.t3 || preset.post.t4 ||
           preset.post.t5 || preset.post.t6 || preset.post.t7 || preset.post.t8 ||
           preset.post.t9 || preset.post.t10 || preset.post.t11 || preset.post.t12 ||
-          preset.post.t13 || preset.post.t14
+          preset.post.t13 || preset.post.t14 || preset.post.t15 || preset.post.t16
         )
         return hasTopStyle || hasPostStyle || hasThemeSlice
       })

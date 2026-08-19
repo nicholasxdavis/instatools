@@ -1,4 +1,5 @@
 import { POST_WIDTH, POST_HEIGHT, HIGHLIGHT_SIZE } from '../config/constants.js'
+import { textureUrl } from '../config/media.js'
 import { applyGrain, getGrainDataUrl } from './filter.js'
 import { tweetIconSvg } from '../themes/template7/icons.js'
 
@@ -16,7 +17,7 @@ if (typeof window !== 'undefined') {
  *   • Circle overlay uses arc() + clip() - never bleeds outside the ring
  *   • object-fit:cover simulated precisely for every image
  *   • Full letter-spacing, text-shadow, opacity, glow support
- *   • All post templates (1 - 12) + highlight creator
+ *   • All post templates (1 - 16) + highlight creator
  */
 
 // ─── CORS proxy helpers ────────────────────────────────────────────────────────
@@ -111,6 +112,13 @@ function _activeVideoSourceFromPost(post) {
     );
     else if (t === 'template13') checks.push(post.t13 && post.t13.bgImage, post.t13 && post.t13.watermarkUrl);
     else if (t === 'template14') checks.push(post.t14 && post.t14.bgImage, post.t14 && post.t14.watermarkUrl);
+    else if (t === 'template15') checks.push(
+        post.t15 && post.t15.bgImage,
+        post.t15 && post.t15.subjectUrl,
+        post.t15 && post.t15.markImageUrl,
+        post.t15 && post.t15.watermarkUrl,
+    );
+    else if (t === 'template16') checks.push(post.t16 && post.t16.productUrl, post.t16 && post.t16.logoUrl);
     else checks.push(post.bgImage, s.overlayImgUrl, s.logoUrl, s.watermarkUrl);
     return checks.find(v => _isVideoSource(v)) || null;
 }
@@ -412,6 +420,8 @@ async function _renderPostToCtx(ctx, state, W, H) {
     else if (tmpl === 'template12')                    await exportT12(ctx, state, W, H);
     else if (tmpl === 'template13')                    await exportT13(ctx, state, W, H);
     else if (tmpl === 'template14')                    await exportT14(ctx, state, W, H);
+    else if (tmpl === 'template15')                    await exportT15(ctx, state, W, H);
+    else if (tmpl === 'template16')                    await exportT16(ctx, state, W, H);
     else                                               await exportT1(ctx, state, W, H);
 }
 
@@ -3162,6 +3172,810 @@ async function exportT14(ctx, state, W, H) {
         ctx.save();
         ctx.globalAlpha = t14.watermarkOpacity ?? 0.92;
         ctx.drawImage(wmImg, innerX + wx, wy, wmSize, wmH);
+        ctx.restore();
+    }
+}
+
+function _hexClip(ctx, x, y, size) {
+    const pts = [
+        [0.5, 0], [0.93, 0.25], [0.93, 0.75], [0.5, 1], [0.07, 0.75], [0.07, 0.25],
+    ];
+    ctx.beginPath();
+    pts.forEach(([px, py], i) => {
+        const X = x + px * size;
+        const Y = y + py * size;
+        if (i === 0) ctx.moveTo(X, Y);
+        else ctx.lineTo(X, Y);
+    });
+    ctx.closePath();
+}
+
+function _drawDotMark(ctx, x, y, size, color) {
+    const gap = size * 0.14;
+    const d = (size - gap) / 2;
+    const r = d / 2;
+    ctx.fillStyle = color;
+    const cells = [
+        [x + r, y + r],
+        [x + d + gap + r, y + r],
+        [x + r, y + d + gap + r],
+        [x + d + gap + r, y + d + gap + r],
+    ];
+    for (const [cx, cy] of cells) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function _drawMarkImage(ctx, img, x, y, size) {
+    const natW = img.naturalWidth || img.width || 1;
+    const natH = img.naturalHeight || img.height || 1;
+    const scale = Math.min(size / natW, size / natH);
+    const dw = natW * scale;
+    const dh = natH * scale;
+    ctx.drawImage(img, x + (size - dw) / 2, y + (size - dh) / 2, dw, dh);
+}
+
+function _resolveCtaAlign(textAlign, ctaAlign) {
+    if (ctaAlign === 'match') return textAlign || 'left';
+    return ctaAlign || 'left';
+}
+
+function _drawT15Cta(ctx, t15, dekFF, y, W, railW, textPadH, textAlign) {
+    const ctaSize = t15.ctaSize || 20;
+    const ctaWeight = t15.ctaWeight || 600;
+    const ctaStyle = t15.ctaStyle || 'fill';
+    const ctaAlign = _resolveCtaAlign(textAlign, t15.ctaAlign);
+    const padX = t15.ctaPadH ?? 24;
+    const padY = t15.ctaPadV ?? 14;
+    const marginTop = t15.ctaMarginTop ?? 12;
+    const offsetX = t15.ctaOffsetX ?? 0;
+    const offsetY = t15.ctaOffsetY ?? 0;
+    const fullWidth = t15.ctaFullWidth;
+    const isTextLink = ctaStyle === 'underline' || ctaStyle === 'ghost';
+
+    y += marginTop + offsetY;
+
+    ctx.save();
+    ctx.font = `${ctaWeight} ${ctaSize}px "${dekFF}", sans-serif`;
+    setLS(ctx, (t15.ctaLetterSpacing ?? -0.01) * ctaSize);
+    const label = t15.ctaText || '';
+    const textW = mW(ctx, label);
+    const copyW = W - railW;
+    const btnW = fullWidth ? copyW - textPadH * 2 : textW + (isTextLink ? 0 : padX * 2);
+    const btnH = isTextLink ? ctaSize + 4 : ctaSize + padY * 2;
+    const bx = _alignX(ctaAlign, textPadH, copyW, btnW) + offsetX;
+
+    if (ctaStyle === 'fill') {
+        ctx.fillStyle = t15.ctaBg || '#14B8A6';
+        _roundRectPath(ctx, bx, y, btnW, btnH, t15.ctaRadius ?? 12);
+        ctx.fill();
+        ctx.fillStyle = t15.ctaColor || '#FFFFFF';
+    } else if (ctaStyle === 'outline') {
+        const border = t15.ctaBorder ?? 2;
+        ctx.strokeStyle = t15.ctaBorderColor || t15.ctaBg || '#14B8A6';
+        ctx.lineWidth = border;
+        _roundRectPath(ctx, bx + border / 2, y + border / 2, btnW - border, btnH - border, t15.ctaRadius ?? 12);
+        ctx.stroke();
+        ctx.fillStyle = t15.ctaColor || t15.ctaBg || '#14B8A6';
+    } else if (ctaStyle === 'underline') {
+        ctx.fillStyle = t15.ctaColor || t15.ctaBg || '#14B8A6';
+    } else {
+        ctx.fillStyle = t15.ctaColor || '#FFFFFF';
+    }
+
+    ctx.textBaseline = 'middle';
+    const tx = isTextLink
+        ? bx
+        : fullWidth && !isTextLink
+            ? bx + btnW / 2
+            : bx + padX;
+    if (fullWidth && !isTextLink) {
+        ctx.textAlign = 'center';
+        ctx.fillText(label, tx, y + btnH / 2);
+        ctx.textAlign = 'left';
+    } else {
+        ctx.fillText(label, tx, y + btnH / 2);
+    }
+
+    if (ctaStyle === 'underline') {
+        const uy = y + btnH - 2;
+        ctx.strokeStyle = t15.ctaBg || t15.ctaBorderColor || '#14B8A6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(bx, uy);
+        ctx.lineTo(bx + textW, uy);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+    return y + btnH;
+}
+
+// ─── TEMPLATE 15 (Campaign - photo field + optional framed subject) ───────────
+async function exportT15(ctx, state, W, H) {
+    const t15 = state.post.t15 || {};
+    const shape = t15.frameShape || 'circle';
+    const framed = shape !== 'none';
+    const PAD_H = t15.paddingH ?? 64;
+    const PAD_V = t15.paddingV ?? 72;
+    const railW = t15.showRail ? Math.max(0, t15.railWidth ?? 12) : 0;
+    const pos = t15.headlinePos || 'center';
+    const align = t15.textAlign || 'left';
+    const showBrandRow = t15.showBrandRow !== false;
+    const markMode = showBrandRow ? (t15.markMode || (t15.showMark ? 'dots' : 'none')) : 'none';
+
+    const [bgImg, subImg, markImg, wmImg] = await Promise.all([
+        t15.bgImage ? loadImg(t15.bgImage) : null,
+        (t15.showSubject && t15.subjectUrl) ? loadImg(t15.subjectUrl) : null,
+        (markMode === 'image' && t15.markImageUrl) ? loadImg(t15.markImageUrl) : null,
+        (t15.showWatermark && t15.watermarkUrl) ? loadImg(t15.watermarkUrl) : null,
+    ]);
+
+    const ff = t15.customFontFamily || t15.fontFamily || 'Plus Jakarta Sans';
+    const brandFF = t15.customBrandFontFamily || t15.brandFontFamily || 'Plus Jakarta Sans';
+    const fs = t15.fontSize || 68;
+    const fw = t15.fontWeight || 700;
+    const brandSize = t15.brandSize || 28;
+    const brandWeight = t15.brandWeight || 600;
+    const kickerSize = t15.kickerSize || 18;
+    const footerSize = t15.footerSize || 22;
+    await Promise.all([
+        loadFont(`${fw} ${fs}px "${ff}"`),
+        loadFont(`${brandWeight} ${brandSize}px "${brandFF}"`),
+        loadFont(`700 ${kickerSize}px "${brandFF}"`),
+        loadFont(`500 ${footerSize}px "${brandFF}"`),
+    ]);
+
+    ctx.fillStyle = t15.bgColor || '#111111';
+    ctx.fillRect(0, 0, W, H);
+
+    if (bgImg) {
+        ctx.save();
+        ctx.globalAlpha = t15.bgOpacity ?? 1;
+        drawCover(
+            ctx,
+            bgImg,
+            0, 0, W, H,
+            t15.imagePosX ?? 50,
+            t15.imagePosY ?? 50,
+            (t15.imageScale ?? 100) / 100,
+        );
+        ctx.restore();
+    }
+
+    const fadePct = Math.max(0, Math.min(100, t15.fadeHeight ?? 38)) / 100;
+    const fadeStrength = Math.max(0, Math.min(1, t15.fadeStrength ?? 0.52));
+    if (fadePct > 0 && fadeStrength > 0) {
+        const fadeH = fadePct * H;
+        const fadeHex = t15.fadeColor || '#000000';
+        const { r, g, b } = h2rgb(fadeHex);
+        const grad = ctx.createLinearGradient(0, fadeH, 0, 0);
+        grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},${fadeStrength})`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, fadeH + 2);
+    }
+
+    if (t15.showBottomFade) {
+        const bottomPct = Math.max(0, Math.min(100, t15.bottomFadeHeight ?? 42)) / 100;
+        const bottomStrength = Math.max(0, Math.min(1, t15.bottomFadeStrength ?? 0.55));
+        if (bottomPct > 0 && bottomStrength > 0) {
+            const fadeH = bottomPct * H;
+            const fadeHex = t15.fadeColor || '#000000';
+            const { r, g, b } = h2rgb(fadeHex);
+            const grad = ctx.createLinearGradient(0, H - fadeH, 0, H);
+            grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+            grad.addColorStop(1, `rgba(${r},${g},${b},${bottomStrength})`);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, H - fadeH - 2, W, fadeH + 2);
+        }
+    }
+
+    if ((t15.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t15.overlayOpacity ?? 0.22;
+        ctx.fillStyle = t15.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    if (t15.showPattern) {
+        const size = Math.max(8, t15.patternSize || 26);
+        const r = 1.15;
+        ctx.save();
+        ctx.globalAlpha = t15.patternOpacity ?? 0.12;
+        ctx.fillStyle = t15.patternColor || '#FFFFFF';
+        for (let y = size / 2; y < H; y += size) {
+            for (let x = size / 2; x < W; x += size) {
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        ctx.restore();
+    }
+
+    if (subImg) {
+        const size = t15.subjectSize || 620;
+        const cx = (t15.subjectPosX ?? 50) / 100 * W;
+        const cy = (t15.subjectPosY ?? 68) / 100 * H;
+        ctx.save();
+        if (t15.grayscale) ctx.filter = 'grayscale(1)';
+        if (t15.showSubjectGlow) {
+            const glowSize = t15.subjectGlowSize ?? 1.2;
+            const glowBlur = Math.round(24 * glowSize);
+            const glowHex = t15.subjectGlowColor || '#FFFFFF';
+            const glowOp = t15.subjectGlowOpacity ?? 1;
+            const { r, g, b } = h2rgb(glowHex);
+            ctx.shadowColor = `rgba(${r},${g},${b},${glowOp})`;
+            ctx.shadowBlur = glowBlur;
+        }
+        if (framed) {
+            const x = cx - size / 2;
+            const y = cy - size / 2;
+            ctx.beginPath();
+            if (shape === 'circle') {
+                ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
+            } else if (shape === 'hex') {
+                _hexClip(ctx, x, y, size);
+            } else {
+                const rad = t15.frameRadius ?? 36;
+                if (typeof ctx.roundRect === 'function') ctx.roundRect(x, y, size, size, rad);
+                else ctx.rect(x, y, size, size);
+            }
+            ctx.clip();
+            drawCover(
+                ctx,
+                subImg,
+                x, y, size, size,
+                t15.subjectImagePosX ?? 50,
+                t15.subjectImagePosY ?? 50,
+                (t15.subjectImageScale ?? 100) / 100,
+            );
+            ctx.restore();
+
+            const border = t15.frameBorder || 0;
+            if (border > 0) {
+                ctx.save();
+                ctx.strokeStyle = t15.frameBorderColor || '#FFFFFF';
+                ctx.lineWidth = border;
+                ctx.beginPath();
+                if (shape === 'circle') ctx.arc(cx, cy, size / 2 - border / 2, 0, Math.PI * 2);
+                else if (shape === 'hex') _hexClip(ctx, x, y, size);
+                else if (typeof ctx.roundRect === 'function') ctx.roundRect(x, y, size, size, t15.frameRadius ?? 36);
+                else ctx.rect(x, y, size, size);
+                ctx.stroke();
+                ctx.restore();
+            }
+        } else {
+            drawCutout(ctx, subImg, cx, cy, size);
+            ctx.restore();
+        }
+    }
+
+    if (railW > 0) {
+        ctx.fillStyle = t15.railColor || t15.accentColor || '#14B8A6';
+        ctx.fillRect(W - railW, 0, railW, H);
+    }
+
+    if (showBrandRow) {
+        const brandY = Math.round(PAD_V * 0.72) + (t15.brandPosY ?? 0);
+        const brandX = PAD_H + (t15.brandPosX ?? 0);
+        const markSize = t15.markSize || 36;
+        const hasMark = markMode === 'dots' || (markMode === 'image' && markImg);
+        const hasBrand = t15.showBrand !== false;
+        const rowH = Math.max(hasMark ? markSize : 0, hasBrand ? brandSize : 0);
+        let brandTextX = brandX;
+        if (hasMark) {
+            const my = brandY + (rowH - markSize) / 2;
+            if (markMode === 'dots') {
+                _drawDotMark(ctx, brandX, my, markSize, t15.accentColor || '#FFFFFF');
+            } else if (markImg) {
+                _drawMarkImage(ctx, markImg, brandX, my, markSize);
+            }
+            brandTextX = brandX + markSize + 14;
+        }
+        if (hasBrand) {
+            ctx.save();
+            ctx.font = `${brandWeight} ${brandSize}px "${brandFF}", sans-serif`;
+            setLS(ctx, (t15.brandLetterSpacing ?? -0.02) * brandSize);
+            ctx.fillStyle = t15.brandColor || '#FFFFFF';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(t15.brandText || '', brandTextX, brandY + rowH / 2);
+            ctx.restore();
+        }
+    }
+
+    const copyOffsetX = t15.copyOffsetX ?? 0;
+    const copyOffsetY = t15.copyOffsetY ?? 0;
+    const textPadH = PAD_H + copyOffsetX;
+
+    const fontSpec = `${fw} ${fs}px "${ff}", sans-serif`;
+    ctx.font = fontSpec;
+    setLS(ctx, (t15.letterSpacing ?? -0.03) * fs);
+
+    const allLines = [];
+    const rawLines = String(t15.headline || '').split(/\r?\n/);
+    for (const rawLine of rawLines) {
+        const parts = rawLine.split(/(\[.*?\])/);
+        const words = [];
+        for (const p of parts) {
+            if (!p) continue;
+            if (p.startsWith('[') && p.endsWith(']')) {
+                p.slice(1, -1).split(/\s+/).forEach((w) => {
+                    if (w) words.push({ word: w, color: t15.highlightColor || '#FFFFFF' });
+                });
+            } else {
+                p.split(/\s+/).forEach((w) => {
+                    if (w) words.push({ word: w, color: t15.headlineColor || '#FFFFFF' });
+                });
+            }
+        }
+        if (!words.length) {
+            allLines.push([]);
+            continue;
+        }
+        const wrapped = wrapColored(ctx, words, W - textPadH * 2 - railW);
+        for (const line of wrapped) allLines.push(line);
+    }
+
+    const lineH = Math.round(fs * (t15.lineHeight ?? 1.12));
+    const showKicker = t15.showKicker;
+    const kickerH = showKicker ? Math.round(kickerSize * 1.15) : 0;
+    const kickerGap = showKicker ? 16 : 0;
+    const dekFF = t15.customDekFontFamily || t15.dekFontFamily || ff;
+    const dekSize = t15.dekSize || 24;
+    const dekWeight = t15.dekWeight || 500;
+    const showDek = t15.showDek;
+    const dekLH = Math.round(dekSize * (t15.dekLineHeight ?? 1.35));
+    let dekLines = [];
+    if (showDek) {
+        await loadFont(`${dekWeight} ${dekSize}px "${dekFF}"`);
+        ctx.save();
+        ctx.font = `${dekWeight} ${dekSize}px "${dekFF}", sans-serif`;
+        setLS(ctx, (t15.dekLetterSpacing ?? -0.02) * dekSize);
+        dekLines = wrapSimple(ctx, String(t15.dek || ''), W - textPadH * 2 - railW);
+        ctx.restore();
+    }
+    const dekH = showDek ? dekLines.length * dekLH + 16 : 0;
+    const showCta = t15.showCta;
+    const ctaSize = t15.ctaSize || 20;
+    const ctaWeight = t15.ctaWeight || 600;
+    let ctaBlockH = 0;
+    if (showCta) {
+        await loadFont(`${ctaWeight} ${ctaSize}px "${dekFF}"`);
+        const ctaStyle = t15.ctaStyle || 'fill';
+        const marginTop = t15.ctaMarginTop ?? 12;
+        const padY = t15.ctaPadV ?? 14;
+        const lh = ctaStyle === 'underline' || ctaStyle === 'ghost'
+            ? ctaSize + 4
+            : ctaSize + padY * 2;
+        ctaBlockH = marginTop + lh;
+    }
+    const totalH = kickerH + kickerGap + Math.max(1, allLines.length) * lineH + dekH + (showCta ? ctaBlockH : 0);
+    const footerBottomPad = Math.max(40, PAD_V * 0.55);
+    const copyBottomGap = t15.copyBottomGap ?? 36;
+    const footerReserve = t15.showFooter
+        ? footerSize + footerBottomPad + copyBottomGap
+        : footerBottomPad + copyBottomGap;
+    const brandClear = showBrandRow && (t15.showBrand !== false || markMode !== 'none') ? 120 : 0;
+
+    let y;
+    if (pos === 'top') y = Math.max(PAD_V, brandClear) + copyOffsetY;
+    else if (pos === 'bottom') y = H - footerReserve - totalH - copyOffsetY;
+    else y = (H - totalH) / 2 + copyOffsetY;
+
+    if (showKicker) {
+        ctx.save();
+        ctx.font = `700 ${kickerSize}px "${brandFF}", sans-serif`;
+        setLS(ctx, (t15.kickerLetterSpacing ?? 0.18) * kickerSize);
+        ctx.fillStyle = t15.kickerColor || '#FFFFFF';
+        ctx.textBaseline = 'top';
+        const kickerText = String(t15.kickerText || '').toUpperCase();
+        let kx = textPadH;
+        if (align === 'center') kx = (W - railW - mW(ctx, kickerText)) / 2;
+        else if (align === 'right') kx = W - railW - textPadH - mW(ctx, kickerText);
+        ctx.fillText(kickerText, kx, y);
+        ctx.restore();
+        y += kickerH + kickerGap;
+    }
+
+    ctx.save();
+    ctx.font = fontSpec;
+    setLS(ctx, (t15.letterSpacing ?? -0.03) * fs);
+    ctx.textBaseline = 'top';
+    const sp = mW(ctx, ' ');
+    const uppercase = t15.uppercase;
+    for (const line of allLines) {
+        if (!line.length) {
+            y += lineH;
+            continue;
+        }
+        let lineW = 0;
+        if (align !== 'left') {
+            lineW = line.reduce(
+                (acc, item, i) => acc + mW(ctx, item.word) + (i < line.length - 1 ? sp : 0),
+                0,
+            );
+        }
+        let x = textPadH;
+        if (align === 'center') x = (W - railW - lineW) / 2;
+        else if (align === 'right') x = W - railW - textPadH - lineW;
+        for (let i = 0; i < line.length; i++) {
+            ctx.fillStyle = line[i].color;
+            const word = uppercase ? line[i].word.toUpperCase() : line[i].word;
+            ctx.fillText(word, x, y);
+            x += mW(ctx, word);
+            if (i < line.length - 1) x += sp;
+        }
+        y += lineH;
+    }
+    ctx.restore();
+
+    if (showDek && dekLines.length) {
+        y += 16;
+        ctx.save();
+        ctx.font = `${dekWeight} ${dekSize}px "${dekFF}", sans-serif`;
+        setLS(ctx, (t15.dekLetterSpacing ?? -0.02) * dekSize);
+        ctx.fillStyle = t15.dekColor || '#FFFFFF';
+        ctx.textBaseline = 'top';
+        for (const line of dekLines) {
+            let dx = textPadH;
+            if (align === 'center') dx = (W - railW - mW(ctx, line)) / 2;
+            else if (align === 'right') dx = W - railW - textPadH - mW(ctx, line);
+            ctx.fillText(line, dx, y);
+            y += dekLH;
+        }
+        ctx.restore();
+    }
+
+    if (showCta) {
+        y += 4;
+        y = _drawT15Cta(ctx, t15, dekFF, y, W, railW, textPadH, align);
+    }
+
+    if (wmImg && t15.showWatermark !== false && t15.watermarkUrl) {
+        const wmW = t15.watermarkSize || 120;
+        const natW = wmImg.naturalWidth || wmImg.width || 1;
+        const natH = wmImg.naturalHeight || wmImg.height || 1;
+        const wmH = (natH / natW) * wmW;
+        const posX = t15.watermarkPosX != null ? t15.watermarkPosX : 94;
+        const posY = t15.watermarkPosY != null ? t15.watermarkPosY : 6;
+        const { x: wx, y: wy } = calcWmXY(posX, posY, W, H, wmW, wmH);
+        ctx.save();
+        ctx.globalAlpha = t15.watermarkOpacity ?? 0.85;
+        ctx.drawImage(wmImg, wx, wy, wmW, wmH);
+        ctx.restore();
+    }
+
+    if (t15.showFooter) {
+        ctx.save();
+        ctx.font = `500 ${footerSize}px "${brandFF}", sans-serif`;
+        setLS(ctx, (t15.footerLetterSpacing ?? 0.02) * footerSize);
+        ctx.fillStyle = t15.footerColor || '#FFFFFF';
+        ctx.textBaseline = 'bottom';
+        const fy = H - footerBottomPad;
+        ctx.fillText(t15.footerLeft || '', PAD_H, fy);
+        const right = t15.footerRight || '';
+        if (right) ctx.fillText(right, W - PAD_H - railW - mW(ctx, right), fy);
+        ctx.restore();
+    }
+}
+
+function _roundRectPath(ctx, x, y, w, h, rx, ry) {
+    if (ry === undefined) ry = rx;
+    let rxRad = Math.max(0, rx);
+    let ryRad = Math.max(0, ry);
+    const scale = Math.min(1, w / (2 * rxRad || w), h / (2 * ryRad || h));
+    rxRad = Math.min(rxRad * scale, w / 2);
+    ryRad = Math.min(ryRad * scale, h / 2);
+
+    if (typeof ctx.roundRect === 'function') {
+        ctx.beginPath();
+        if (Math.abs(rxRad - ryRad) < 0.01) {
+            ctx.roundRect(x, y, w, h, rxRad);
+        } else {
+            ctx.roundRect(x, y, w, h, [
+                { x: rxRad, y: ryRad },
+                { x: rxRad, y: ryRad },
+                { x: rxRad, y: ryRad },
+                { x: rxRad, y: ryRad },
+            ]);
+        }
+        return;
+    }
+    const rad = Math.min(rxRad, ryRad);
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rad);
+    ctx.arcTo(x + w, y + h, x, y + h, rad);
+    ctx.arcTo(x, y + h, x, y, rad);
+    ctx.arcTo(x, y, x + w, y, rad);
+    ctx.closePath();
+}
+
+function _alignX(align, pad, boxW, contentW) {
+    if (align === 'center') return (boxW - contentW) / 2;
+    if (align === 'right') return boxW - pad - contentW;
+    return pad;
+}
+
+// ─── TEMPLATE 16 (Launch - SaaS product ad) ───────────────────────────────────
+async function exportT16(ctx, state, W, H) {
+    const t16 = state.post.t16 || {};
+    const PAD_H = t16.paddingH ?? 72;
+    const PAD_V = t16.paddingV ?? 64;
+    const align = t16.textAlign || 'left';
+    const stackOffsetX = t16.stackOffsetX ?? 0;
+    const stackOffsetY = t16.stackOffsetY ?? 0;
+    const textPadH = PAD_H + stackOffsetX;
+    const maxTextW = W - textPadH * 2;
+    const headlinePos = t16.headlinePos || 'top';
+    const logoOffsetX = t16.logoOffsetX ?? 0;
+    const logoOffsetY = t16.logoOffsetY ?? 0;
+
+    const [logoImg, productImg] = await Promise.all([
+        (t16.showLogo && t16.logoUrl) ? loadImg(t16.logoUrl) : null,
+        (t16.showProduct && t16.productUrl) ? loadImg(t16.productUrl) : null,
+    ]);
+
+    const ff = t16.customFontFamily || t16.fontFamily || 'Plus Jakarta Sans';
+    const dekFF = t16.customDekFontFamily || t16.dekFontFamily || ff;
+    const fs = t16.fontSize || 72;
+    const fw = t16.fontWeight || 800;
+    const dekSize = t16.dekSize || 28;
+    const dekWeight = t16.dekWeight || 500;
+    const kickerSize = t16.kickerSize || 18;
+    const ctaSize = t16.ctaSize || 22;
+    const ctaWeight = t16.ctaWeight || 600;
+    await Promise.all([
+        loadFont(`${fw} ${fs}px "${ff}"`),
+        loadFont(`${dekWeight} ${dekSize}px "${dekFF}"`),
+        loadFont(`700 ${kickerSize}px "${dekFF}"`),
+        loadFont(`${ctaWeight} ${ctaSize}px "${dekFF}"`),
+    ]);
+
+    ctx.fillStyle = t16.bgColor || '#FFFFFF';
+    ctx.fillRect(0, 0, W, H);
+
+    const textureSrc = t16.textureId ? textureUrl(t16.textureId) : '';
+    if (textureSrc) {
+        const texImg = await loadImg(textureSrc);
+        if (texImg) {
+            const natW = texImg.naturalWidth || texImg.width || 1;
+            const texturePct = (t16.textureScale ?? 100) / 100;
+            const pattern = ctx.createPattern(texImg, 'repeat');
+            if (pattern) {
+                if (typeof pattern.setTransform === 'function') {
+                    // Match CSS background-size: N% (width % of canvas, height auto).
+                    const scale = (W / natW) * texturePct;
+                    pattern.setTransform(new DOMMatrix().scale(scale));
+                }
+                ctx.save();
+                ctx.globalAlpha = t16.textureOpacity ?? 0.35;
+                ctx.fillStyle = pattern;
+                ctx.fillRect(0, 0, W, H);
+                ctx.restore();
+            }
+        }
+    }
+
+    if (t16.showBlob) {
+        const bw = t16.blobWidth || 520;
+        const bh = t16.blobHeight || 420;
+        const cx = (t16.blobPosX ?? 78) / 100 * W;
+        const cy = (t16.blobPosY ?? 72) / 100 * H;
+        const rot = ((t16.blobRotate || 0) * Math.PI) / 180;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rot);
+        ctx.fillStyle = t16.blobColor || '#FF3D8A';
+        const pct = (t16.blobRadius ?? 50) / 100;
+        const rx = bw * pct;
+        const ry = bh * pct;
+        _roundRectPath(ctx, -bw / 2, -bh / 2, bw, bh, rx, ry);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    if (productImg) {
+        const bottom = t16.productBottom ?? 56;
+        const prodH = Math.round(H * ((t16.productHeight ?? 46) / 100));
+        const widthPct = Math.max(50, Math.min(100, t16.productWidth ?? 100));
+        const availW = W - PAD_H * 2;
+        const prodW = Math.round(availW * (widthPct / 100));
+        const anchorX = (t16.productOffsetX ?? 50) / 100;
+        const prodX = Math.round(PAD_H + (availW - prodW) * anchorX);
+        const prodY = H - bottom - prodH;
+        const rad = t16.productRadius ?? 32;
+        if (t16.showShadow) {
+            ctx.save();
+            ctx.shadowColor = t16.shadowColor || 'rgba(17,17,17,0.14)';
+            ctx.shadowBlur = Math.round((t16.shadowSize || 28) * 2.2);
+            ctx.shadowOffsetY = t16.shadowSize || 28;
+            ctx.fillStyle = '#fff';
+            _roundRectPath(ctx, prodX, prodY, prodW, prodH, rad);
+            ctx.fill();
+            ctx.restore();
+        }
+        ctx.save();
+        _roundRectPath(ctx, prodX, prodY, prodW, prodH, rad);
+        ctx.clip();
+        drawCover(
+            ctx,
+            productImg,
+            prodX, prodY, prodW, prodH,
+            t16.imagePosX ?? 50,
+            t16.imagePosY ?? 50,
+            (t16.imageScale ?? 100) / 100,
+        );
+        ctx.restore();
+        const border = t16.productBorder || 0;
+        if (border > 0) {
+            ctx.save();
+            ctx.strokeStyle = t16.productBorderColor || '#EDEDED';
+            ctx.lineWidth = border;
+            _roundRectPath(ctx, prodX + border / 2, prodY + border / 2, prodW - border, prodH - border, Math.max(0, rad - border / 2));
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+
+    let logoBlockH = 0;
+    let logoW = 0;
+    let logoH = 0;
+    if (logoImg) {
+        logoW = t16.logoSize || 72;
+        const natW = logoImg.naturalWidth || logoImg.width || 1;
+        const natH = logoImg.naturalHeight || logoImg.height || 1;
+        logoH = (natH / natW) * logoW;
+        logoBlockH = logoH + 28 + logoOffsetY;
+    }
+
+    const kickerBlockH = t16.showKicker ? Math.round(kickerSize * 1.2) + 14 : 0;
+
+    const fontSpec = `${fw} ${fs}px "${ff}", sans-serif`;
+    ctx.font = fontSpec;
+    setLS(ctx, (t16.letterSpacing ?? -0.04) * fs);
+    const allLines = [];
+    const rawLines = String(t16.headline || '').split(/\r?\n/);
+    for (const rawLine of rawLines) {
+        const parts = rawLine.split(/(\[.*?\])/);
+        const words = [];
+        for (const p of parts) {
+            if (!p) continue;
+            if (p.startsWith('[') && p.endsWith(']')) {
+                p.slice(1, -1).split(/\s+/).forEach((w) => {
+                    if (w) words.push({ word: w, color: t16.highlightColor || '#4353FF' });
+                });
+            } else {
+                p.split(/\s+/).forEach((w) => {
+                    if (w) words.push({ word: w, color: t16.headlineColor || '#111111' });
+                });
+            }
+        }
+        if (!words.length) {
+            allLines.push([]);
+            continue;
+        }
+        const wrapped = wrapColored(ctx, words, maxTextW);
+        for (const line of wrapped) allLines.push(line);
+    }
+
+    const lineH = Math.round(fs * (t16.lineHeight ?? 1.08));
+    const headlineBlockH = Math.max(1, allLines.length) * lineH;
+
+    let dekLines = [];
+    const dekLH = Math.round(dekSize * (t16.dekLineHeight ?? 1.35));
+    if (t16.showDek) {
+        ctx.save();
+        ctx.font = `${dekWeight} ${dekSize}px "${dekFF}", sans-serif`;
+        setLS(ctx, (t16.dekLetterSpacing ?? -0.02) * dekSize);
+        dekLines = wrapSimple(ctx, String(t16.dek || ''), maxTextW);
+        ctx.restore();
+    }
+    const dekBlockH = t16.showDek ? 18 + dekLines.length * dekLH : 0;
+
+    let ctaBlockH = 0;
+    if (t16.showCta) {
+        const padY = t16.ctaPadV ?? 16;
+        ctaBlockH = 28 + ctaSize + padY * 2;
+    }
+
+    const stackH = logoBlockH + kickerBlockH + headlineBlockH + dekBlockH + ctaBlockH;
+    const productReserve = productImg ? (t16.productBottom ?? 56) + Math.round(H * ((t16.productHeight ?? 46) / 100)) + 24 : 0;
+
+    let y;
+    if (headlinePos === 'center') y = (H - stackH) / 2 + stackOffsetY;
+    else if (headlinePos === 'bottom') y = H - productReserve - PAD_V - stackH - stackOffsetY;
+    else y = PAD_V + stackOffsetY;
+
+    if (logoImg) {
+        const lx = _alignX(align, textPadH, W, logoW) + logoOffsetX;
+        ctx.drawImage(logoImg, lx, y + logoOffsetY, logoW, logoH);
+        y += logoBlockH;
+    }
+
+    if (t16.showKicker) {
+        ctx.save();
+        ctx.font = `700 ${kickerSize}px "${dekFF}", sans-serif`;
+        setLS(ctx, (t16.kickerLetterSpacing ?? 0.16) * kickerSize);
+        ctx.fillStyle = t16.kickerColor || '#8A8A8A';
+        ctx.textBaseline = 'top';
+        const kickerText = String(t16.kickerText || '').toUpperCase();
+        const kx = _alignX(align, textPadH, W, mW(ctx, kickerText));
+        ctx.fillText(kickerText, kx, y);
+        ctx.restore();
+        y += kickerBlockH;
+    }
+
+    ctx.save();
+    ctx.font = fontSpec;
+    setLS(ctx, (t16.letterSpacing ?? -0.04) * fs);
+    ctx.textBaseline = 'top';
+    const sp = mW(ctx, ' ');
+    const uppercase = t16.uppercase;
+    for (const line of allLines) {
+        if (!line.length) {
+            y += lineH;
+            continue;
+        }
+        let lineW = 0;
+        if (align !== 'left') {
+            lineW = line.reduce(
+                (acc, item, i) => acc + mW(ctx, uppercase ? item.word.toUpperCase() : item.word) + (i < line.length - 1 ? sp : 0),
+                0,
+            );
+        }
+        let x = textPadH;
+        if (align === 'center') x = (W - lineW) / 2;
+        else if (align === 'right') x = W - textPadH - lineW;
+        for (let i = 0; i < line.length; i++) {
+            ctx.fillStyle = line[i].color;
+            const word = uppercase ? line[i].word.toUpperCase() : line[i].word;
+            ctx.fillText(word, x, y);
+            x += mW(ctx, word);
+            if (i < line.length - 1) x += sp;
+        }
+        y += lineH;
+    }
+    ctx.restore();
+
+    if (t16.showDek && dekLines.length) {
+        y += 18;
+        ctx.save();
+        ctx.font = `${dekWeight} ${dekSize}px "${dekFF}", sans-serif`;
+        setLS(ctx, (t16.dekLetterSpacing ?? -0.02) * dekSize);
+        ctx.fillStyle = t16.dekColor || '#5C5C5C';
+        ctx.textBaseline = 'top';
+        for (const line of dekLines) {
+            const dx = _alignX(align, textPadH, W, mW(ctx, line));
+            ctx.fillText(line, dx, y);
+            y += dekLH;
+        }
+        ctx.restore();
+    }
+
+    if (t16.showCta) {
+        y += 28;
+        const padX = t16.ctaPadH ?? 28;
+        const padY = t16.ctaPadV ?? 16;
+        ctx.save();
+        ctx.font = `${ctaWeight} ${ctaSize}px "${dekFF}", sans-serif`;
+        setLS(ctx, (t16.ctaLetterSpacing ?? -0.01) * ctaSize);
+        const label = t16.ctaText || '';
+        const textW = mW(ctx, label);
+        const btnW = textW + padX * 2;
+        const btnH = ctaSize + padY * 2;
+        const bx = _alignX(align, textPadH, W, btnW);
+        ctx.fillStyle = t16.ctaBg || '#111111';
+        _roundRectPath(ctx, bx, y, btnW, btnH, t16.ctaRadius ?? 14);
+        ctx.fill();
+        ctx.fillStyle = t16.ctaColor || '#FFFFFF';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, bx + padX, y + btnH / 2);
         ctx.restore();
     }
 }

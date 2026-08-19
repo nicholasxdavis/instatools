@@ -74,6 +74,7 @@ export const FONT_WEIGHTS = [
   { label: 'Medium', value: 500 },
   { label: 'Semibold', value: 600 },
   { label: 'Bold', value: 700 },
+  { label: 'Extrabold', value: 800 },
   { label: 'Black', value: 900 },
 ]
 
@@ -81,4 +82,56 @@ export const ALIGN_OPTIONS = [
   { label: 'Left', value: 'left' },
   { label: 'Center', value: 'center' },
   { label: 'Right', value: 'right' },
+]
+
+export const FRAME_OPTIONS = [
+  { label: 'Circle', value: 'circle' },
+  { label: 'Rounded', value: 'rounded' },
+  { label: 'Hexagon', value: 'hex' },
+  { label: 'Cutout', value: 'none' },
+]
+
+export const HEADLINE_POS_OPTIONS = [
+  { label: 'Top', value: 'top' },
+  { label: 'Center', value: 'center' },
+  { label: 'Bottom', value: 'bottom' },
+]
+
+export const MARK_MODE_OPTIONS = [
+  { label: 'Four-dot mark', value: 'dots' },
+  { label: 'Custom icon', value: 'image' },
+  { label: 'None', value: 'none' },
+]
+
+export const CTA_STYLE_OPTIONS = [
+  { label: 'Filled button', value: 'fill' },
+  { label: 'Outline button', value: 'outline' },
+  { label: 'Underline link', value: 'underline' },
+  { label: 'Text link', value: 'ghost' },
+]
+
+export const CTA_ALIGN_OPTIONS = [
+  { label: 'Match text', value: 'match' },
+  { label: 'Left', value: 'left' },
+  { label: 'Center', value: 'center' },
+  { label: 'Right', value: 'right' },
+]
+
+export const TEXTURE_OPTIONS = [
+  { label: 'None', value: '' },
+  { label: 'Brick wall', value: 'brickwall' },
+  { label: 'Crossline dots', value: 'crosslineDots' },
+  { label: 'Diagonals', value: 'diagonales' },
+  { label: 'Double bubble', value: 'doubleBubble' },
+  { label: 'Hypnotize', value: 'hypnotize' },
+  { label: 'Nice snow', value: 'niceSnow' },
+  { label: 'Pipes', value: 'pipes' },
+  { label: 'Repeated square', value: 'repeatedSquare' },
+  { label: 'Ripples', value: 'ripples' },
+  { label: 'Sports', value: 'sports' },
+  { label: 'Stripes light', value: 'stripesLight' },
+  { label: 'Swirl', value: 'swirl' },
+  { label: 'Tiny squares', value: 'tinySquares' },
+  { label: 'What the hex', value: 'whatTheHex' },
+  { label: 'White waves', value: 'whiteWaves' },
 ]

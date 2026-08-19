@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
           <div class="m-templates-head">
             <h2 id="templates-title">Layouts ready to post.</h2>
             <p>
-              Fourteen Instagram layouts for news, sports, finance, tweets, fashion, and more. Open one, edit it, export HD on your device.
+              Sixteen Instagram layouts for news, sports, finance, tweets, fashion, campaigns, and more. Open one, edit it, export HD on your device.
             </p>
           </div>
           <div class="m-grid">

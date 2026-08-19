@@ -1,7 +1,7 @@
 import { SITE, absoluteUrl } from './site.js'
 
 const HOME_DESCRIPTION =
-  'Free Instagram post maker with 14 ready layouts. Edit photos and headlines in your browser, then export HD 1080x1350 PNG locally. No signup.'
+  'Free Instagram post maker with 16 ready layouts. Edit photos and headlines in your browser, then export HD 1080x1350 PNG locally. No signup.'
 
 export const HOME_FAQS = [
   {
@@ -181,6 +181,28 @@ export const THEME_CATALOG = [
     keywords:
       'athlete Instagram post, sports news Instagram maker, NFL Instagram graphic, free athlete post maker',
   },
+  {
+    id: 'template15',
+    slug: 'campaign',
+    name: 'Campaign',
+    title: 'Campaign Instagram Post Maker | Instatools',
+    h1: 'Make Campaign Instagram Posts',
+    description:
+      'Create campaign Instagram posts with a photo background, clean overlay type, and optional framed cutout. Free marketing look. Export HD 1080x1350 PNG locally.',
+    keywords:
+      'campaign Instagram post, marketing Instagram graphic, brand Instagram post maker, free campaign post maker',
+  },
+  {
+    id: 'template16',
+    slug: 'launch',
+    name: 'Launch',
+    title: 'Product Ad Instagram Maker | Instatools',
+    h1: 'Make Product Ad Instagram Posts',
+    description:
+      'Create SaaS-style Instagram ads with a logo, headline, CTA button, and product shot. Free marketing layout. Export HD 1080x1350 PNG locally.',
+    keywords:
+      'SaaS Instagram ad, product Instagram ad maker, CTA Instagram graphic, free product ad maker',
+  },
 ]
 
 const ROBOTS = 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
@@ -295,7 +317,7 @@ export function jsonLdForPage(page) {
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         featureList: [
           'Free Instagram post maker',
-          '14 ready-to-edit layouts',
+          '16 ready-to-edit layouts',
           'Typography and photo controls',
           'Local-only HD PNG and video export',
         ],
