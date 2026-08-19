@@ -15,11 +15,81 @@ const imagePos = (prefix) => [
   slider(`${prefix}imagePosY`, 'Position Y', 0, 100, { unit: '%' }),
 ]
 
-const cutoutFades = (prefix) => [
-  slider(`post.t12.${prefix}FadeTop`, 'Fade out top', 0, 80, { unit: '%' }),
-  slider(`post.t12.${prefix}FadeBottom`, 'Fade out bottom', 0, 80, { unit: '%' }),
-  slider(`post.t12.${prefix}FadeLeft`, 'Fade out left', 0, 80, { unit: '%' }),
-  slider(`post.t12.${prefix}FadeRight`, 'Fade out right', 0, 80, { unit: '%' }),
+const cutoutFades = (stateKey, prefix) => [
+  slider(`post.${stateKey}.${prefix}FadeTop`, 'Fade out top', 0, 80, { unit: '%' }),
+  slider(`post.${stateKey}.${prefix}FadeBottom`, 'Fade out bottom', 0, 80, { unit: '%' }),
+  slider(`post.${stateKey}.${prefix}FadeLeft`, 'Fade out left', 0, 80, { unit: '%' }),
+  slider(`post.${stateKey}.${prefix}FadeRight`, 'Fade out right', 0, 80, { unit: '%' }),
+]
+
+const cutoutStackFields = (stateKey) => [
+  {
+    title: 'Content',
+    fields: [
+      area(`post.${stateKey}.headline`, 'Headline', { hint: 'Built for transparent PNG cutouts: rappers, products, people. Line breaks stay.' }),
+      text(`post.${stateKey}.eyebrowLeft`, 'Eyebrow left'),
+      text(`post.${stateKey}.eyebrowRight`, 'Eyebrow right'),
+      text(`post.${stateKey}.swipeText`, 'Swipe text', { togglePath: `post.${stateKey}.showSwipe` }),
+      image(`post.${stateKey}.imageCenter`, 'Center cutout', [
+        slider(`post.${stateKey}.centerSize`, 'Size', 200, 1100, { unit: 'px' }),
+        slider(`post.${stateKey}.centerPosX`, 'Position X', 0, 100, { unit: '%' }),
+        slider(`post.${stateKey}.centerPosY`, 'Position Y', 0, 100, { unit: '%' }),
+        ...cutoutFades(stateKey, 'center'),
+      ]),
+      image(`post.${stateKey}.imageLeft`, 'Left cutout', [
+        slider(`post.${stateKey}.leftSize`, 'Size', 120, 900, { unit: 'px' }),
+        slider(`post.${stateKey}.leftPosX`, 'Position X', 0, 100, { unit: '%' }),
+        slider(`post.${stateKey}.leftPosY`, 'Position Y', 0, 100, { unit: '%' }),
+        ...cutoutFades(stateKey, 'left'),
+      ]),
+      image(`post.${stateKey}.imageRight`, 'Right cutout', [
+        slider(`post.${stateKey}.rightSize`, 'Size', 120, 900, { unit: 'px' }),
+        slider(`post.${stateKey}.rightPosX`, 'Position X', 0, 100, { unit: '%' }),
+        slider(`post.${stateKey}.rightPosY`, 'Position Y', 0, 100, { unit: '%' }),
+        ...cutoutFades(stateKey, 'right'),
+      ]),
+    ],
+  },
+  {
+    title: 'Typography',
+    fields: [
+      font(`post.${stateKey}.fontFamily`, `post.${stateKey}.customFontFamily`),
+      slider(`post.${stateKey}.fontSize`, 'Size', 48, 220, { unit: 'px' }),
+      select(`post.${stateKey}.fontWeight`, 'Weight', FONT_WEIGHTS),
+      color(`post.${stateKey}.headlineColor`, 'Headline'),
+      select(`post.${stateKey}.textAlign`, 'Align', ALIGN_OPTIONS),
+      slider(`post.${stateKey}.lineHeight`, 'Line height', 0.7, 1.3, { step: 0.01 }),
+      slider(`post.${stateKey}.letterSpacing`, 'Letter spacing', -0.08, 0.12, { step: 0.005, unit: 'em' }),
+      slider(`post.${stateKey}.paddingH`, 'Padding X', 16, 120, { unit: 'px' }),
+      slider(`post.${stateKey}.paddingBottom`, 'Padding bottom', 60, 200, { unit: 'px' }),
+      slider(`post.${stateKey}.eyebrowSize`, 'Eyebrow size', 16, 72, { unit: 'px' }),
+      color(`post.${stateKey}.eyebrowColor`, 'Eyebrow color'),
+      slider(`post.${stateKey}.eyebrowLetterSpacing`, 'Eyebrow spacing', -0.04, 0.2, { step: 0.005, unit: 'em' }),
+      slider(`post.${stateKey}.swipeFontSize`, 'Swipe size', 12, 40, { unit: 'px' }),
+      color(`post.${stateKey}.swipeColor`, 'Swipe color'),
+      slider(`post.${stateKey}.swipeLetterSpacing`, 'Swipe spacing', 0, 0.3, { step: 0.01, unit: 'em' }),
+    ],
+  },
+  {
+    title: 'Stage & logo',
+    fields: [
+      color(`post.${stateKey}.bgColor`, 'Background'),
+      color(`post.${stateKey}.glowColor`, 'Glow'),
+      slider(`post.${stateKey}.glowX`, 'Glow X', 0, 100, { unit: '%' }),
+      slider(`post.${stateKey}.glowY`, 'Glow Y', 0, 100, { unit: '%' }),
+      slider(`post.${stateKey}.glowSize`, 'Glow size', 20, 120, { unit: '%' }),
+      slider(`post.${stateKey}.noiseAmount`, 'Grain', 0, 1, { step: 0.02 }),
+      slider(`post.${stateKey}.fadeHeight`, 'Bottom wash', 0, 80, { unit: '%' }),
+      slider(`post.${stateKey}.fadeStrength`, 'Wash strength', 0, 1, { step: 0.02 }),
+      image(`post.${stateKey}.logoUrl`, 'Logo', [
+        toggle(`post.${stateKey}.showLogo`, 'Show logo'),
+        slider(`post.${stateKey}.logoSize`, 'Size', 40, 320, { unit: 'px' }),
+        slider(`post.${stateKey}.logoOpacity`, 'Opacity', 0, 1, { step: 0.05, unit: '%' }),
+        slider(`post.${stateKey}.logoPosX`, 'Position X', 0, 120, { unit: '%' }),
+        slider(`post.${stateKey}.logoPosY`, 'Position Y', 0, 100, { unit: '%' }),
+      ]),
+    ],
+  },
 ]
 
 export const THEME_FIELDS = {
@@ -486,75 +556,9 @@ export const THEME_FIELDS = {
     },
   ],
 
-  template12: [
-    {
-      title: 'Content',
-      fields: [
-        area('post.t12.headline', 'Headline', { hint: 'Built for transparent PNG cutouts: rappers, products, people. Line breaks stay.' }),
-        text('post.t12.eyebrowLeft', 'Eyebrow left'),
-        text('post.t12.eyebrowRight', 'Eyebrow right'),
-        text('post.t12.swipeText', 'Swipe text', { togglePath: 'post.t12.showSwipe' }),
-        image('post.t12.imageCenter', 'Center cutout', [
-          slider('post.t12.centerSize', 'Size', 200, 1100, { unit: 'px' }),
-          slider('post.t12.centerPosX', 'Position X', 0, 100, { unit: '%' }),
-          slider('post.t12.centerPosY', 'Position Y', 0, 100, { unit: '%' }),
-          ...cutoutFades('center'),
-        ]),
-        image('post.t12.imageLeft', 'Left cutout', [
-          slider('post.t12.leftSize', 'Size', 120, 900, { unit: 'px' }),
-          slider('post.t12.leftPosX', 'Position X', 0, 100, { unit: '%' }),
-          slider('post.t12.leftPosY', 'Position Y', 0, 100, { unit: '%' }),
-          ...cutoutFades('left'),
-        ]),
-        image('post.t12.imageRight', 'Right cutout', [
-          slider('post.t12.rightSize', 'Size', 120, 900, { unit: 'px' }),
-          slider('post.t12.rightPosX', 'Position X', 0, 100, { unit: '%' }),
-          slider('post.t12.rightPosY', 'Position Y', 0, 100, { unit: '%' }),
-          ...cutoutFades('right'),
-        ]),
-      ],
-    },
-    {
-      title: 'Typography',
-      fields: [
-        font('post.t12.fontFamily', 'post.t12.customFontFamily'),
-        slider('post.t12.fontSize', 'Size', 48, 220, { unit: 'px' }),
-        select('post.t12.fontWeight', 'Weight', FONT_WEIGHTS),
-        color('post.t12.headlineColor', 'Headline'),
-        select('post.t12.textAlign', 'Align', ALIGN_OPTIONS),
-        slider('post.t12.lineHeight', 'Line height', 0.7, 1.3, { step: 0.01 }),
-        slider('post.t12.letterSpacing', 'Letter spacing', -0.08, 0.12, { step: 0.005, unit: 'em' }),
-        slider('post.t12.paddingH', 'Padding X', 16, 120, { unit: 'px' }),
-        slider('post.t12.paddingBottom', 'Padding bottom', 60, 200, { unit: 'px' }),
-        slider('post.t12.eyebrowSize', 'Eyebrow size', 16, 72, { unit: 'px' }),
-        color('post.t12.eyebrowColor', 'Eyebrow color'),
-        slider('post.t12.eyebrowLetterSpacing', 'Eyebrow spacing', -0.04, 0.2, { step: 0.005, unit: 'em' }),
-        slider('post.t12.swipeFontSize', 'Swipe size', 12, 40, { unit: 'px' }),
-        color('post.t12.swipeColor', 'Swipe color'),
-        slider('post.t12.swipeLetterSpacing', 'Swipe spacing', 0, 0.3, { step: 0.01, unit: 'em' }),
-      ],
-    },
-    {
-      title: 'Stage & logo',
-      fields: [
-        color('post.t12.bgColor', 'Background'),
-        color('post.t12.glowColor', 'Glow'),
-        slider('post.t12.glowX', 'Glow X', 0, 100, { unit: '%' }),
-        slider('post.t12.glowY', 'Glow Y', 0, 100, { unit: '%' }),
-        slider('post.t12.glowSize', 'Glow size', 20, 120, { unit: '%' }),
-        slider('post.t12.noiseAmount', 'Grain', 0, 1, { step: 0.02 }),
-        slider('post.t12.fadeHeight', 'Bottom wash', 0, 80, { unit: '%' }),
-        slider('post.t12.fadeStrength', 'Wash strength', 0, 1, { step: 0.02 }),
-        image('post.t12.logoUrl', 'Logo', [
-          toggle('post.t12.showLogo', 'Show logo'),
-          slider('post.t12.logoSize', 'Size', 40, 320, { unit: 'px' }),
-          slider('post.t12.logoOpacity', 'Opacity', 0, 1, { step: 0.05, unit: '%' }),
-          slider('post.t12.logoPosX', 'Position X', 0, 120, { unit: '%' }),
-          slider('post.t12.logoPosY', 'Position Y', 0, 100, { unit: '%' }),
-        ]),
-      ],
-    },
-  ],
+  template12: cutoutStackFields('t12'),
+
+  template17: cutoutStackFields('t17'),
 
   template13: [
     {

@@ -30,8 +30,6 @@ jobs:
 
       - name: Build production bundle
         run: npm run build
-        env:
-          GITHUB_PAGES: ''
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

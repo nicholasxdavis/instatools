@@ -203,6 +203,17 @@ export const THEME_CATALOG = [
     keywords:
       'SaaS Instagram ad, product Instagram ad maker, CTA Instagram graphic, free product ad maker',
   },
+  {
+    id: 'template17',
+    slug: 'smoke-cutout',
+    name: 'Smoke Cutout',
+    title: 'Rap Cutout Instagram Maker | Instatools',
+    h1: 'Make Rap Cutout Instagram Posts',
+    description:
+      'Stack rapper PNG cutouts with smoke and glow on a dark stage. Free collage layout for hip-hop posts. Export sharp 1080x1350 PNG locally.',
+    keywords:
+      'rapper Instagram post, Travis Scott Instagram graphic, smoke cutout Instagram, free rap collage maker',
+  },
 ]
 
 const ROBOTS = 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
@@ -408,7 +419,7 @@ export function headTagsForPage(page) {
   const image = absoluteUrl(SITE.ogImage.path)
   const robots = page.robots
   const jsonLd = JSON.stringify(jsonLdForPage(page))
-  const assetBase = process.env.GITHUB_PAGES === 'true' ? '/instatools/' : '/'
+  const assetBase = process.env.DEPLOY_TARGET === 'github-pages' ? '/instatools/' : '/'
   return `    <title>${escapeHtml(page.title)}</title>
     <meta name="description" content="${escapeHtml(page.description)}" />
     <meta name="keywords" content="${escapeHtml(page.keywords || '')}" />

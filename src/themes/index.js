@@ -13,6 +13,7 @@ import Template13Preview from './template13/Preview.vue'
 import Template14Preview from './template14/Preview.vue'
 import Template15Preview from './template15/Preview.vue'
 import Template16Preview from './template16/Preview.vue'
+import Template17Preview from './template17/Preview.vue'
 import { THEME_CATALOG } from '@/seo/catalog'
 import { THEME_FIELDS } from './fields'
 import { publicUrl } from '@/utils/publicUrl'
@@ -53,6 +54,11 @@ const PREVIEWS = {
     component: Template16Preview,
     fields: THEME_FIELDS.template16,
     note: 'SaaS ad - logo, CTA, product shot',
+  },
+  template17: {
+    component: Template17Preview,
+    fields: THEME_FIELDS.template17,
+    note: 'Smoke cutout - rapper PNGs on red glow stage',
   },
 }
 

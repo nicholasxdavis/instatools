@@ -2,10 +2,11 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
-const githubPages = process.env.GITHUB_PAGES === 'true'
+const deployTarget = process.env.DEPLOY_TARGET || 'root'
+const base = deployTarget === 'github-pages' ? '/instatools/' : '/'
 
 export default defineConfig({
-  base: githubPages ? '/instatools/' : '/',
+  base,
   appType: 'spa',
   plugins: [vue()],
   resolve: {

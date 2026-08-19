@@ -107,6 +107,12 @@ function _activeVideoSourceFromPost(post) {
         post.t12 && post.t12.imageRight,
         post.t12 && post.t12.logoUrl,
     );
+    else if (t === 'template17') checks.push(
+        post.t17 && post.t17.imageCenter,
+        post.t17 && post.t17.imageLeft,
+        post.t17 && post.t17.imageRight,
+        post.t17 && post.t17.logoUrl,
+    );
     else if (t === 'template13') checks.push(post.t13 && post.t13.bgImage, post.t13 && post.t13.watermarkUrl);
     else if (t === 'template14') checks.push(post.t14 && post.t14.bgImage, post.t14 && post.t14.watermarkUrl);
     else if (t === 'template15') checks.push(
@@ -414,7 +420,8 @@ async function _renderPostToCtx(ctx, state, W, H) {
     else if (tmpl === 'template9')                     await exportT9(ctx, state, W, H);
     else if (tmpl === 'template10')                    await exportT10(ctx, state, W, H);
     else if (tmpl === 'template11')                    await exportT11(ctx, state, W, H);
-    else if (tmpl === 'template12')                    await exportT12(ctx, state, W, H);
+    else if (tmpl === 'template12' || tmpl === 'template17')
+                                                      await exportCutoutStack(ctx, state, W, H, tmpl === 'template17' ? 't17' : 't12');
     else if (tmpl === 'template13')                    await exportT13(ctx, state, W, H);
     else if (tmpl === 'template14')                    await exportT14(ctx, state, W, H);
     else if (tmpl === 'template15')                    await exportT15(ctx, state, W, H);
@@ -2521,69 +2528,69 @@ async function exportT11(ctx, state, W, H) {
     }
 }
 
-// ─── TEMPLATE 12 (Cutout Stack - bronze field + transparent PNGs) ─────────────
-async function exportT12(ctx, state, W, H) {
-    const t12 = state.post.t12 || {};
+// ─── Cutout Stack (template12 / template17) ───────────────────────────────────
+async function exportCutoutStack(ctx, state, W, H, key = 't12') {
+    const t = state.post[key] || {};
     const [centerImg, leftImg, rightImg, logoImg] = await Promise.all([
-        t12.imageCenter ? loadImg(t12.imageCenter) : null,
-        t12.imageLeft ? loadImg(t12.imageLeft) : null,
-        t12.imageRight ? loadImg(t12.imageRight) : null,
-        (t12.showLogo && t12.logoUrl) ? loadImg(t12.logoUrl) : null,
+        t.imageCenter ? loadImg(t.imageCenter) : null,
+        t.imageLeft ? loadImg(t.imageLeft) : null,
+        t.imageRight ? loadImg(t.imageRight) : null,
+        (t.showLogo && t.logoUrl) ? loadImg(t.logoUrl) : null,
     ]);
 
-    const ff = t12.customFontFamily || t12.fontFamily || 'Archivo Black';
-    const fs = t12.fontSize || 148;
-    const fw = t12.fontWeight || 900;
-    const eyeFS = t12.eyebrowSize || 34;
-    const swFS = t12.swipeFontSize || 22;
+    const ff = t.customFontFamily || t.fontFamily || 'Archivo Black';
+    const fs = t.fontSize || 148;
+    const fw = t.fontWeight || 900;
+    const eyeFS = t.eyebrowSize || 34;
+    const swFS = t.swipeFontSize || 22;
     await Promise.all([
         loadFont(`${fw} ${fs}px "${ff}"`),
         loadFont(`800 ${eyeFS}px "${ff}"`),
         loadFont(`800 ${swFS}px "${ff}"`),
     ]);
 
-    const bg = t12.bgColor || '#2a1a12';
+    const bg = t.bgColor || '#2a1a12';
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
 
-    const gx = ((t12.glowX ?? 50) / 100) * W;
-    const gy = ((t12.glowY ?? 34) / 100) * H;
-    const gr = ((t12.glowSize ?? 70) / 100) * W;
+    const gx = ((t.glowX ?? 50) / 100) * W;
+    const gy = ((t.glowY ?? 34) / 100) * H;
+    const gr = ((t.glowSize ?? 70) / 100) * W;
     const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr);
-    glow.addColorStop(0, t12.glowColor || '#b08958');
+    glow.addColorStop(0, t.glowColor || '#b08958');
     glow.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
 
-    if ((t12.noiseAmount || 0) > 0) applyGrain(ctx, W, H, t12.noiseAmount);
+    if ((t.noiseAmount || 0) > 0) applyGrain(ctx, W, H, t.noiseAmount);
 
     if (leftImg) {
-        drawCutout(ctx, leftImg, (t12.leftPosX ?? 18) / 100 * W, (t12.leftPosY ?? 44) / 100 * H, t12.leftSize || 420, {
-            top: t12.leftFadeTop ?? 0,
-            bottom: t12.leftFadeBottom ?? 28,
-            left: t12.leftFadeLeft ?? 0,
-            right: t12.leftFadeRight ?? 0,
+        drawCutout(ctx, leftImg, (t.leftPosX ?? 18) / 100 * W, (t.leftPosY ?? 44) / 100 * H, t.leftSize || 420, {
+            top: t.leftFadeTop ?? 0,
+            bottom: t.leftFadeBottom ?? 28,
+            left: t.leftFadeLeft ?? 0,
+            right: t.leftFadeRight ?? 0,
         });
     }
     if (rightImg) {
-        drawCutout(ctx, rightImg, (t12.rightPosX ?? 82) / 100 * W, (t12.rightPosY ?? 44) / 100 * H, t12.rightSize || 420, {
-            top: t12.rightFadeTop ?? 0,
-            bottom: t12.rightFadeBottom ?? 28,
-            left: t12.rightFadeLeft ?? 0,
-            right: t12.rightFadeRight ?? 0,
+        drawCutout(ctx, rightImg, (t.rightPosX ?? 82) / 100 * W, (t.rightPosY ?? 44) / 100 * H, t.rightSize || 420, {
+            top: t.rightFadeTop ?? 0,
+            bottom: t.rightFadeBottom ?? 28,
+            left: t.rightFadeLeft ?? 0,
+            right: t.rightFadeRight ?? 0,
         });
     }
     if (centerImg) {
-        drawCutout(ctx, centerImg, (t12.centerPosX ?? 50) / 100 * W, (t12.centerPosY ?? 46) / 100 * H, t12.centerSize || 780, {
-            top: t12.centerFadeTop ?? 0,
-            bottom: t12.centerFadeBottom ?? 38,
-            left: t12.centerFadeLeft ?? 0,
-            right: t12.centerFadeRight ?? 0,
+        drawCutout(ctx, centerImg, (t.centerPosX ?? 50) / 100 * W, (t.centerPosY ?? 46) / 100 * H, t.centerSize || 780, {
+            top: t.centerFadeTop ?? 0,
+            bottom: t.centerFadeBottom ?? 38,
+            left: t.centerFadeLeft ?? 0,
+            right: t.centerFadeRight ?? 0,
         });
     }
 
-    const washH = Math.max(0, Math.min(100, t12.fadeHeight ?? 42)) / 100 * H;
-    const washStrength = Math.max(0, Math.min(1, t12.fadeStrength ?? 0.92));
+    const washH = Math.max(0, Math.min(100, t.fadeHeight ?? 42)) / 100 * H;
+    const washStrength = Math.max(0, Math.min(1, t.fadeStrength ?? 0.92));
     if (washH > 0 && washStrength > 0) {
         const { r, g, b } = h2rgb(bg);
         const wash = ctx.createLinearGradient(0, H - washH, 0, H);
@@ -2596,22 +2603,22 @@ async function exportT12(ctx, state, W, H) {
         ctx.restore();
     }
 
-    if (logoImg && t12.showLogo) {
-        const lw = t12.logoSize || 110;
+    if (logoImg && t.showLogo) {
+        const lw = t.logoSize || 110;
         const natW = logoImg.naturalWidth || logoImg.width || 1;
         const natH = logoImg.naturalHeight || logoImg.height || 1;
         const lh = (natH / natW) * lw;
-        const { x: lx, y: ly } = calcWmXY(t12.logoPosX ?? 4, t12.logoPosY ?? 4, W, H, lw, lh);
+        const { x: lx, y: ly } = calcWmXY(t.logoPosX ?? 4, t.logoPosY ?? 4, W, H, lw, lh);
         ctx.save();
-        ctx.globalAlpha = t12.logoOpacity ?? 1;
+        ctx.globalAlpha = t.logoOpacity ?? 1;
         ctx.drawImage(logoImg, lx, ly, lw, lh);
         ctx.restore();
     }
 
-    const PAD_H = t12.paddingH ?? 48;
-    const PAD_B = t12.paddingBottom ?? 128;
-    const hl = String(t12.headline || '').toUpperCase();
-    const lsPx = (t12.letterSpacing ?? -0.04) * fs;
+    const PAD_H = t.paddingH ?? 48;
+    const PAD_B = t.paddingBottom ?? 128;
+    const hl = String(t.headline || '').toUpperCase();
+    const lsPx = (t.letterSpacing ?? -0.04) * fs;
     ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
     setLS(ctx, lsPx);
     const rawLines = hl.split(/\r?\n/);
@@ -2620,7 +2627,7 @@ async function exportT12(ctx, state, W, H) {
         const wrapped = wrapSimple(ctx, raw, W - PAD_H * 2);
         for (const line of wrapped) lines.push(line);
     }
-    const lineH = Math.round(fs * (t12.lineHeight ?? 0.86));
+    const lineH = Math.round(fs * (t.lineHeight ?? 0.86));
     const titleH = Math.max(1, lines.length) * lineH;
     const eyeGap = 10;
     const eyeH = eyeFS * 1.1;
@@ -2628,22 +2635,22 @@ async function exportT12(ctx, state, W, H) {
 
     ctx.save();
     ctx.font = `800 ${eyeFS}px "${ff}", sans-serif`;
-    setLS(ctx, (t12.eyebrowLetterSpacing ?? 0.02) * eyeFS);
-    ctx.fillStyle = t12.eyebrowColor || '#FFFFFF';
+    setLS(ctx, (t.eyebrowLetterSpacing ?? 0.02) * eyeFS);
+    ctx.fillStyle = t.eyebrowColor || '#FFFFFF';
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
-    ctx.fillText((t12.eyebrowLeft || '').toUpperCase(), PAD_H, y);
+    ctx.fillText((t.eyebrowLeft || '').toUpperCase(), PAD_H, y);
     ctx.textAlign = 'right';
-    ctx.fillText((t12.eyebrowRight || '').toUpperCase(), W - PAD_H, y);
+    ctx.fillText((t.eyebrowRight || '').toUpperCase(), W - PAD_H, y);
     ctx.restore();
     y += eyeH + eyeGap;
 
     ctx.save();
     ctx.font = `${fw} ${fs}px "${ff}", sans-serif`;
     setLS(ctx, lsPx);
-    ctx.fillStyle = t12.headlineColor || '#FFFFFF';
+    ctx.fillStyle = t.headlineColor || '#FFFFFF';
     ctx.textBaseline = 'top';
-    const align = t12.textAlign || 'center';
+    const align = t.textAlign || 'center';
     for (const line of lines) {
         const lineW = mW(ctx, line);
         let x = PAD_H;
@@ -2654,14 +2661,14 @@ async function exportT12(ctx, state, W, H) {
     }
     ctx.restore();
 
-    if (t12.showSwipe !== false) {
+    if (t.showSwipe !== false) {
         ctx.save();
         ctx.font = `800 ${swFS}px "${ff}", sans-serif`;
-        setLS(ctx, (t12.swipeLetterSpacing ?? 0.06) * swFS);
-        ctx.fillStyle = t12.swipeColor || '#FFFFFF';
+        setLS(ctx, (t.swipeLetterSpacing ?? 0.06) * swFS);
+        ctx.fillStyle = t.swipeColor || '#FFFFFF';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        ctx.fillText((t12.swipeText || 'SWIPE LEFT TO SEE THE LIST').toUpperCase(), W / 2, H - 28);
+        ctx.fillText((t.swipeText || 'SWIPE LEFT TO SEE THE LIST').toUpperCase(), W / 2, H - 28);
         ctx.restore();
     }
 }
