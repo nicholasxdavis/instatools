@@ -2,7 +2,6 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {
-  APP_PAGE,
   INDEXABLE_PAGES,
   NOT_FOUND_PAGE,
   headTagsForPage,
@@ -29,7 +28,7 @@ function fileForPath(path) {
 }
 
 const source = await readFile(join(dist, 'index.html'), 'utf8')
-const pages = [...INDEXABLE_PAGES, APP_PAGE, NOT_FOUND_PAGE]
+const pages = [...INDEXABLE_PAGES, NOT_FOUND_PAGE]
 
 for (const page of pages) {
   const file = fileForPath(page.path)

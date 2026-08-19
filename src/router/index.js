@@ -10,15 +10,27 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'app',
+      component: PostGenerator,
+      meta: { shell: 'app' },
+    },
+    {
+      path: '/home',
       name: 'home',
       component: MarketingHome,
       meta: { shell: 'marketing' },
     },
     {
       path: '/app',
-      name: 'app',
-      component: PostGenerator,
-      meta: { shell: 'app' },
+      redirect: '/',
+    },
+    {
+      path: '/tool',
+      redirect: '/',
+    },
+    {
+      path: '/tool/:pathMatch(.*)*',
+      redirect: '/',
     },
     {
       path: '/themes/:slug',

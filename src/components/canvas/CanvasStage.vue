@@ -18,6 +18,7 @@ const canOut = computed(() => scale.value > MIN + 0.001)
 const canIn = computed(() => scale.value < MAX - 0.001)
 
 function fit() {
+  if (store.splitDragging) return
   if (!frame.value) return
   if (store.manualZoom != null) {
     scale.value = store.manualZoom
@@ -58,11 +59,21 @@ watch(
   () => nextTick(fit),
 )
 
+watch(
+  () => store.splitDragging,
+  (dragging, wasDragging) => {
+    if (wasDragging && !dragging) nextTick(fit)
+  },
+)
+
 onMounted(() => {
   fit()
   window.addEventListener('resize', fit)
   if (frame.value && typeof ResizeObserver !== 'undefined') {
-    observer = new ResizeObserver(() => fit())
+    observer = new ResizeObserver(() => {
+      if (store.splitDragging) return
+      fit()
+    })
     observer.observe(frame.value)
   }
 })

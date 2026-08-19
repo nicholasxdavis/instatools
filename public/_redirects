@@ -1,2 +1,7 @@
-/themes/*  /themes/:splat/index.html  200
-/*    /index.html   200
+/app      /      301
+/app/*    /      301
+/tool     /      301
+/tool/*   /      301
+/home     /home/ 200
+/themes/* /themes/:splat/index.html 200
+/*        /index.html   200

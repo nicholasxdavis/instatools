@@ -12,7 +12,7 @@ import BrandMark from '@/components/brand/BrandMark.vue'
       <p class="code">404</p>
       <h1 id="missing-title">Page not found</h1>
       <p>That link does not match an Instatools page. Open the maker or pick a layout.</p>
-      <router-link class="ui-btn ui-btn-primary" to="/app">
+      <router-link class="ui-btn ui-btn-primary" to="/">
         <PhArrowLeft :size="15" weight="bold" />
         Try now
       </router-link>

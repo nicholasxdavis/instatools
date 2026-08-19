@@ -88,8 +88,8 @@ test.describe('rendered pages', () => {
       const heading = page.locator('#marketing-title, .workspace h1, .missing h1')
       await expect(heading).toHaveCount(1)
       await expect(heading).toHaveText(record.h1)
-      if (record.id === 'home') {
-        await expect(page.getByRole('link', { name: 'Try now' }).first()).toHaveAttribute('href', '/app')
+      if (record.id === 'marketing') {
+        await expect(page.getByRole('link', { name: 'Try now' }).first()).toHaveAttribute('href', '/')
         const jsonHome = JSON.parse(await page.locator('#ld-json').textContent())
         expect(jsonHome['@graph'].some((node) => node['@type'] === 'FAQPage')).toBeTruthy()
         await expect(page.getByRole('heading', { name: 'Frequently asked questions' })).toBeVisible()
@@ -100,7 +100,7 @@ test.describe('rendered pages', () => {
   }
 
   test('home theme picker exposes crawlable theme links', async ({ page }) => {
-    await page.goto('/app')
+    await page.goto('/')
     await page.getByRole('tab', { name: 'Themes' }).click()
     const links = page.locator('nav[aria-label="Instagram post themes"] a')
     await expect(links).toHaveCount(THEME_PAGES.length)
@@ -111,7 +111,7 @@ test.describe('rendered pages', () => {
   })
 
   test('marketing home lists every layout', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/home')
     const cards = page.locator('#templates a.m-card')
     await expect(cards).toHaveCount(THEME_PAGES.length)
     for (const theme of THEME_PAGES) {
@@ -139,7 +139,7 @@ test.describe('rendered pages', () => {
   })
 
   test('images have accessible names', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/home')
     const images = page.locator('img')
     const count = await images.count()
     expect(count).toBeGreaterThan(0)

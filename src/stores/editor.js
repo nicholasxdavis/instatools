@@ -50,6 +50,7 @@ export const useEditorStore = defineStore('editor', {
     initial.presets = loadPresets()
     initial.mobileEditorPct = loadSplit()
     initial.editorWidth = loadEditorWidth()
+    initial.splitDragging = false
     return initial
   },
 

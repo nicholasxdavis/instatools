@@ -30,7 +30,18 @@ const { show } = useToast()
 const { confirm } = useConfirm()
 const exporting = ref(false)
 const bodyEl = ref(null)
-const { dragging: draggingY, start: startY, reset: resetY } = useSplitDrag(bodyEl)
+const splitLive = ref(store.mobileEditorPct)
+watch(() => store.mobileEditorPct, (value) => {
+  if (!draggingY.value) splitLive.value = value
+})
+const { dragging: draggingY, start: startY, reset: resetY } = useSplitDrag(bodyEl, {
+  onDrag: (pct) => { splitLive.value = Math.round(pct) },
+  onCommit: (pct) => store.setMobileEditorPct(pct, true),
+  onReset: (pct) => {
+    splitLive.value = pct
+    store.setMobileEditorPct(pct, true)
+  },
+})
 const { dragging: draggingX, start: startX, reset: resetX } = useSidebarDrag(bodyEl)
 const dragging = computed(() => draggingX.value || draggingY.value)
 
@@ -103,7 +114,7 @@ async function exportPost() {
       <div
         class="editor-pane"
         :style="{
-          '--split': `${store.mobileEditorPct}%`,
+          '--split': `${splitLive}%`,
           '--sidebar': `${store.editorWidth}px`,
         }"
       >
@@ -196,16 +207,24 @@ async function exportPost() {
     padding-bottom: env(safe-area-inset-bottom);
     transition: height 0.22s var(--ease);
   }
-  .dragging .editor-pane { transition: none; }
+  .dragging .editor-pane {
+    transition: none;
+    will-change: height;
+  }
+  .dragging .canvas-slot {
+    pointer-events: none;
+  }
   .split-y {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 22px;
+    height: 32px;
     flex-shrink: 0;
     background: var(--chrome);
     cursor: ns-resize;
     touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .bar {
     width: 36px;

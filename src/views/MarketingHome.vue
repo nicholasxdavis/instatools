@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
         <a href="#faq">FAQ</a>
       </nav>
       <div class="m-nav-actions">
-        <router-link class="btn-try" to="/app">Try now</router-link>
+        <router-link class="btn-try" to="/">Try now</router-link>
         <a
           class="m-support"
           href="https://buymeacoffee.com/galore"
@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
         </h1>
         <p class="m-lead">{{ HOME_PAGE.lead }}</p>
         <div class="m-hero-actions">
-          <router-link class="btn-try btn-try-lg" to="/app">Try now</router-link>
+          <router-link class="btn-try btn-try-lg" to="/">Try now</router-link>
           <a class="btn-ghost" href="#templates">Browse layouts</a>
         </div>
       </section>
@@ -176,14 +176,14 @@ onBeforeUnmount(() => {
         <br />
         <span class="m-footer-grad">open for everyone.</span>
       </h2>
-      <router-link class="btn-try btn-try-lg" to="/app">Try now</router-link>
+      <router-link class="btn-try btn-try-lg" to="/">Try now</router-link>
       <nav class="m-footer-links" aria-label="Footer">
         <a href="#templates">Layouts</a>
         <a href="#faq">FAQ</a>
         <a :href="privacyHref">Privacy</a>
         <a :href="termsHref">Terms</a>
         <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <router-link to="/app">Open maker</router-link>
+        <router-link to="/">Open maker</router-link>
         <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer">Support Us</a>
       </nav>
       <p class="m-copy">

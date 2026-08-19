@@ -211,7 +211,7 @@ export const HOME_PAGE = {
   id: 'home',
   path: '/',
   title: 'Free Instagram Post Maker | Instatools',
-  h1: 'Free Instagram Post Maker for creators.',
+  h1: 'Free Instagram Post Maker',
   description: HOME_DESCRIPTION,
   lead:
     'Make scroll-stopping Instagram posts in your browser. Pick a layout, edit the photo and headline, then export HD PNG on your device.',
@@ -223,14 +223,29 @@ export const HOME_PAGE = {
   priority: '1.0',
 }
 
+export const MARKETING_PAGE = {
+  id: 'marketing',
+  path: '/home/',
+  title: 'Free Instagram Post Maker | Instatools',
+  h1: 'Free Instagram Post Maker for creators.',
+  description: HOME_DESCRIPTION,
+  lead:
+    'Make scroll-stopping Instagram posts in your browser. Pick a layout, edit the photo and headline, then export HD PNG on your device.',
+  keywords:
+    'Instagram post maker, free Instagram post maker, Instagram post generator, Instagram graphic maker, make Instagram posts, Instatools',
+  faqs: HOME_FAQS,
+  robots: ROBOTS,
+  changefreq: 'weekly',
+  priority: '0.9',
+}
+
 export const APP_PAGE = {
   id: 'app',
-  path: '/app/',
-  title: 'Instagram Post Maker App | Instatools',
-  h1: 'Free Instagram Post Maker',
-  description: HOME_DESCRIPTION,
-  keywords:
-    'Instagram post maker, Instagram post generator, free Instagram post maker, make Instagram posts, Instatools',
+  path: '/',
+  title: HOME_PAGE.title,
+  h1: HOME_PAGE.h1,
+  description: HOME_PAGE.description,
+  keywords: HOME_PAGE.keywords,
   robots: 'noindex,follow',
   changefreq: null,
   priority: null,
@@ -263,7 +278,7 @@ export const THEME_PAGES = THEME_CATALOG.map((theme) => ({
   priority: '0.8',
 }))
 
-export const INDEXABLE_PAGES = [HOME_PAGE, ...THEME_PAGES]
+export const INDEXABLE_PAGES = [HOME_PAGE, MARKETING_PAGE, ...THEME_PAGES]
 
 export function jsonLdForPage(page) {
   const origin = SITE.origin
@@ -288,7 +303,7 @@ export function jsonLdForPage(page) {
     },
   ]
 
-  if (page.id === 'home') {
+  if (page.id === 'home' || page.id === 'marketing') {
     graph.push(
       {
         '@type': 'WebPage',
@@ -306,7 +321,7 @@ export function jsonLdForPage(page) {
         '@type': 'WebApplication',
         '@id': `${origin}/#app`,
         name: 'Instatools Free Instagram Post Maker',
-        url: absoluteUrl('/app/'),
+        url: absoluteUrl('/'),
         image,
         description: page.description,
         applicationCategory: 'DesignApplication',
@@ -335,7 +350,9 @@ export function jsonLdForPage(page) {
           url: absoluteUrl(themePage.path),
         })),
       },
-      {
+    )
+    if (page.id === 'marketing') {
+      graph.push({
         '@type': 'FAQPage',
         '@id': `${url}#faq`,
         mainEntity: HOME_FAQS.map((faq) => ({
@@ -346,8 +363,8 @@ export function jsonLdForPage(page) {
             text: faq.answer,
           },
         })),
-      },
-    )
+      })
+    }
   } else if (page.slug) {
     graph.push(
       {
@@ -444,7 +461,7 @@ export function noscriptForPage(page) {
       <main>
         <h1>${escapeHtml(page.h1)}</h1>
 ${lead}        <p>${escapeHtml(page.description)}</p>
-        <p><a href="/app/">Try now</a></p>
+        <p><a href="/">Open maker</a></p>
         <h2>Layouts ready to post</h2>
         <ul>
 ${links}
@@ -479,6 +496,8 @@ Disallow: /404
 Disallow: /404/
 Disallow: /app
 Disallow: /app/
+Disallow: /tool
+Disallow: /tool/
 
 Sitemap: ${absoluteUrl('/sitemap.xml')}
 `
