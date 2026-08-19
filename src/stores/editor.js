@@ -12,6 +12,13 @@ import {
 import { createDefaultState, getDefaultThemeSlice } from '@/themes/defaults'
 import { templateStateKey } from '@/utils/text'
 import { clone, getByPath, setByPath, presetsForStorage } from '@/utils/media'
+import {
+  buildDesignPost,
+  mergeDesignPost,
+  parseImportedDesign,
+  validateDesignPost,
+  designExportPayload,
+} from '@/utils/design-io'
 
 function loadPresets() {
   try {
@@ -100,13 +107,35 @@ export const useEditorStore = defineStore('editor', {
       this.post[key] = fresh
     },
 
+    buildCurrentDesign() {
+      const post = buildDesignPost(this.post)
+      if (!post) return null
+      return {
+        mode: this.mode === 'highlight' ? 'post' : (this.mode || 'post'),
+        post,
+      }
+    },
+
+    applyDesign(design) {
+      if (!design?.post || !validateDesignPost(design.post)) {
+        return false
+      }
+      this.post = mergeDesignPost(this.post, clone(design.post))
+      this.mode = design.mode === 'highlight' ? 'post' : (design.mode || 'post')
+      this.activeTab = 'editor'
+      this.manualZoom = null
+      return true
+    },
+
     savePreset(name) {
+      const post = buildDesignPost(this.post)
+      if (!post) throw new Error('No template selected.')
       const preset = {
         id: Date.now(),
         name: name || `Preset ${this.presets.length + 1}`,
-        mode: this.mode,
+        mode: this.mode === 'highlight' ? 'post' : (this.mode || 'post'),
         createdAt: new Date().toISOString(),
-        post: clone(this.post),
+        post,
       }
       this.presets.unshift(preset)
       this.persistPresets()
@@ -116,73 +145,26 @@ export const useEditorStore = defineStore('editor', {
     loadPreset(id) {
       const preset = this.presets.find((item) => item.id === id)
       if (!preset?.post) return false
-      const next = clone(preset.post)
-      const key = templateStateKey(next.template)
-      if (key !== 'style') {
-        next[key] = { ...getDefaultThemeSlice(key), ...(next[key] || {}) }
-      } else {
-        next.style = { ...getDefaultThemeSlice('style'), ...(next.style || {}) }
+      return this.applyDesign({ mode: preset.mode, post: preset.post })
+    },
+
+    importDesign(raw) {
+      const parsed = parseImportedDesign(raw)
+      if (!validateDesignPost(parsed.post)) {
+        throw new Error('Invalid design data — missing template fields.')
       }
-      this.post = { ...this.post, ...next }
-      this.mode = preset.mode === 'highlight' ? 'post' : (preset.mode || 'post')
-      this.activeTab = 'editor'
-      return true
+      const ok = this.applyDesign({ mode: parsed.mode, post: parsed.post })
+      if (!ok) throw new Error('Could not apply design to the canvas.')
+      return { extras: parsed.extras }
+    },
+
+    exportDesignPayload() {
+      return designExportPayload(this.mode, this.post)
     },
 
     deletePreset(id) {
       this.presets = this.presets.filter((item) => item.id !== id)
       this.persistPresets()
-    },
-
-    importPresets(raw) {
-      let data = raw
-      if (typeof raw === 'string') data = JSON.parse(raw)
-
-      let incoming = []
-      if (Array.isArray(data)) incoming = data
-      else if (data && typeof data === 'object' && Array.isArray(data.presets)) incoming = data.presets
-      else throw new Error('Invalid preset file - expected an array or { presets: [...] }.')
-
-      const valid = incoming.filter((preset) => {
-        if (!preset || typeof preset !== 'object') return false
-        if (preset.id == null) return false
-        if (typeof preset.name !== 'string' || !preset.name.trim()) return false
-        const hasTopStyle = preset.style && typeof preset.style === 'object'
-        const hasPostStyle = preset.post?.style && typeof preset.post.style === 'object'
-        const hasThemeSlice = preset.post && (
-          preset.post.template || preset.post.t2 || preset.post.t3 || preset.post.t4 ||
-          preset.post.t5 || preset.post.t6 || preset.post.t7 || preset.post.t8 ||
-          preset.post.t9 || preset.post.t10 || preset.post.t11 || preset.post.t12 ||
-          preset.post.t13 || preset.post.t14 || preset.post.t15 || preset.post.t16
-        )
-        return hasTopStyle || hasPostStyle || hasThemeSlice
-      })
-      if (!valid.length) throw new Error('No valid presets found - each preset needs id, name, and style data.')
-
-      const existingIds = new Set(this.presets.map((preset) => preset?.id).filter((id) => id != null))
-      const existingNames = new Map(
-        this.presets.map((preset) => [preset?.name?.toLowerCase(), preset?.id]),
-      )
-      let skipped = 0
-      let updated = 0
-      const toAdd = []
-
-      for (const preset of valid) {
-        if (existingIds.has(preset.id)) {
-          skipped += 1
-        } else if (existingNames.has(preset.name.toLowerCase())) {
-          const oldId = existingNames.get(preset.name.toLowerCase())
-          this.presets = this.presets.filter((item) => item.id !== oldId)
-          toAdd.push(preset)
-          updated += 1
-        } else {
-          toAdd.push(preset)
-        }
-      }
-
-      this.presets = [...this.presets, ...toAdd]
-      const storageOk = this.persistPresets()
-      return { added: toAdd.length, skipped, updated, storageOk }
     },
 
     persistPresets() {

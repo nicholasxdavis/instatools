@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch, onUnmounted } from 'vue'
 import { PhUploadSimple } from '@phosphor-icons/vue/compact'
 import { useEditorStore } from '@/stores/editor'
 import { readMediaFile } from '@/utils/media'
+import { resolveMediaUrl } from '@/utils/mediaUrl'
 import FieldRenderer from './FieldRenderer.vue'
 
 const props = defineProps({
@@ -16,14 +17,37 @@ const toggleOn = computed(() => {
   return path ? !!store.getValue(path) : false
 })
 const fieldId = computed(() => `field-${props.field.path.replace(/[^a-zA-Z0-9]+/g, '-')}`)
+
+const sliderDragging = ref(false)
+const sliderLocal = ref(null)
+let sliderRaf = 0
+let sliderPending = null
+let sliderLastCommit = 0
+const SLIDER_THROTTLE_MS = 72
+
+const sliderCurrent = computed(() => {
+  if (props.field.type === 'slider' && sliderDragging.value && sliderLocal.value != null) {
+    return sliderLocal.value
+  }
+  return value.value ?? props.field.min ?? 0
+})
+
 const fillPct = computed(() => {
   const field = props.field
   if (field.type !== 'slider') return 0
   const min = Number(field.min ?? 0)
   const max = Number(field.max ?? 100)
-  const current = Number(value.value ?? min)
+  const current = Number(sliderCurrent.value ?? min)
   if (max === min) return 0
   return Math.min(100, Math.max(0, ((current - min) / (max - min)) * 100))
+})
+
+watch(value, () => {
+  if (!sliderDragging.value) sliderLocal.value = null
+})
+
+onUnmounted(() => {
+  if (sliderRaf) cancelAnimationFrame(sliderRaf)
 })
 
 function update(next) {
@@ -39,6 +63,61 @@ function update(next) {
   store.setValue(field.path, next)
 }
 
+function commitSlider(next, force = false) {
+  const field = props.field
+  const now = performance.now()
+  if (!force && now - sliderLastCommit < SLIDER_THROTTLE_MS) {
+    sliderPending = Number(next)
+    if (!sliderRaf) {
+      sliderRaf = requestAnimationFrame(() => {
+        sliderRaf = 0
+        if (sliderPending != null) {
+          sliderLastCommit = performance.now()
+          store.setValue(field.path, sliderPending)
+          sliderPending = null
+        }
+      })
+    }
+    return
+  }
+  sliderLastCommit = now
+  sliderPending = null
+  if (sliderRaf) {
+    cancelAnimationFrame(sliderRaf)
+    sliderRaf = 0
+  }
+  store.setValue(field.path, Number(next))
+}
+
+function onSliderPointerDown(event) {
+  sliderDragging.value = true
+  sliderLocal.value = Number(value.value ?? props.field.min ?? 0)
+  event.currentTarget?.setPointerCapture?.(event.pointerId)
+}
+
+function onSliderInput(event) {
+  const next = Number(event.target.value)
+  sliderLocal.value = next
+  commitSlider(next)
+}
+
+function onSliderChange(event) {
+  const next = Number(event.target.value)
+  sliderLocal.value = next
+  commitSlider(next, true)
+  sliderDragging.value = false
+  sliderLocal.value = null
+}
+
+function onSliderPointerUp(event) {
+  if (!sliderDragging.value) return
+  const next = Number(event.target.value)
+  commitSlider(next, true)
+  sliderDragging.value = false
+  sliderLocal.value = null
+  event.currentTarget?.releasePointerCapture?.(event.pointerId)
+}
+
 function flipToggle(path = props.field.path) {
   store.setValue(path, !store.getValue(path))
 }
@@ -46,12 +125,19 @@ function flipToggle(path = props.field.path) {
 function displayValue() {
   const field = props.field
   if (field.type !== 'slider') return ''
-  const current = Number(value.value ?? 0)
+  const current = Number(sliderCurrent.value ?? 0)
   if (field.unit === '%' && field.max <= 1) return `${Math.round(current * 100)}%`
   if (field.unit === '%') return `${Math.round(current)}%`
   if (field.unit === 'px') return `${Math.round(current)}px`
   if (field.unit === 'em') return `${Number(current).toFixed(2)}em`
   return String(current)
+}
+
+function onImageBlur(event) {
+  const raw = String(event.target.value || '').trim()
+  if (!raw || raw.startsWith('data:') || raw.startsWith('blob:')) return
+  const resolved = resolveMediaUrl(raw)
+  if (resolved && resolved !== raw) update(resolved)
 }
 
 async function onUpload(event) {
@@ -76,14 +162,19 @@ async function onUpload(event) {
       <input
         type="range"
         :id="fieldId"
+        class="slider-input"
         :min="field.min"
         :max="field.max"
         :step="field.step || 1"
-        :value="value ?? field.min"
+        :value="sliderCurrent"
         :aria-label="field.label"
         :aria-valuetext="displayValue()"
         :style="{ '--fill': `${fillPct}%` }"
-        @input="update($event.target.value)"
+        @pointerdown="onSliderPointerDown"
+        @pointerup="onSliderPointerUp"
+        @pointercancel="onSliderPointerUp"
+        @input="onSliderInput"
+        @change="onSliderChange"
       />
       <span class="slider-value">{{ displayValue() }}</span>
     </div>
@@ -196,6 +287,7 @@ async function onUpload(event) {
           placeholder="Paste URL or upload"
           :aria-label="field.label"
           @input="update($event.target.value)"
+          @blur="onImageBlur"
         />
         <label class="icon-btn" :title="`Upload ${field.label}`">
           <input type="file" hidden accept="image/*,video/*" :aria-label="`Upload ${field.label}`" @change="onUpload" />
@@ -224,15 +316,16 @@ async function onUpload(event) {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 22px;
+  min-height: 32px;
 }
 .slider-row .field-label {
   flex: 0 1 7.5em;
 }
-.slider-row input[type='range'] {
+.slider-row .slider-input {
   flex: 1;
   min-width: 0;
   margin: 0;
+  touch-action: none;
 }
 .slider-value {
   flex: 0 0 auto;
@@ -313,5 +406,16 @@ async function onUpload(event) {
   flex-direction: column;
   gap: 7px;
   padding: 8px 0 0;
+}
+
+@media (max-width: 899px) {
+  .slider-row {
+    min-height: 40px;
+    gap: 10px;
+  }
+  .slider-row .slider-input {
+    min-height: 28px;
+    padding: 10px 0;
+  }
 }
 </style>

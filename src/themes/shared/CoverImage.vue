@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { coverImageStyle } from '@/utils/image'
 import { isVideoSource } from '@/utils/media'
+import { resolveMediaUrl } from '@/utils/mediaUrl'
 
 const props = defineProps({
   src: { type: String, default: '' },
@@ -32,13 +33,15 @@ const mediaStyle = computed(() => {
   })
 })
 
-const isVideo = computed(() => isVideoSource(props.src))
+const resolvedSrc = computed(() => resolveMediaUrl(props.src))
+const isVideo = computed(() => isVideoSource(resolvedSrc.value))
 
 function onError(event) {
   const el = event.target
-  if (!el.dataset.retry && props.src) {
+  const src = resolvedSrc.value
+  if (!el.dataset.retry && src) {
     el.dataset.retry = '1'
-    el.src = `${props.src}${props.src.includes('?') ? '&' : '?'}r=${Date.now()}`
+    el.src = `${src}${src.includes('?') ? '&' : '?'}r=${Date.now()}`
     return
   }
   el.style.display = 'none'
@@ -51,9 +54,9 @@ function onLoad(event) {
 
 <template>
   <video
-    v-if="isVideo && src"
-    :key="src"
-    :src="src"
+    v-if="isVideo && resolvedSrc"
+    :key="resolvedSrc"
+    :src="resolvedSrc"
     :style="mediaStyle"
     autoplay
     loop
@@ -61,9 +64,9 @@ function onLoad(event) {
     playsinline
   />
   <img
-    v-else-if="src"
-    :key="src"
-    :src="src"
+    v-else-if="resolvedSrc"
+    :key="resolvedSrc"
+    :src="resolvedSrc"
     :alt="alt"
     :style="mediaStyle"
     @error="onError"

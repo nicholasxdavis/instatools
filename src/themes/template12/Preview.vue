@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import { getGrainDataUrl } from '@/export/filter'
+import { resolveMediaUrl } from '@/utils/mediaUrl'
 import WatermarkLayer from '../shared/WatermarkLayer.vue'
 
 const { post } = storeToRefs(useEditorStore())
@@ -45,7 +46,7 @@ const cutouts = computed(() => {
   return [
     {
       key: 'left',
-      src: t.imageLeft,
+      src: resolveMediaUrl(t.imageLeft),
       size: t.leftSize,
       x: t.leftPosX,
       y: t.leftPosY,
@@ -54,7 +55,7 @@ const cutouts = computed(() => {
     },
     {
       key: 'right',
-      src: t.imageRight,
+      src: resolveMediaUrl(t.imageRight),
       size: t.rightSize,
       x: t.rightPosX,
       y: t.rightPosY,
@@ -63,7 +64,7 @@ const cutouts = computed(() => {
     },
     {
       key: 'center',
-      src: t.imageCenter,
+      src: resolveMediaUrl(t.imageCenter),
       size: t.centerSize,
       x: t.centerPosX,
       y: t.centerPosY,

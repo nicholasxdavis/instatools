@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { watermarkPlacement } from '@/utils/image'
 import { isVideoSource } from '@/utils/media'
+import { resolveMediaUrl } from '@/utils/mediaUrl'
 
 const props = defineProps({
   src: { type: String, default: '' },
@@ -28,13 +29,15 @@ const mediaStyle = computed(() => ({
   display: 'block',
 }))
 
-const isVideo = computed(() => isVideoSource(props.src))
+const resolvedSrc = computed(() => resolveMediaUrl(props.src))
+const isVideo = computed(() => isVideoSource(resolvedSrc.value))
 
 function onError(event) {
   const el = event.target
-  if (!el.dataset.retry && props.src) {
+  const src = resolvedSrc.value
+  if (!el.dataset.retry && src) {
     el.dataset.retry = '1'
-    el.src = `${props.src}${props.src.includes('?') ? '&' : '?'}r=${Date.now()}`
+    el.src = `${src}${src.includes('?') ? '&' : '?'}r=${Date.now()}`
     return
   }
   el.style.display = 'none'
@@ -46,11 +49,11 @@ function onLoad(event) {
 </script>
 
 <template>
-  <div v-if="src && visible" :style="style">
+  <div v-if="resolvedSrc && visible" :style="style">
     <video
       v-if="isVideo"
-      :key="src"
-      :src="src"
+      :key="resolvedSrc"
+      :src="resolvedSrc"
       :style="mediaStyle"
       autoplay
       loop
@@ -59,8 +62,8 @@ function onLoad(event) {
     />
     <img
       v-else
-      :key="src"
-      :src="src"
+      :key="resolvedSrc"
+      :src="resolvedSrc"
       alt=""
       :style="mediaStyle"
       @error="onError"

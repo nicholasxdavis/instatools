@@ -1,11 +1,9 @@
-import { publicUrl } from '@/utils/publicUrl'
-
 /** Public CDN for default demo media (CORS-friendly via jsDelivr). */
 export const CDN_ORIGIN = 'https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src'
 
-/** Local Vite public path used in development for faster offline editing. */
-const H = import.meta.env.DEV ? publicUrl('holder') : `${CDN_ORIGIN}/holder`
-const T = import.meta.env.DEV ? publicUrl('textures') : `${CDN_ORIGIN}/textures`
+/** Holder and textures live on CDN — not copied into site public/. */
+const H = `${CDN_ORIGIN}/holder`
+const T = `${CDN_ORIGIN}/textures`
 
 export const TEXTURES = {
   brickwall: `${T}/brickwall.png`,

@@ -1,5 +1,7 @@
 import { POST_WIDTH, POST_HEIGHT, HIGHLIGHT_SIZE } from '../config/constants.js'
 import { textureUrl } from '../config/media.js'
+import { resolveMediaUrl, normalizeGithubBlob } from '../utils/mediaUrl.js'
+import { designExportPayload, downloadDesignJson } from '../utils/design-io.js'
 import { applyGrain, getGrainDataUrl } from './filter.js'
 import { tweetIconSvg } from '../themes/template7/icons.js'
 
@@ -36,12 +38,7 @@ const _CORS_PROXIES = [
 let _exportSession = null;
 
 function _resolveSrc(src) {
-    if (!src || typeof src !== 'string') return src;
-    const value = src.trim();
-    if (!value) return value;
-    if (value.startsWith('src/ui/')) return `/${value.slice(4)}`;
-    if (value.startsWith('./src/ui/')) return `/${value.slice(6)}`;
-    return value;
+    return resolveMediaUrl(src)
 }
 
 function _isLocalSrc(src) {
@@ -179,7 +176,7 @@ async function _loadImageElementRetry(src, attempts = 3) {
 }
 
 function _fetchableCandidates(src) {
-    const normalized = _normalizeImgUrl(src);
+    const normalized = normalizeGithubBlob(src);
     const candidates = [normalized];
     if (normalized !== src) candidates.push(src);
     _CORS_PROXIES.forEach(fn => {
@@ -4240,48 +4237,17 @@ function _bumpDownloadCount() {
     }
 }
 
-// ─── EXPORT PRESETS AS JSON ───────────────────────────────────────────────────
+// ─── EXPORT CURRENT CANVAS DESIGN AS JSON ─────────────────────────────────────
 function exportPresets() {
     const state  = window.state || {};
     const notify = window.showNotification || ((m, t) => console.log(`[${t}]`, m));
     try {
-        if (!Array.isArray(state.presets) || state.presets.length === 0) {
-            notify('No presets to export. Save a preset first!', 'error');
-            return;
-        }
-        
-        const valid = state.presets.filter(p =>
-            p && typeof p === 'object' && p.id != null &&
-            typeof p.name === 'string' && p.name.trim() &&
-            (p.style || (p.post && p.post.style))
-        );
-
-        if (valid.length === 0) {
-            notify('No valid presets to export.', 'error');
-            return;
-        }
-        
-        const data = {
-            version:     '1.1',
-            exportDate:  new Date().toISOString(),
-            presetCount: valid.length,
-            presets:     valid,
-        };
-
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url  = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href     = url;
-        link.download = `instatools-presets-${Date.now()}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-
-        notify(`Exported ${valid.length} preset(s)!`, 'success');
+        const payload = designExportPayload(state.mode, state.post);
+        downloadDesignJson(payload, `instatools-design-${Date.now()}.json`);
+        notify('Design exported', 'success');
     } catch (e) {
-        console.error('Export presets error:', e);
-        notify('Failed to export presets: ' + (e.message || 'Unknown error'), 'error');
+        console.error('Export design error:', e);
+        notify('Failed to export design: ' + (e.message || 'Unknown error'), 'error');
     }
 }
 

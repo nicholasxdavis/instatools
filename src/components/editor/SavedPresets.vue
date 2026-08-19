@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { PhFloppyDisk, PhFolder, PhFolderOpen, PhTrash } from '@phosphor-icons/vue/compact'
 import { getTheme } from '@/themes'
 import { useEditorStore } from '@/stores/editor'
-import { exportSavedPresets } from '@/export'
+import { exportDesignFile } from '@/export'
 import { useToast } from '@/composables/useToast'
 import { useConfirm } from '@/composables/useConfirm'
 
@@ -13,10 +13,16 @@ const { confirm } = useConfirm()
 const name = ref('')
 const importInput = ref(null)
 
+const currentThemeName = computed(() => getTheme(store.post.template)?.name || 'Theme')
+
 function save() {
-  const preset = store.savePreset(name.value.trim())
-  name.value = ''
-  show(`Saved “${preset.name}”`)
+  try {
+    const preset = store.savePreset(name.value.trim())
+    name.value = ''
+    show(`Saved “${preset.name}” (${currentThemeName.value})`)
+  } catch (error) {
+    show(error.message || 'Could not save design', 'error')
+  }
 }
 
 async function load(id) {
@@ -47,24 +53,33 @@ async function remove(id) {
   show('Deleted')
 }
 
-function exportAll() {
-  exportSavedPresets((message, type = 'success') => show(message, type))
+function exportDesign() {
+  exportDesignFile((message, type = 'success') => show(message, type))
 }
 
-async function importFile(event) {
+async function importDesign(event) {
   const file = event.target.files?.[0]
   event.target.value = ''
   if (!file) return
+
+  const ok = await confirm({
+    title: 'Import design?',
+    message: `Your current canvas (${currentThemeName.value}) will be wiped and replaced with the imported design. Unsaved edits are lost.`,
+    confirmLabel: 'Import',
+    danger: true,
+  })
+  if (!ok) return
+
   try {
     const text = await file.text()
-    const result = store.importPresets(text)
-    let message = `Imported ${result.added} preset${result.added === 1 ? '' : 's'}!`
-    if (result.skipped) message += ` (${result.skipped} duplicate${result.skipped === 1 ? '' : 's'} skipped)`
-    if (result.updated) message += ` (${result.updated} updated by name)`
-    if (!result.storageOk) message += ' - storage full, export JSON to keep them!'
-    show(message, result.storageOk ? 'success' : 'error')
+    const result = store.importDesign(text)
+    let message = 'Design imported'
+    if (result.extras > 0) {
+      message += ` (file had ${result.extras + 1} design${result.extras + 1 === 1 ? '' : 's'} — loaded the first)`
+    }
+    show(message)
   } catch (error) {
-    show(error.message || 'Failed to import presets', 'error')
+    show(error.message || 'Failed to import design', 'error')
   }
 }
 
@@ -75,6 +90,7 @@ function themeName(preset) {
 
 <template>
   <div class="presets">
+    <p class="scope-hint">Saves and exports only this layout — {{ currentThemeName }}.</p>
     <div class="save-row">
       <input v-model="name" class="control-input" type="text" placeholder="Name this design" @keydown.enter="save" />
       <button class="ui-btn ui-btn-primary" type="button" @click="save">
@@ -83,15 +99,15 @@ function themeName(preset) {
       </button>
     </div>
     <div class="io-row">
-      <button class="ui-btn ui-btn-ghost" type="button" @click="exportAll">
+      <button class="ui-btn ui-btn-ghost" type="button" @click="exportDesign">
         <PhFolder :size="15" weight="bold" />
-        Export All
+        Export
       </button>
       <button class="ui-btn ui-btn-ghost" type="button" @click="importInput?.click()">
         <PhFolderOpen :size="15" weight="bold" />
         Import
       </button>
-      <input ref="importInput" type="file" hidden accept=".json,application/json" @change="importFile" />
+      <input ref="importInput" type="file" hidden accept=".json,application/json" @change="importDesign" />
     </div>
     <p v-if="!store.presets.length" class="empty">Save a design to reuse it later.</p>
     <div
@@ -117,6 +133,12 @@ function themeName(preset) {
 
 <style scoped>
 .presets { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.scope-hint {
+  font-size: 11px;
+  line-height: 1.35;
+  color: #7a7a7a;
+  margin: 0;
+}
 .save-row { display: flex; gap: 6px; }
 .io-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .empty { font-size: 12px; color: #7a7a7a; padding: 22px 8px; text-align: center; }
