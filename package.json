@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/seo-prerender.mjs",
+    "deploy:cf": "npm run build && wrangler pages deploy dist --project-name=instatools --commit-dirty=true",
     "preview": "vite preview",
     "seo:assets": "node scripts/generate-seo-assets.mjs",
     "thumbs": "node scripts/optimize-theme-thumbs.mjs",
@@ -27,6 +28,7 @@
     "chrome-launcher": "^1.2.0",
     "lighthouse": "^12.8.0",
     "sharp": "^0.35.3",
-    "vite": "^8.2.0"
+    "vite": "^8.2.0",
+    "wrangler": "^3.114.17"
   }
 }

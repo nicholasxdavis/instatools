@@ -31,9 +31,6 @@ const { confirm } = useConfirm()
 const exporting = ref(false)
 const bodyEl = ref(null)
 const splitLive = ref(store.mobileEditorPct)
-watch(() => store.mobileEditorPct, (value) => {
-  if (!draggingY.value) splitLive.value = value
-})
 const { dragging: draggingY, start: startY, reset: resetY } = useSplitDrag(bodyEl, {
   onDrag: (pct) => { splitLive.value = Math.round(pct) },
   onCommit: (pct) => store.setMobileEditorPct(pct, true),
@@ -41,6 +38,9 @@ const { dragging: draggingY, start: startY, reset: resetY } = useSplitDrag(bodyE
     splitLive.value = pct
     store.setMobileEditorPct(pct, true)
   },
+})
+watch(() => store.mobileEditorPct, (value) => {
+  if (!draggingY.value) splitLive.value = value
 })
 const { dragging: draggingX, start: startX, reset: resetX } = useSidebarDrag(bodyEl)
 const dragging = computed(() => draggingX.value || draggingY.value)
