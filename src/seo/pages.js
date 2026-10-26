@@ -15,7 +15,7 @@ export function pageForRoute(route) {
   if (route.name === 'theme') {
     return THEME_PAGES.find((page) => page.slug === route.params.slug) || NOT_FOUND_PAGE
   }
-  if (route.name === 'app') return HOME_PAGE
-  if (route.name === 'home') return MARKETING_PAGE
+  if (route.name === 'app') return APP_PAGE
+  if (route.name === 'home') return HOME_PAGE
   return HOME_PAGE
 }

@@ -75,7 +75,7 @@ async function importDesign(event) {
     const result = store.importDesign(text)
     let message = 'Design imported'
     if (result.extras > 0) {
-      message += ` (file had ${result.extras + 1} design${result.extras + 1 === 1 ? '' : 's'} — loaded the first)`
+      message += ` (file had ${result.extras + 1} designs; loaded the first)`
     }
     show(message)
   } catch (error) {
@@ -90,7 +90,7 @@ function themeName(preset) {
 
 <template>
   <div class="presets">
-    <p class="scope-hint">Saves and exports only this layout — {{ currentThemeName }}.</p>
+    <p class="scope-hint">Saves and exports only this layout: {{ currentThemeName }}.</p>
     <div class="save-row">
       <input v-model="name" class="control-input" type="text" placeholder="Name this design" @keydown.enter="save" />
       <button class="ui-btn ui-btn-primary" type="button" @click="save">

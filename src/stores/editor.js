@@ -151,7 +151,7 @@ export const useEditorStore = defineStore('editor', {
     importDesign(raw) {
       const parsed = parseImportedDesign(raw)
       if (!validateDesignPost(parsed.post)) {
-        throw new Error('Invalid design data — missing template fields.')
+        throw new Error('Invalid design data: missing template fields.')
       }
       const ok = this.applyDesign({ mode: parsed.mode, post: parsed.post })
       if (!ok) throw new Error('Could not apply design to the canvas.')

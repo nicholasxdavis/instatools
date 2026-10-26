@@ -2,6 +2,10 @@ node_modules
 dist
 dist-ssr
 *.local
+api/node_modules
+api/dist
+api/.wrangler
+api/.dev.vars
 audits
 test-results
 playwright-report

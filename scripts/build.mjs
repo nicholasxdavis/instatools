@@ -18,5 +18,6 @@ function run(command, args) {
 }
 
 console.log(`build target: ${target}`)
+run('node', ['scripts/sync-home-seo.mjs'])
 run('vite', ['build'])
 run('node', ['scripts/seo-prerender.mjs'])

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Apply for API access | Instatools</title>
+    <meta name="description" content="Request an invite-only Instatools API key for your app or agent." />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://www.useinstatools.com/apply/" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://www.useinstatools.com/sitemap.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Instatools" />
+    <meta property="og:title" content="Apply for API access | Instatools" />
+    <meta property="og:description" content="Request an invite-only Instatools API key for your app or agent." />
+    <meta property="og:url" content="https://www.useinstatools.com/apply/" />
+    <meta property="og:image" content="https://www.useinstatools.com/og.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --chrome: #1a1a1a;
+        --chrome-2: #242424;
+        --ink: #f2f2f2;
+        --muted: #b3b3b3;
+        --grad: linear-gradient(90deg, #fcaf45 0%, #e1306c 50%, #833ab4 100%);
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--chrome);
+        color: var(--ink);
+        font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+        letter-spacing: -0.025em;
+        color-scheme: dark;
+      }
+      body { padding: 28px 16px 64px; }
+      .nav {
+        max-width: 640px;
+        margin: 0 auto 48px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .nav img { height: 36px; width: auto; }
+      .nav-links { display: flex; gap: 18px; font-size: 14px; font-weight: 700; }
+      a { color: inherit; text-decoration: none; }
+      .nav-links a:hover { color: #fff; }
+      main { max-width: 640px; margin: 0 auto; }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        line-height: 1.05;
+        color: #fff;
+      }
+      .lead { color: var(--muted); font-size: 17px; line-height: 1.5; margin: 0 0 32px; }
+      form, .thanks {
+        background: var(--chrome-2);
+        border: 0;
+        border-radius: 16px;
+        padding: 24px;
+      }
+      label { display: grid; gap: 6px; margin-bottom: 16px; font-size: 13px; font-weight: 700; color: var(--muted); }
+      input, textarea {
+        font: inherit;
+        font-weight: 500;
+        padding: 12px 14px;
+        border: 0;
+        border-radius: 10px;
+        background: #2a2a2a;
+        color: var(--ink);
+      }
+      input:focus, textarea:focus {
+        outline: 0;
+        background: #333;
+      }
+      textarea { min-height: 140px; resize: vertical; }
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 14px 28px;
+        font: inherit;
+        font-weight: 800;
+        color: #fff;
+        background-image: var(--grad);
+        cursor: pointer;
+      }
+      button:hover { transform: translateY(-1px); }
+      .thanks h2 { margin: 0 0 8px; font-size: 22px; color: #fff; }
+      .thanks p { margin: 0; color: var(--muted); }
+      .foot { margin-top: 28px; font-size: 13px; color: var(--muted); }
+      .foot a:hover { color: #fff; }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <a href="/"><img src="/logo.png" alt="Instatools" /></a>
+      <nav class="nav-links" aria-label="Page">
+        <a href="/docs/">Docs</a>
+        <a href="/make/">Maker</a>
+      </nav>
+    </div>
+    <main>
+      <h1>Apply for API access.</h1>
+      <p class="lead">
+        The Instatools API is invite only. Tell us who you are and what you are building. If we approve the request, we email a key.
+      </p>
+      <div id="thanks" class="thanks" hidden>
+        <h2>Request received.</h2>
+        <p>If it is a fit, you will hear from us with a key. You can close this page.</p>
+      </div>
+      <form
+        id="apply-form"
+        action="https://flareform-api.nic-58f.workers.dev/f/prj_c062523364cf338843d1"
+        method="POST"
+      >
+        <label>
+          Name
+          <input type="text" name="name" autocomplete="name" required />
+        </label>
+        <label>
+          Email
+          <input type="email" name="email" autocomplete="email" required />
+        </label>
+        <label>
+          What you are building
+          <textarea name="message" required placeholder="App, agent, or workflow. A sentence or two is enough."></textarea>
+        </label>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+        <input type="hidden" name="_next" id="next" value="https://www.useinstatools.com/apply/?sent=1" />
+        <button type="submit">Request a key</button>
+      </form>
+      <p class="foot"><a href="/docs/">Read the API docs</a> while you wait.</p>
+    </main>
+    <script>
+      if (new URLSearchParams(location.search).get('sent') === '1') {
+        document.getElementById('apply-form').hidden = true
+        document.getElementById('thanks').hidden = false
+      } else {
+        document.getElementById('next').value = `${location.origin}/apply/?sent=1`
+      }
+    </script>
+  </body>
+</html>

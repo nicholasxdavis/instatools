@@ -86,6 +86,7 @@ async function exportPost() {
     <header class="topbar chrome">
       <div class="left">
         <BrandMark />
+        <router-link class="ui-btn ui-btn-ghost layouts-link hide-sm" to="/#templates">All layouts</router-link>
         <h1 class="sr-only">{{ page.h1 }}</h1>
       </div>
       <div class="actions">
@@ -175,6 +176,7 @@ async function exportPost() {
 }
 .actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .show-sm { display: none; }
+.layouts-link { font-size: 13px; }
 .body {
   flex: 1;
   min-height: 0;
@@ -190,6 +192,7 @@ async function exportPost() {
 
 @media (max-width: 899px) {
   .topbar { padding: 0 10px 0 12px; }
+  .hide-sm { display: none; }
   .hide-label span { display: none; }
   .hide-label {
     width: 32px;

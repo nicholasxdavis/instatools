@@ -296,5 +296,4 @@ window.closeSupportPopup = function () {
     }
 };
 
-// Auto-initialize
-new SupportToast();
+// Shown after exports via checkSupportPopup() from export engine (not on every visit).

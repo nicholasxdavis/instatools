@@ -7,6 +7,7 @@ export const SITE = {
   themeColor: '#1a1a1a',
   backgroundColor: '#1a1a1a',
   twitter: '',
+  googleSiteVerification: '',
   sameAs: [
     'https://buymeacoffee.com/galore',
     'https://github.com/nicholasxdavis/instatools',

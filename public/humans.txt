@@ -1,0 +1,9 @@
+/* TEAM */
+Developer: Blacnova Development
+Site: https://www.blacnova.net
+GitHub: https://github.com/nicholasxdavis/instatools
+
+/* SITE */
+Standards: HTML5, CSS3, JavaScript
+Software: Vue, Vite, Cloudflare Pages
+Doctype: HTML5

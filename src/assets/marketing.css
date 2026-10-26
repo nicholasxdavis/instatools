@@ -131,6 +131,20 @@
   justify-self: end;
 }
 
+.marketing .m-nav-mobile-api {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.marketing .m-nav-mobile-api a {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 700;
+}
+.marketing .m-nav-mobile-api a:hover {
+  color: #fff;
+}
+
 .marketing .m-support {
   color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
@@ -224,6 +238,14 @@
   background-image: var(--m-grad);
   z-index: -1;
 }
+.marketing .m-trust {
+  margin: -8px auto 20px;
+  max-width: 36rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: -0.02em;
+}
 .marketing .m-lead {
   margin: -16px auto 28px;
   max-width: 38rem;
@@ -260,6 +282,57 @@
 .marketing .btn-ghost:focus-visible {
   outline: 2px solid #0f172a;
   outline-offset: 3px;
+}
+
+.marketing .m-how {
+  width: min(100% - 48px, 52rem);
+  margin: 0 auto 72px;
+  scroll-margin-top: 96px;
+}
+.marketing .m-how-shell {
+  padding: 0 8px;
+}
+.marketing .m-how h2 {
+  margin: 0 0 24px;
+  text-align: center;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #0f172a;
+}
+.marketing .m-how-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 16px;
+}
+.marketing .m-how-steps li {
+  display: grid;
+  gap: 6px;
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  counter-increment: how;
+}
+.marketing .m-how-steps {
+  counter-reset: how;
+}
+.marketing .m-how-steps li strong {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+.marketing .m-how-steps li strong::before {
+  content: counter(how) '. ';
+  color: #e1306c;
+}
+.marketing .m-how-steps li span {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #475569;
 }
 
 .marketing .m-templates {
@@ -472,6 +545,9 @@
   }
   .marketing .m-nav-center {
     display: flex;
+  }
+  .marketing .m-nav-mobile-api {
+    display: none;
   }
   .marketing .m-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

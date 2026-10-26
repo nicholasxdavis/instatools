@@ -1,0 +1,223 @@
+:root {
+  --theme-color: #dd2a7b;
+  --chrome: #1a1a1a;
+  --chrome-2: #242424;
+  --chrome-3: #2a2a2a;
+  --docs-ink: #f2f2f2;
+  --docs-muted: #b3b3b3;
+  --docs-line: #2e2e2e;
+}
+
+html, body {
+  background: var(--chrome);
+  color: var(--docs-ink);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.02em;
+  color-scheme: dark;
+}
+
+body:not(.ready) {
+  background: var(--chrome);
+}
+
+.app-nav {
+  background: var(--chrome);
+  border-bottom: 1px solid var(--docs-line);
+  margin: 0;
+  padding: 12px 24px 12px 0;
+}
+
+.app-nav a,
+.app-nav li ul a {
+  color: var(--docs-ink) !important;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.app-nav a:hover,
+.app-nav li.active > a {
+  color: #fff !important;
+}
+
+.app-nav ul li ul {
+  background: var(--chrome-2);
+  border: 1px solid var(--docs-line);
+}
+
+.sidebar {
+  background: var(--chrome);
+  border-right: 1px solid var(--docs-line);
+  color: var(--docs-ink);
+}
+
+.sidebar .app-name {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.sidebar .app-name-link,
+.sidebar .app-name-link:hover {
+  color: var(--docs-ink);
+}
+
+.sidebar .app-name-link img,
+.sidebar .app-name img {
+  max-height: 28px;
+  width: auto;
+}
+
+.sidebar-nav ul li a,
+.sidebar-nav ul li a:hover,
+.sidebar .sidebar-nav a {
+  color: var(--docs-muted);
+  font-weight: 650;
+}
+
+.sidebar-nav ul li a:hover {
+  color: #fff;
+}
+
+.sidebar-nav ul li.active > a {
+  color: #dd2a7b;
+  border-right: 2px solid #dd2a7b;
+  background: transparent;
+}
+
+.sidebar-nav ul li.collapse .app-sub-sidebar {
+  display: none;
+}
+
+.search {
+  margin: 0 12px 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.search input {
+  background: var(--chrome-2) !important;
+  border: 0 !important;
+  border-radius: 8px;
+  color: var(--docs-ink);
+}
+
+.search input::placeholder {
+  color: #888;
+}
+
+.search .results-panel {
+  color: var(--docs-ink);
+  background: var(--chrome);
+}
+
+.search .matching-post {
+  border-bottom-color: var(--docs-line);
+}
+
+.search .matching-post h2,
+.search .matching-post a {
+  color: var(--docs-ink);
+}
+
+.search .matching-post p {
+  color: var(--docs-muted);
+}
+
+.content {
+  background: var(--chrome);
+}
+
+.markdown-section {
+  max-width: 760px;
+  color: var(--docs-ink);
+}
+
+.markdown-section h1,
+.markdown-section h2,
+.markdown-section h3,
+.markdown-section h4 {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.markdown-section p,
+.markdown-section li,
+.markdown-section td {
+  color: var(--docs-ink);
+}
+
+.markdown-section a {
+  color: #dd2a7b;
+  font-weight: 650;
+}
+
+.markdown-section hr {
+  border-bottom-color: var(--docs-line);
+}
+
+.markdown-section code {
+  background: var(--chrome-2);
+  color: #f2f2f2;
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+}
+
+.markdown-section pre,
+.markdown-section pre > code {
+  background: #111;
+  color: #f8fafc;
+  border-radius: 10px;
+}
+
+.markdown-section pre {
+  padding: 16px;
+}
+
+.markdown-section table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.markdown-section th,
+.markdown-section td {
+  border-color: var(--docs-line);
+}
+
+.markdown-section th {
+  background: var(--chrome-2);
+  color: #fff;
+  font-weight: 700;
+}
+
+.markdown-section tr:nth-child(2n) {
+  background: #1f1f1f;
+}
+
+.markdown-section blockquote {
+  border-left-color: #dd2a7b;
+  color: var(--docs-muted);
+}
+
+.sidebar-toggle {
+  background: transparent;
+}
+
+.sidebar-toggle span {
+  background: #f2f2f2;
+}
+
+.progress {
+  background: #dd2a7b;
+}
+
+.github-corner {
+  display: none !important;
+}
+
+@media print {
+  .sidebar, .sidebar-toggle, .search, .app-nav {
+    display: none;
+  }
+}

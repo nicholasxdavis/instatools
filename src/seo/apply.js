@@ -87,6 +87,12 @@ export function applySeo(page) {
   upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: page.description })
   upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: image })
   upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt', content: SITE.ogImage.alt })
+  if (SITE.googleSiteVerification) {
+    upsertMeta('meta[name="google-site-verification"]', {
+      name: 'google-site-verification',
+      content: SITE.googleSiteVerification,
+    })
+  }
 
   upsertLink('canonical', url)
   upsertLink('manifest', `${import.meta.env.BASE_URL || '/'}site.webmanifest`)

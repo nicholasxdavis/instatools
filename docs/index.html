@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Instatools API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Instatools API documentation. Invite-only JSON API for templates, designs, and PNG render." />
+    <meta name="robots" content="index,follow" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://www.useinstatools.com/docs/" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://www.useinstatools.com/sitemap.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Instatools" />
+    <meta property="og:title" content="Instatools API" />
+    <meta property="og:description" content="Instatools API documentation. Invite-only JSON API for templates, designs, and PNG render." />
+    <meta property="og:url" content="https://www.useinstatools.com/docs/" />
+    <meta property="og:image" content="https://www.useinstatools.com/og.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+    <link rel="stylesheet" href="theme.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      window.$docsify = {
+        name: 'Instatools API',
+        nameLink: '/docs/',
+        logo: '/logo.png',
+        basePath: '/docs/',
+        homepage: 'README.md',
+        loadSidebar: true,
+        loadNavbar: true,
+        auto2top: true,
+        maxLevel: 3,
+        subMaxLevel: 2,
+        search: {
+          placeholder: 'Search docs',
+          noData: 'No results',
+        },
+        alias: {
+          '/.*/_sidebar.md': '/_sidebar.md',
+          '/.*/_navbar.md': '/_navbar.md',
+        },
+        noEmoji: true,
+        routerMode: 'hash',
+        notFoundPage: true,
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  </body>
+</html>

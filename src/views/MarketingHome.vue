@@ -10,8 +10,10 @@ let resizeTimer = 0
 const year = new Date().getFullYear()
 const faqs = HOME_PAGE.faqs
 const base = import.meta.env.BASE_URL
-const privacyHref = `${base}privacy.html`
-const termsHref = `${base}terms.html`
+const privacyHref = `${base}privacy`
+const termsHref = `${base}terms`
+const docsHref = `${base}docs/`
+const applyHref = `${base}apply/`
 const logoSrc = publicUrl('logo.png')
 
 function blurb(theme) {
@@ -90,11 +92,12 @@ onBeforeUnmount(() => {
         <img :src="logoSrc" width="120" height="44" alt="Instatools" decoding="async" />
       </router-link>
       <nav class="m-nav-center" aria-label="Page">
+        <a href="#how">How it works</a>
         <a href="#templates">Layouts</a>
         <a href="#faq">FAQ</a>
       </nav>
       <div class="m-nav-actions">
-        <router-link class="btn-try" to="/">Try now</router-link>
+        <router-link class="btn-try" to="/make">Try now</router-link>
         <a
           class="m-support"
           href="https://buymeacoffee.com/galore"
@@ -115,9 +118,30 @@ onBeforeUnmount(() => {
           <span class="m-hero-mark">creators.</span>
         </h1>
         <p class="m-lead">{{ HOME_PAGE.lead }}</p>
+        <p class="m-trust">No AI · No signup · Your photos stay on your device</p>
         <div class="m-hero-actions">
-          <router-link class="btn-try btn-try-lg" to="/">Try now</router-link>
+          <router-link class="btn-try btn-try-lg" to="/make">Try now</router-link>
           <a class="btn-ghost" href="#templates">Browse layouts</a>
+        </div>
+      </section>
+
+      <section id="how" class="m-how" aria-labelledby="how-title">
+        <div class="m-how-shell">
+          <h2 id="how-title">How it works</h2>
+          <ol class="m-how-steps">
+            <li>
+              <strong>Pick a layout</strong>
+              <span>News, sports, tweets, fashion, and more. Each one is ready to edit.</span>
+            </li>
+            <li>
+              <strong>Swap your photo and text</strong>
+              <span>Upload from your phone or desktop. Tune type size, colors, and crops in the sidebar.</span>
+            </li>
+            <li>
+              <strong>Export and post</strong>
+              <span>Download a 1080px PNG on your device and upload straight to Instagram.</span>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -126,7 +150,7 @@ onBeforeUnmount(() => {
           <div class="m-templates-head">
             <h2 id="templates-title">Layouts ready to post.</h2>
             <p>
-              Sixteen Instagram layouts for news, sports, finance, tweets, fashion, campaigns, and more. Open one, edit it, export HD on your device.
+              {{ THEME_CARDS.length }} Instagram layouts for news, sports, finance, tweets, fashion, campaigns, and more. Open one, edit it, export HD on your device.
             </p>
           </div>
           <div class="m-grid">
@@ -176,14 +200,17 @@ onBeforeUnmount(() => {
         <br />
         <span class="m-footer-grad">open for everyone.</span>
       </h2>
-      <router-link class="btn-try btn-try-lg" to="/">Try now</router-link>
+      <router-link class="btn-try btn-try-lg" to="/make">Try now</router-link>
       <nav class="m-footer-links" aria-label="Footer">
+        <a href="#how">How it works</a>
         <a href="#templates">Layouts</a>
         <a href="#faq">FAQ</a>
+        <a :href="docsHref">API docs</a>
+        <a :href="applyHref">Apply for a key</a>
         <a :href="privacyHref">Privacy</a>
         <a :href="termsHref">Terms</a>
         <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <router-link to="/">Open maker</router-link>
+        <router-link to="/make">Open maker</router-link>
         <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer">Support Us</a>
       </nav>
       <p class="m-copy">

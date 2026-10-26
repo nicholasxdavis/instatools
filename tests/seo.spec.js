@@ -26,6 +26,11 @@ test.describe('catalog quality', () => {
     const slugs = THEME_PAGES.map((page) => page.slug)
     expect(new Set(slugs).size).toBe(slugs.length)
   })
+
+  test('catalog copy has no em or en dashes', () => {
+    const blob = JSON.stringify(INDEXABLE_PAGES)
+    expect(blob).not.toMatch(/[—–]/)
+  })
 })
 
 test.describe('static documents', () => {
@@ -38,6 +43,8 @@ test.describe('static documents', () => {
     expect(body).toContain('Allow: /themes/')
     expect(body).toContain('Disallow: /404')
     expect(body).toContain('Disallow: /app')
+    expect(body).toContain('Disallow: /make')
+    expect(body).toContain('Allow: /llms.txt')
     expect(body).toContain(`Sitemap: ${absoluteUrl('/sitemap.xml')}`)
   })
 
@@ -51,6 +58,10 @@ test.describe('static documents', () => {
       expect(xml).toContain(loc)
       expect(xml.split(loc).length - 1).toBe(1)
     }
+    expect(xml).toContain(`<loc>${SITE.origin}/privacy</loc>`)
+    expect(xml).toContain(`<loc>${SITE.origin}/terms</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/docs/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/apply/')}</loc>`)
   })
 
   test('web manifest is valid JSON', async ({ request }) => {
@@ -58,8 +69,35 @@ test.describe('static documents', () => {
     expect(response.ok()).toBeTruthy()
     const manifest = await response.json()
     expect(manifest.name).toBe(SITE.name)
-    expect(['/', './']).toContain(manifest.start_url)
+    expect(['/', './', '/make/', '/make']).toContain(manifest.start_url)
     expect(manifest.icons.length).toBeGreaterThan(0)
+  })
+
+  test('IndexNow key file matches the published key', async ({ request }) => {
+    const { INDEXNOW } = await import('../src/seo/indexnow.js')
+    const response = await request.get(`/${INDEXNOW.key}.txt`)
+    expect(response.ok()).toBeTruthy()
+    expect((await response.text()).trim()).toBe(INDEXNOW.key)
+  })
+
+  test('privacy and terms are clean and indexable', async ({ request }) => {
+    for (const path of ['/privacy.html', '/terms.html']) {
+      const response = await request.get(path)
+      expect(response.ok()).toBeTruthy()
+      const body = await response.text()
+      expect(body).not.toContain('profitablecpm')
+      expect(body).not.toContain('invoke.js')
+      expect(body).toMatch(/rel="canonical"/)
+      expect(body).not.toMatch(/[—–]/)
+    }
+  })
+
+  test('llms.txt describes the product', async ({ request }) => {
+    const response = await request.get('/llms.txt')
+    expect(response.ok()).toBeTruthy()
+    const body = await response.text()
+    expect(body).toContain('Instatools')
+    expect(body).toContain('Sitemap:')
   })
 })
 
@@ -88,19 +126,20 @@ test.describe('rendered pages', () => {
       const heading = page.locator('#marketing-title, .workspace h1, .missing h1')
       await expect(heading).toHaveCount(1)
       await expect(heading).toHaveText(record.h1)
-      if (record.id === 'marketing') {
-        await expect(page.getByRole('link', { name: 'Try now' }).first()).toHaveAttribute('href', '/')
+      if (record.id === 'home') {
+        await expect(page.getByRole('link', { name: 'Try now' }).first()).toHaveAttribute('href', '/make')
         const jsonHome = JSON.parse(await page.locator('#ld-json').textContent())
         expect(jsonHome['@graph'].some((node) => node['@type'] === 'FAQPage')).toBeTruthy()
         await expect(page.getByRole('heading', { name: 'Frequently asked questions' })).toBeVisible()
-      } else {
+        await expect(page.locator('script[data-cf-beacon]')).toHaveCount(1)
+      } else if (record.slug) {
         await expect(page.locator('.skip-link')).toHaveAttribute('href', '#workspace')
       }
     })
   }
 
-  test('home theme picker exposes crawlable theme links', async ({ page }) => {
-    await page.goto('/')
+  test('maker theme picker exposes crawlable theme links', async ({ page }) => {
+    await page.goto('/make')
     await page.getByRole('tab', { name: 'Themes' }).click()
     const links = page.locator('nav[aria-label="Instagram post themes"] a')
     await expect(links).toHaveCount(THEME_PAGES.length)
@@ -111,7 +150,7 @@ test.describe('rendered pages', () => {
   })
 
   test('marketing home lists every layout', async ({ page }) => {
-    await page.goto('/home')
+    await page.goto('/')
     const cards = page.locator('#templates a.m-card')
     await expect(cards).toHaveCount(THEME_PAGES.length)
     for (const theme of THEME_PAGES) {
@@ -139,7 +178,7 @@ test.describe('rendered pages', () => {
   })
 
   test('images have accessible names', async ({ page }) => {
-    await page.goto('/home')
+    await page.goto('/')
     const images = page.locator('img')
     const count = await images.count()
     expect(count).toBeGreaterThan(0)
