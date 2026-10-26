@@ -12,6 +12,25 @@ The maker on the website stays free. These limits are for the HTTP API only.
 
 Renders reset on the 1st of each UTC month. Stored designs stay until you delete them.
 
+## Cancel
+
+Pro renews monthly until you cancel. Open the billing portal with your API key. Cancel takes effect at the end of the paid period. You keep Pro quota until then, then the key returns to Free.
+
+Stripe emails the cardholder if a renewal fails.
+
+## Refunds
+
+We do not prorate unused renders. If a charge looks wrong, email [nic@blacnova.net](mailto:nic@blacnova.net) within 14 days. Full terms: [useinstatools.com/terms](https://www.useinstatools.com/terms).
+
+## Delete the API account
+
+```bash
+curl -X DELETE https://instatools-api.nic-58f.workers.dev/v1/me \
+  -H "Authorization: Bearer itk_your_key"
+```
+
+That revokes the key, deletes stored designs, and cancels an open Pro subscription.
+
 ## Upgrade
 
 1. [Get a key](get-a-key.md) if you do not have one.

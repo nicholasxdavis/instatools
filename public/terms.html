@@ -4,43 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Terms of Service | Instatools</title>
-    <meta name="description" content="Instatools terms of service. Free local Instagram post maker. You are responsible for the content you export and publish." />
+    <meta name="description" content="Instatools terms. Free local maker, email API keys, Pro billing, cancel anytime, acceptable use." />
     <meta name="robots" content="index,follow" />
-    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="theme-color" content="#f7f7f8" />
+    <meta name="color-scheme" content="light" />
     <link rel="canonical" href="https://www.useinstatools.com/terms" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href="https://www.useinstatools.com/sitemap.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Instatools" />
     <meta property="og:title" content="Terms of Service | Instatools" />
-    <meta property="og:description" content="Instatools terms of service. Free local Instagram post maker. You are responsible for the content you export and publish." />
+    <meta property="og:description" content="Instatools terms. Free local maker, email API keys, Pro billing, and cancel anytime." />
     <meta property="og:url" content="https://www.useinstatools.com/terms" />
     <meta property="og:image" content="https://www.useinstatools.com/og.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <style>
-      :root { --chrome: #1a1a1a; --ink: #f2f2f2; --muted: #b3b3b3; }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; min-height: 100%; background: var(--chrome); color: var(--ink); font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.025em; }
-      body { padding: 28px 16px 64px; }
-      .nav { max-width: 720px; margin: 0 auto 48px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-      .nav img { height: 36px; width: auto; }
-      .nav-links { display: flex; gap: 18px; font-size: 14px; font-weight: 700; }
-      a { color: inherit; text-decoration: none; }
-      .nav-links a:hover, .foot a:hover { color: #fff; }
-      main { max-width: 720px; margin: 0 auto; }
-      h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; letter-spacing: -0.05em; line-height: 1.05; color: #fff; }
-      .lead { color: var(--muted); font-size: 17px; line-height: 1.5; margin: 0 0 32px; }
-      h2 { margin: 28px 0 10px; font-size: 18px; color: #fff; }
-      p { color: var(--muted); line-height: 1.6; }
-      .foot { margin-top: 36px; font-size: 13px; color: var(--muted); }
-    </style>
+    <link rel="stylesheet" href="/page.css" />
   </head>
   <body>
     <div class="nav">
-      <a href="/"><img src="/logo.png" alt="Instatools" /></a>
+      <a href="/"><img src="/logo-dark.png" alt="Instatools" /></a>
       <nav class="nav-links" aria-label="Page">
+        <a href="/docs/">Docs</a>
         <a href="/make/">Maker</a>
         <a href="/privacy">Privacy</a>
       </nav>
@@ -50,24 +36,44 @@
       <p class="lead">Updated 26 October 2026. By using Instatools you agree to these terms.</p>
 
       <h2>The product</h2>
-      <p>Instatools is a free browser tool for making Instagram posts. The public maker runs locally in your browser. The HTTP API is available with an email signup. Free keys have a monthly render cap. Paid Pro keys have a higher cap. Abuse, scraping that ignores those caps, or sharing keys may get the key revoked.</p>
-
-      <h2>Provided as is</h2>
-      <p>Instatools is provided "as is" and "as available". We make no warranties, including merchantability, fitness for a particular purpose, and non-infringement.</p>
-
-      <h2>Your content</h2>
-      <p>You are responsible for the images, text, and other content you load into the maker, and for anything you export or publish. You must follow applicable law and Instagram policies. Do not use Instatools to create illegal or infringing material.</p>
+      <p>Instatools is a free browser tool for making Instagram posts. The public maker runs locally in your browser. The HTTP API is available after you submit an email. We send a key. Free keys have a monthly render cap. Pro keys have a higher cap for a monthly fee billed by Stripe.</p>
+      <p>Instatools is not an AI generator. You pick a layout and edit it.</p>
 
       <h2>No affiliation</h2>
       <p>Instatools is not affiliated with, endorsed by, or sponsored by Instagram or Meta.</p>
 
+      <h2>Your content</h2>
+      <p>You are responsible for the images, text, and other content you load into the maker or send to the API, and for anything you export or publish. You must follow applicable law and Instagram policies. Do not use Instatools to create illegal, infringing, or abusive material. We may revoke a key that ignores these rules or the published rate limits.</p>
+
+      <h2>API keys</h2>
+      <p>Keys are secrets. Do not share them. If a key leaks, rotate it or request a new one with the same email. We hash keys at rest. Requesting a key again revokes the previous key for that email.</p>
+
+      <h2>Plans, billing, and cancel</h2>
+      <p>The maker stays free. API Free includes the published monthly render and design caps. API Pro is $19 per month unless we post a different price at checkout.</p>
+      <ul>
+        <li>Pro renews each month until you cancel.</li>
+        <li>Cancel in the Stripe billing portal from the <a href="/docs/#/pricing">pricing page</a>.</li>
+        <li>Cancel takes effect at the end of the paid period. You keep Pro quota until then, then the key returns to Free.</li>
+        <li>Failed payments can pause or cancel Pro. Stripe will email the cardholder.</li>
+        <li>We do not prorate unused renders. Refunds are not owed for unused quota, except where the law requires one. If a charge looks wrong, email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a> within 14 days.</li>
+      </ul>
+
+      <h2>Availability</h2>
+      <p>Render uses a headless browser on Cloudflare. It can be slow or fail. We do not promise 100% uptime. If a render fails, that call is not counted against quota.</p>
+
+      <h2>Provided as is</h2>
+      <p>Instatools is provided "as is" and "as available". We make no warranties, including merchantability, fitness for a particular purpose, and non-infringement.</p>
+
       <h2>Limits of liability</h2>
-      <p>To the maximum extent permitted by law, Instatools and Blacnova Development are not liable for indirect, incidental, special, consequential, or punitive damages, or for lost profits, arising from your use of the tools.</p>
+      <p>To the maximum extent permitted by law, Instatools and Blacnova Development are not liable for indirect, incidental, special, consequential, or punitive damages, or for lost profits, arising from your use of the tools. Our total liability for the API is limited to the amount you paid us for Pro in the 3 months before the claim.</p>
+
+      <h2>Account deletion</h2>
+      <p>Call <code>DELETE /v1/me</code> with your key, or email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. We revoke keys, delete stored API designs, and cancel an open Pro subscription.</p>
 
       <h2>Changes</h2>
-      <p>We may update these terms. Continued use after a change means you accept the updated terms.</p>
+      <p>We may update these terms. Continued use after a change means you accept the updated terms. The date at the top is the latest version.</p>
 
-      <p class="foot">Questions: <a href="https://github.com/nicholasxdavis/instatools/issues">open a GitHub issue</a>. This is not legal advice. <a href="/privacy">Privacy policy</a>.</p>
+      <p class="foot">Questions: <a href="mailto:nic@blacnova.net">nic@blacnova.net</a> or <a href="https://github.com/nicholasxdavis/instatools/issues">GitHub issues</a>. This is not legal advice. <a href="/privacy">Privacy policy</a>.</p>
     </main>
   </body>
 </html>

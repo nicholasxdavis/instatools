@@ -9,3 +9,5 @@
 * [Limits](limits.md)
 * [Reference](reference.md)
 * [Errors](errors.md)
+* [Terms](https://www.useinstatools.com/terms)
+* [Privacy](https://www.useinstatools.com/privacy)

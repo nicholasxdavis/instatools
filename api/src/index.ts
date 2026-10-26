@@ -9,12 +9,14 @@ import {
   requireAdmin,
   rotateKey,
   signupWithEmail,
+  wipeApp,
   type AppRecord,
 } from './auth'
 import { catalog, requireTemplate, templateDetail, listTemplates } from './catalog'
 import {
   countDesigns,
   createDesign,
+  deleteAllDesigns,
   deleteDesign,
   designResponse,
   getDesign,
@@ -27,7 +29,7 @@ import { openApiDocument } from './openapi'
 import { PLANS, siteOrigin } from './plans'
 import { assertDesignQuota, assertRenderQuota, consumeRender, quotaSnapshot } from './quota'
 import { pngResponse, renderPng } from './render'
-import { createCheckoutSession, createPortalSession, verifyStripeSignature, type StripeEvent } from './stripe'
+import { cancelSubscription, createCheckoutSession, createPortalSession, verifyStripeSignature, type StripeEvent } from './stripe'
 
 type Vars = { app: AppRecord; apiKey: string }
 
@@ -144,6 +146,16 @@ v1.post('/billing/checkout', async (c) => {
 v1.post('/billing/portal', async (c) => {
   const session = await createPortalSession(c.env, c.get('app'))
   return json({ url: session.url })
+})
+
+v1.delete('/me', async (c) => {
+  const app = c.get('app')
+  if (app.stripeSubscriptionId) {
+    await cancelSubscription(c.env, app.stripeSubscriptionId)
+  }
+  await deleteAllDesigns(c.env, app.id)
+  await wipeApp(c.env, app, c.get('apiKey'))
+  return json({ ok: true, deleted: true })
 })
 
 v1.get('/templates', () => json({

@@ -3,7 +3,7 @@ import { CDN_ORIGIN } from '@/config/media'
 const HOLDER_ROOT = `${CDN_ORIGIN}/holder/`
 const TEXTURES_ROOT = `${CDN_ORIGIN}/textures/`
 
-/** GitHub blob viewer URLs do not send CORS headers — use raw.githubusercontent.com. */
+/** GitHub blob viewer URLs do not send CORS headers. Use raw.githubusercontent.com. */
 export function normalizeGithubBlob(src) {
   try {
     const u = new URL(src)

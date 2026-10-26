@@ -213,3 +213,13 @@ export async function applyStripePlan(env: Env, appId: string, patch: Partial<Ap
   if (!app) return
   await saveApp(env, { ...app, ...patch })
 }
+
+export async function wipeApp(env: Env, app: AppRecord, previousToken?: string) {
+  const extraHash = previousToken?.startsWith('itk_') ? await sha256Hex(previousToken) : undefined
+  await revokeKeys(env, app.id, extraHash)
+  if (app.email) await env.KV.delete(emailKey(await sha256Hex(app.email)))
+  await env.KV.delete(`app:${app.id}`)
+  const now = new Date()
+  const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`
+  await env.KV.delete(`usage:${app.id}:${month}`)
+}

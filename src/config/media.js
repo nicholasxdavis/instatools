@@ -1,7 +1,7 @@
 /** Public CDN for default demo media (CORS-friendly via jsDelivr). */
 export const CDN_ORIGIN = 'https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src'
 
-/** Holder and textures live on CDN — not copied into site public/. */
+/** Holder and textures live on CDN, not copied into site public/. */
 const H = `${CDN_ORIGIN}/holder`
 const T = `${CDN_ORIGIN}/textures`
 

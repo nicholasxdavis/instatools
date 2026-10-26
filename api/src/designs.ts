@@ -117,6 +117,15 @@ export function parseDesignInput(
   return { template, post: next }
 }
 
+export async function deleteAllDesigns(env: Env, appId: string) {
+  let cursor: string | undefined
+  do {
+    const page = await env.KV.list({ prefix: `design:${appId}:`, cursor, limit: 1000 })
+    await Promise.all(page.keys.map((key) => env.KV.delete(key.name)))
+    cursor = page.list_complete ? undefined : page.cursor
+  } while (cursor)
+}
+
 export async function countDesigns(env: Env, appId: string) {
   let count = 0
   let cursor: string | undefined

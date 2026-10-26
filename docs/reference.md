@@ -23,6 +23,7 @@ Machine-readable: `GET /v1/openapi.json` (requires a key).
 | Method | Path | Notes |
 | --- | --- | --- |
 | GET | `/v1/me` | Current app and quota |
+| DELETE | `/v1/me` | Delete account, designs, keys. Cancel Pro. |
 | POST | `/v1/me/keys` | Rotate key. Previous key revoked. |
 | POST | `/v1/billing/checkout` | Stripe Checkout URL for Pro |
 | POST | `/v1/billing/portal` | Stripe customer portal |

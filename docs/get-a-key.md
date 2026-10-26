@@ -1,6 +1,6 @@
 # Get a key
 
-Anyone can get a key. Enter your email. We send the key from Blacnova Development (`nic@blacnova.net`).
+Anyone can get a key. Enter your email. We send the key from Blacnova Development (`nic@blacnova.net`). By signing up you agree to the [terms](https://www.useinstatools.com/terms) and [privacy policy](https://www.useinstatools.com/privacy).
 
 The key is shown only in that email. If you request again, we send a new key and revoke the old one.
 

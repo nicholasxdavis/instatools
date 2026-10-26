@@ -5,8 +5,8 @@
 </template>
 
 <script setup>
-import { publicUrl } from '@/utils/publicUrl'
-const logoSrc = publicUrl('logo.png')
+import { brandLogo } from '@/utils/brandLogo'
+const logoSrc = brandLogo('dark')
 </script>
 
 <style scoped>

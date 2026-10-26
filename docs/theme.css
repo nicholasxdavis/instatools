@@ -63,6 +63,7 @@ body:not(.ready) {
 .sidebar .app-name img {
   max-height: 28px;
   width: auto;
+  background: transparent;
 }
 
 .sidebar-nav ul li a,

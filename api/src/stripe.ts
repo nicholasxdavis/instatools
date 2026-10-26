@@ -42,6 +42,9 @@ export async function createCheckoutSession(env: Env, app: AppRecord) {
     success_url: `${origin}/docs/#/pricing?checkout=success`,
     cancel_url: `${origin}/docs/#/pricing?checkout=cancel`,
     client_reference_id: app.id,
+    billing_address_collection: 'auto',
+    'custom_text[submit][message]':
+      'Pro renews monthly until you cancel in the billing portal. You agree to useinstatools.com/terms and useinstatools.com/privacy.',
     'metadata[appId]': app.id,
     'subscription_data[metadata][appId]': app.id,
   }
@@ -51,6 +54,11 @@ export async function createCheckoutSession(env: Env, app: AppRecord) {
   const url = typeof session.url === 'string' ? session.url : ''
   if (!url) throw new HttpError(502, 'stripe_error', 'Stripe did not return a checkout URL.')
   return { url, id: String(session.id || '') }
+}
+
+export async function cancelSubscription(env: Env, subscriptionId: string) {
+  if (!subscriptionId) return
+  await stripeRequest(env, 'DELETE', `/subscriptions/${encodeURIComponent(subscriptionId)}`)
 }
 
 export async function createPortalSession(env: Env, app: AppRecord) {

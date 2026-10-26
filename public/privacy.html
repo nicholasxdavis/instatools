@@ -4,78 +4,88 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Privacy Policy | Instatools</title>
-    <meta name="description" content="Instatools privacy policy. Design and export run in your browser. Photos stay on your device. Cloudflare Web Analytics is cookieless." />
+    <meta name="description" content="Instatools privacy policy. The maker stays in your browser. API keys, email, Stripe billing, and how to delete your data." />
     <meta name="robots" content="index,follow" />
-    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="theme-color" content="#f7f7f8" />
+    <meta name="color-scheme" content="light" />
     <link rel="canonical" href="https://www.useinstatools.com/privacy" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href="https://www.useinstatools.com/sitemap.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Instatools" />
     <meta property="og:title" content="Privacy Policy | Instatools" />
-    <meta property="og:description" content="Instatools privacy policy. Design and export run in your browser. Photos stay on your device." />
+    <meta property="og:description" content="Instatools privacy policy. The maker stays in your browser. API keys, email, and Stripe billing." />
     <meta property="og:url" content="https://www.useinstatools.com/privacy" />
     <meta property="og:image" content="https://www.useinstatools.com/og.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <style>
-      :root { --chrome: #1a1a1a; --chrome-2: #242424; --ink: #f2f2f2; --muted: #b3b3b3; --grad: linear-gradient(90deg, #fcaf45 0%, #e1306c 50%, #833ab4 100%); }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; min-height: 100%; background: var(--chrome); color: var(--ink); font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.025em; }
-      body { padding: 28px 16px 64px; }
-      .nav { max-width: 720px; margin: 0 auto 48px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-      .nav img { height: 36px; width: auto; }
-      .nav-links { display: flex; gap: 18px; font-size: 14px; font-weight: 700; }
-      a { color: inherit; text-decoration: none; }
-      .nav-links a:hover, .foot a:hover { color: #fff; }
-      main { max-width: 720px; margin: 0 auto; }
-      h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; letter-spacing: -0.05em; line-height: 1.05; color: #fff; }
-      .lead { color: var(--muted); font-size: 17px; line-height: 1.5; margin: 0 0 32px; }
-      h2 { margin: 28px 0 10px; font-size: 18px; color: #fff; }
-      p, li { color: var(--muted); line-height: 1.6; }
-      ul { padding-left: 1.2em; }
-      .foot { margin-top: 36px; font-size: 13px; color: var(--muted); }
-    </style>
+    <link rel="stylesheet" href="/page.css" />
   </head>
   <body>
     <div class="nav">
-      <a href="/"><img src="/logo.png" alt="Instatools" /></a>
+      <a href="/"><img src="/logo-dark.png" alt="Instatools" /></a>
       <nav class="nav-links" aria-label="Page">
+        <a href="/docs/">Docs</a>
         <a href="/make/">Maker</a>
         <a href="/terms">Terms</a>
       </nav>
     </div>
     <main>
       <h1>Privacy Policy</h1>
-      <p class="lead">Updated 26 October 2026. Instatools is built so your work stays on your device.</p>
+      <p class="lead">Updated 26 October 2026. The public maker is built so your work stays on your device. The HTTP API stores only what it needs to run keys, quota, and billing.</p>
 
-      <h2>Local design and export</h2>
-      <p>The public maker processes photos, headlines, and exports in your browser. We do not upload your images or design data to Instatools servers when you create or download a post.</p>
+      <h2>Who we are</h2>
+      <p>Instatools is operated by Blacnova Development. Contact: <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. Site: <a href="https://www.useinstatools.com">useinstatools.com</a>.</p>
 
-      <h2>No account for the maker</h2>
-      <p>You can use the maker without creating an account. Saved designs stay in your browser storage on this device.</p>
+      <h2>Public maker</h2>
+      <p>Design, photos, headlines, and export run in your browser. We do not upload your images or design JSON to Instatools servers when you create or download a post in the maker. Saved layouts live in this browser on this device.</p>
+      <p>You can use the maker without an account.</p>
 
-      <h2>API keys and billing</h2>
-      <p>If you request an API key, we store the email you submit, hash the key, and email the key to that address. If you upgrade to Pro, Stripe processes the payment. We store your plan and Stripe customer id so quota can be applied. Do not send passwords in any form on this site.</p>
+      <h2>API signup</h2>
+      <p>If you request an API key we store:</p>
+      <ul>
+        <li>The email you submit</li>
+        <li>A hashed copy of the API key (not the raw key)</li>
+        <li>Plan, usage counts, and saved API designs you create over HTTP</li>
+      </ul>
+      <p>We email the key from Blacnova Development (<a href="mailto:nic@blacnova.net">nic@blacnova.net</a>) using Brevo. Do not send passwords in any form on this site. The HTTP response never includes the key.</p>
+
+      <h2>Billing</h2>
+      <p>If you upgrade to Pro, Stripe processes the payment. We store your plan, Stripe customer id, and subscription id so quota can follow the subscription. Stripe also stores the card and invoices. Cancel in the Stripe billing portal. Access stays Pro until the paid period ends, then the key drops back to the free cap.</p>
+
+      <h2>Renders</h2>
+      <p>API PNG renders run on a Cloudflare Worker with a headless browser. Image URLs in your JSON are fetched to draw the layout. We do not keep the PNG after the response is sent.</p>
 
       <h2>Analytics</h2>
-      <p>We use Cloudflare Web Analytics. It is cookieless, does not identify you across sites, and is used to count page views and see which pages are used. We do not sell analytics data.</p>
+      <p>We use Cloudflare Web Analytics. It is cookieless, does not identify you across sites, and is used to count page views. We do not sell analytics data. We do not run ad networks on this site.</p>
 
-      <h2>Static assets</h2>
-      <p>Pages may load fonts from Google Fonts and, on API docs, scripts from jsDelivr. Demo layout images are served from a public CDN. That does not change how your own photos are processed in the maker.</p>
+      <h2>Processors</h2>
+      <ul>
+        <li>Cloudflare: hosting, Worker, KV, Web Analytics</li>
+        <li>Brevo: transactional email for API keys</li>
+        <li>Stripe: Pro checkout, invoices, and cancellation</li>
+        <li>Google Fonts and jsDelivr: fonts and docs scripts</li>
+      </ul>
+
+      <h2>Retention and deletion</h2>
+      <p>Maker data stays in your browser until you clear it. API data stays until you delete the account or we have to remove it for abuse or legal reasons.</p>
+      <p>Delete API data with <code>DELETE /v1/me</code> using your key, or email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. That revokes keys, deletes stored designs, and cancels an open Pro subscription. Stripe may keep invoices as required by payment law.</p>
+
+      <h2>Children</h2>
+      <p>The API is not directed at children under 13. Do not sign up with a child’s email.</p>
 
       <h2>What we do not do</h2>
       <ul>
-        <li>We do not run advertising networks on this site.</li>
-        <li>We do not sell your photos or form submissions.</li>
-        <li>We do not require an account to export a PNG.</li>
+        <li>We do not sell your photos or emails.</li>
+        <li>We do not require an account to export a PNG from the maker.</li>
+        <li>We do not use a model to generate posts.</li>
       </ul>
 
       <h2>Updates</h2>
       <p>We may update this page. The date at the top is the latest version.</p>
 
-      <p class="foot">Questions: <a href="https://github.com/nicholasxdavis/instatools/issues">open a GitHub issue</a>. This is not legal advice. <a href="/terms">Terms of service</a>.</p>
+      <p class="foot">Questions: <a href="mailto:nic@blacnova.net">nic@blacnova.net</a> or <a href="https://github.com/nicholasxdavis/instatools/issues">GitHub issues</a>. This is not legal advice. <a href="/terms">Terms of service</a>.</p>
     </main>
   </body>
 </html>

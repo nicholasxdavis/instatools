@@ -1,4 +1,6 @@
 * [Site](https://www.useinstatools.com/)
 * [Maker](https://www.useinstatools.com/make/)
 * [Get a key](https://www.useinstatools.com/signup/)
+* [Terms](https://www.useinstatools.com/terms)
+* [Privacy](https://www.useinstatools.com/privacy)
 * [GitHub](https://github.com/nicholasxdavis/instatools)

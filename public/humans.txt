@@ -5,5 +5,6 @@ GitHub: https://github.com/nicholasxdavis/instatools
 
 /* SITE */
 Standards: HTML5, CSS3, JavaScript
-Software: Vue, Vite, Cloudflare Pages
+Contact: nic@blacnova.net
+Software: Vue, Vite, Cloudflare Pages, Cloudflare Workers
 Doctype: HTML5

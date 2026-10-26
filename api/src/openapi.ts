@@ -25,7 +25,10 @@ export function openApiDocument(origin: string) {
       '/v1/billing/webhook': { post: { security: [], summary: 'Stripe webhook' } },
       '/v1/billing/checkout': { post: { summary: 'Create Stripe Checkout session for Pro' } },
       '/v1/billing/portal': { post: { summary: 'Open Stripe billing portal' } },
-      '/v1/me': { get: { summary: 'Current app and quota' } },
+      '/v1/me': {
+        get: { summary: 'Current app and quota' },
+        delete: { summary: 'Delete account, designs, keys, and cancel Pro' },
+      },
       '/v1/me/keys': { post: { summary: 'Rotate API key' } },
       '/v1/templates': { get: { summary: 'List templates' } },
       '/v1/templates/{id}': { get: { summary: 'Template defaults, fields, JSON Schema' } },

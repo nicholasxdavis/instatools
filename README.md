@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo-dark.png" alt="Instatools" height="56" />
+</p>
+
 # Instatools
 
 Free Instagram post maker. No AI.
@@ -5,6 +9,15 @@ Free Instagram post maker. No AI.
 Pick a layout, drop in your photo and headline, export an HD PNG on your device. No signup. Photos never leave the browser.
 
 **Live site:** [useinstatools.com](https://www.useinstatools.com/)
+
+<p align="center">
+  <img src="public/og.png" alt="Instatools homepage" />
+</p>
+
+<p align="center">
+  <img src="public/themes/cards/template1.png" alt="News Classic layout" width="46%" />
+  <img src="public/themes/cards/template16.png" alt="Launch layout" width="46%" />
+</p>
 
 ## Run the maker
 
@@ -27,7 +40,7 @@ News, sports, tweets, fashion, rap cutouts, campaign ads, and more. Each one is 
 
 ## API
 
-Invite-only JSON API. Create a design, patch fields, render PNG.
+Email signup. We send a key. Create a design, patch fields, render PNG. Free has a monthly cap. Pro raises it.
 
 ```bash
 cd api
@@ -44,7 +57,8 @@ curl http://127.0.0.1:8787/v1/templates \
 ```
 
 Docs: [useinstatools.com/docs](https://www.useinstatools.com/docs/)  
-Get a key: [useinstatools.com/signup](https://www.useinstatools.com/signup/)
+Get a key: [useinstatools.com/signup](https://www.useinstatools.com/signup/)  
+Pricing: [useinstatools.com/docs/#/pricing](https://www.useinstatools.com/docs/#/pricing)
 
 The renderer compiles the same Vue templates as the public maker.
 
