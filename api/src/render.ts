@@ -52,7 +52,12 @@ export async function renderPng(env: Env, request: Request, post: DesignPost, te
   }
 }
 
-export function pngResponse(bytes: Uint8Array, template: CatalogTemplate, designId?: string) {
+export function pngResponse(
+  bytes: Uint8Array,
+  template: CatalogTemplate,
+  designId?: string,
+  usage?: { renders: number },
+) {
   const headers = new Headers({
     'content-type': 'image/png',
     'cache-control': 'no-store',
@@ -62,5 +67,6 @@ export function pngResponse(bytes: Uint8Array, template: CatalogTemplate, design
     'x-instatools-height': String(template.size.height),
   })
   if (designId) headers.set('x-instatools-design', designId)
+  if (usage) headers.set('x-instatools-renders-used', String(usage.renders))
   return new Response(bytes, { status: 200, headers })
 }

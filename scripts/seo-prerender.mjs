@@ -52,7 +52,7 @@ await writeFile(join(dist, 'robots.txt'), robotsTxt())
 await writeFile(join(dist, 'llms.txt'), llmsTxt())
 await writeFile(join(dist, `${INDEXNOW.key}.txt`), indexNowKeyBody())
 
-for (const extra of ['apply/index.html', 'docs/index.html', 'privacy.html', 'terms.html']) {
+for (const extra of ['signup/index.html', 'apply/index.html', 'docs/index.html', 'privacy.html', 'terms.html']) {
   const file = join(dist, extra)
   try {
     const html = await readFile(file, 'utf8')

@@ -117,6 +117,17 @@ export function parseDesignInput(
   return { template, post: next }
 }
 
+export async function countDesigns(env: Env, appId: string) {
+  let count = 0
+  let cursor: string | undefined
+  do {
+    const page = await env.KV.list({ prefix: `design:${appId}:`, cursor, limit: 1000 })
+    count += page.keys.length
+    cursor = page.list_complete ? undefined : page.cursor
+  } while (cursor)
+  return count
+}
+
 export async function createDesign(env: Env, appId: string, raw: JsonRecord) {
   const { template, post } = parseDesignInput(raw)
   const record: DesignRecord = {

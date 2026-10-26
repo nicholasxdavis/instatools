@@ -87,6 +87,7 @@ async function exportPost() {
       <div class="left">
         <BrandMark />
         <router-link class="ui-btn ui-btn-ghost layouts-link hide-sm" to="/#templates">All layouts</router-link>
+        <a class="ui-btn ui-btn-ghost layouts-link hide-sm" href="/docs/">Docs</a>
         <h1 class="sr-only">{{ page.h1 }}</h1>
       </div>
       <div class="actions">

@@ -1,6 +1,6 @@
 # Quick start
 
-You need an API key. If you do not have one, [apply](https://www.useinstatools.com/apply/).
+You need an API key. [Get one with your email](get-a-key.md).
 
 ## 1. Confirm the service
 
@@ -8,7 +8,7 @@ You need an API key. If you do not have one, [apply](https://www.useinstatools.c
 curl https://instatools-api.nic-58f.workers.dev/v1/health
 ```
 
-`GET /v1/health` is public. Everything else under `/v1` needs a key, except `POST /v1/apps` which needs the admin token.
+`GET /v1/health` and `POST /v1/signup` are public. Everything else under `/v1` needs a key, except the Stripe webhook and admin mint route.
 
 ## 2. Who you are
 
@@ -16,6 +16,8 @@ curl https://instatools-api.nic-58f.workers.dev/v1/health
 curl https://instatools-api.nic-58f.workers.dev/v1/me \
   -H "Authorization: Bearer itk_your_key"
 ```
+
+This returns your plan and remaining renders for the month.
 
 ## 3. Pick a template
 

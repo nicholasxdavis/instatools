@@ -32,6 +32,10 @@
   },
   "vars": {
     "BOOTSTRAP_APP_NAME": "instatools-testing",
-    "RENDER_ORIGIN": ""
+    "RENDER_ORIGIN": "",
+    "SITE_ORIGIN": "https://www.useinstatools.com",
+    "BREVO_SENDER_EMAIL": "nic@blacnova.net",
+    "BREVO_SENDER_NAME": "Blacnova Development",
+    "STRIPE_PRICE_PRO": "price_1UUxFtGrsdJU1djq3mzriZeF"
   }
 }

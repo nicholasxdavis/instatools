@@ -7,8 +7,15 @@ interface __BaseEnv_Env {
 	ASSETS: Fetcher;
 	BOOTSTRAP_APP_NAME: "instatools-testing";
 	RENDER_ORIGIN: "";
+	SITE_ORIGIN: string;
+	BREVO_SENDER_EMAIL: string;
+	BREVO_SENDER_NAME: string;
+	STRIPE_PRICE_PRO: string;
 	ADMIN_TOKEN: string;
 	BOOTSTRAP_API_KEY: string;
+	BREVO_API_KEY: string;
+	STRIPE_SECRET_KEY: string;
+	STRIPE_WEBHOOK_SECRET: string;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {

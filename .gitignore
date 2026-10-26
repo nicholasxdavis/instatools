@@ -6,6 +6,10 @@ api/node_modules
 api/dist
 api/.wrangler
 api/.dev.vars
+.env
+.env.*
+!.env.example
+!**/.dev.vars.example
 audits
 test-results
 playwright-report

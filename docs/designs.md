@@ -58,6 +58,8 @@ GET /v1/designs?limit=50
 
 Limit max is 200. Returns id, template, slug, timestamps. Not the full JSON.
 
+Free accounts can store 25 designs. Pro can store 500. Over the cap returns `quota_exceeded`.
+
 ## Body limit
 
 2MB. Keep photos as URLs when you can.

@@ -10,17 +10,22 @@ Machine-readable: `GET /v1/openapi.json` (requires a key).
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| GET | `/` | Service descriptor |
+| GET | `/` | Service descriptor and plans |
 | GET | `/v1/health` | Liveness, template count |
+| GET | `/v1/plans` | Free and Pro quotas |
 | GET | `/robots.txt` | Disallow all |
+| POST | `/v1/signup` | `{ "email": "you@example.com" }`. Key arrives by email. |
+| POST | `/v1/billing/webhook` | Stripe. Signed. |
 | POST | `/v1/apps` | Admin only. `X-Admin-Token`. `{ "name": "my-agent" }` |
 
 ## App
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| GET | `/v1/me` | Current app |
+| GET | `/v1/me` | Current app and quota |
 | POST | `/v1/me/keys` | Rotate key. Previous key revoked. |
+| POST | `/v1/billing/checkout` | Stripe Checkout URL for Pro |
+| POST | `/v1/billing/portal` | Stripe customer portal |
 | GET | `/v1/openapi.json` | OpenAPI 3.1 |
 
 ## Templates
@@ -52,11 +57,11 @@ Accepted bodies: `{ template, fields }`, native slices (`t16`, `style`, ...), or
 
 | Method | Path | Notes |
 | --- | --- | --- |
-| POST | `/v1/render` | One-shot JSON to PNG. Nothing stored. |
-| POST | `/v1/designs/{id}/render` | Stored design to PNG |
+| POST | `/v1/render` | One-shot JSON to PNG. Nothing stored. Counts against quota. |
+| POST | `/v1/designs/{id}/render` | Stored design to PNG. Counts against quota. |
 
-Response `image/png` with `X-Instatools-Template`, `X-Instatools-Width`, `X-Instatools-Height`. Stored renders also send `X-Instatools-Design`.
+Response `image/png` with `X-Instatools-Template`, `X-Instatools-Width`, `X-Instatools-Height`. Stored renders also send `X-Instatools-Design`. Successful renders send `X-Instatools-Renders-Used`.
 
 ## CORS
 
-Any origin. Allowed headers: `Authorization`, `Content-Type`, `X-Admin-Token`, `Accept`.
+Any origin. Allowed headers: `Authorization`, `Content-Type`, `X-Admin-Token`, `Accept`, `Stripe-Signature`.

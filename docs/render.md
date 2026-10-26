@@ -39,3 +39,5 @@ The renderer loads image URLs from the JSON. They must be reachable from Cloudfl
 ## Timing
 
 The Worker opens a headless browser, applies the design, waits for fonts and images, then screenshots the artboard. Expect a few seconds. Timeouts surface as `render_failed`.
+
+Successful renders count against the monthly quota. See [Limits](limits.md).

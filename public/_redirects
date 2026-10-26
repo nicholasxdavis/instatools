@@ -8,8 +8,11 @@ https://useinstatools.com/*  https://www.useinstatools.com/:splat  301
 /docs     /docs/index.html 200
 /docs/    /docs/index.html 200
 /docs/*   /docs/:splat 200
-/apply    /apply/index.html 200
-/apply/   /apply/index.html 200
-/apply/*  /apply/:splat 200
+/signup   /signup/index.html 200
+/signup/  /signup/index.html 200
+/signup/* /signup/:splat 200
+/apply    /signup/  301
+/apply/   /signup/  301
+/apply/*  /signup/  301
 /themes/* /themes/:splat/index.html 200
 /*        /index.html   200

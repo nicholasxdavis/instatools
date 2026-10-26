@@ -30,7 +30,7 @@ export const HOME_FAQS = [
   {
     question: 'Is there an API?',
     answer:
-      'Yes. The Instatools API is invite only. Apply for a key, then use the docs to create and render layouts from JSON.',
+      'Yes. Enter your email on the signup page and we send a free API key. The HTTP API has a monthly render cap. Pro raises the quota.',
   },
 ]
 
@@ -504,7 +504,7 @@ export function noscriptForPage(page) {
       <main>
         <h1>${escapeHtml(page.h1)}</h1>
 ${lead}        <p>${escapeHtml(page.description)}</p>
-        <p><a href="/make/">Open maker</a> · <a href="/docs/">API docs</a> · <a href="/apply/">Apply for a key</a></p>
+        <p><a href="/make/">Open maker</a> · <a href="/docs/">API docs</a> · <a href="/signup/">Get a key</a></p>
         <h2>Layouts ready to post</h2>
         <ul>
 ${links}
@@ -518,7 +518,7 @@ ${faqs}
 export function sitemapXml(lastmod = new Date().toISOString().slice(0, 10)) {
   const extra = [
     { path: '/docs/', changefreq: 'weekly', priority: '0.7' },
-    { path: '/apply/', changefreq: 'monthly', priority: '0.6' },
+    { path: '/signup/', changefreq: 'monthly', priority: '0.6' },
     { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
     { path: '/terms', changefreq: 'yearly', priority: '0.3' },
   ]
@@ -542,7 +542,7 @@ export function robotsTxt() {
 Allow: /
 Allow: /themes/
 Allow: /docs/
-Allow: /apply/
+Allow: /signup/
 Allow: /privacy
 Allow: /terms
 Allow: /llms.txt
@@ -571,7 +571,7 @@ The public maker is local-only. Photos stay on the visitor's device.
 - Home: ${absoluteUrl('/')}
 - Maker: ${absoluteUrl('/make/')}
 - API docs: ${absoluteUrl('/docs/')}
-- Apply for a key: ${absoluteUrl('/apply/')}
+- Get an API key: ${absoluteUrl('/signup/')}
 - Sitemap: ${absoluteUrl('/sitemap.xml')}
 
 ## Layouts
@@ -584,7 +584,7 @@ export function indexableUrls() {
   return [
     ...INDEXABLE_PAGES.map((page) => absoluteUrl(page.path)),
     absoluteUrl('/docs/'),
-    absoluteUrl('/apply/'),
+    absoluteUrl('/signup/'),
     `${SITE.origin}/privacy`,
     `${SITE.origin}/terms`,
   ]

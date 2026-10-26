@@ -61,7 +61,7 @@ test.describe('static documents', () => {
     expect(xml).toContain(`<loc>${SITE.origin}/privacy</loc>`)
     expect(xml).toContain(`<loc>${SITE.origin}/terms</loc>`)
     expect(xml).toContain(`<loc>${absoluteUrl('/docs/')}</loc>`)
-    expect(xml).toContain(`<loc>${absoluteUrl('/apply/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/signup/')}</loc>`)
   })
 
   test('web manifest is valid JSON', async ({ request }) => {

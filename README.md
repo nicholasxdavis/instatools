@@ -44,7 +44,7 @@ curl http://127.0.0.1:8787/v1/templates \
 ```
 
 Docs: [useinstatools.com/docs](https://www.useinstatools.com/docs/)  
-Request a key: [useinstatools.com/apply](https://www.useinstatools.com/apply/)
+Get a key: [useinstatools.com/signup](https://www.useinstatools.com/signup/)
 
 The renderer compiles the same Vue templates as the public maker.
 

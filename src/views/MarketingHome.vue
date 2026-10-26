@@ -13,7 +13,7 @@ const base = import.meta.env.BASE_URL
 const privacyHref = `${base}privacy`
 const termsHref = `${base}terms`
 const docsHref = `${base}docs/`
-const applyHref = `${base}apply/`
+const signupHref = `${base}signup/`
 const logoSrc = publicUrl('logo.png')
 
 function blurb(theme) {
@@ -95,8 +95,14 @@ onBeforeUnmount(() => {
         <a href="#how">How it works</a>
         <a href="#templates">Layouts</a>
         <a href="#faq">FAQ</a>
+        <a :href="docsHref">Docs</a>
       </nav>
       <div class="m-nav-actions">
+        <div class="m-nav-mobile-api">
+          <a :href="docsHref">Docs</a>
+          <a :href="signupHref">API</a>
+        </div>
+        <a class="m-support" :href="signupHref">Get a key</a>
         <router-link class="btn-try" to="/make">Try now</router-link>
         <a
           class="m-support"
@@ -206,7 +212,7 @@ onBeforeUnmount(() => {
         <a href="#templates">Layouts</a>
         <a href="#faq">FAQ</a>
         <a :href="docsHref">API docs</a>
-        <a :href="applyHref">Apply for a key</a>
+        <a :href="signupHref">Get a key</a>
         <a :href="privacyHref">Privacy</a>
         <a :href="termsHref">Terms</a>
         <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer">GitHub</a>
