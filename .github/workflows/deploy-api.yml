@@ -28,9 +28,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: api/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            api/package-lock.json
 
-      - name: Install
+      - name: Install maker
+        run: npm ci
+
+      - name: Install API
         working-directory: api
         run: npm ci
 
