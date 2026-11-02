@@ -106,7 +106,7 @@ function onTabKey(event) {
   color: #8a8a8a;
   height: 40px;
   font-size: 12.5px;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
   transition: color 0.15s ease;
 }
@@ -155,7 +155,7 @@ function onTabKey(event) {
 }
 .section h2 {
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #a3a3a3;

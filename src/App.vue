@@ -46,7 +46,7 @@ onMounted(() => {
 }
 .app-marketing {
   height: auto;
-  min-height: 100%;
+  min-height: 100dvh;
   overflow: visible;
   background: transparent;
 }

@@ -5,7 +5,7 @@ export const HOME_FAQS = [
   {
     question: 'Is Instatools free?',
     answer:
-      'Yes. Instatools is a free Instagram post maker. Open a layout, edit your post, and export HD PNG with no signup and no paywall.',
+      'Yes. Instatools is free. Open a layout, edit your post, and export HD PNG with no signup and no paywall.',
   },
   {
     question: 'Do my photos leave my device?',
@@ -20,7 +20,7 @@ export const HOME_FAQS = [
   {
     question: 'How do I start?',
     answer:
-      'Click Try now to open the maker, or pick a layout below to jump straight into that Instagram post design.',
+      'Click Try now to open Instatools, or pick a layout below to jump straight into that Instagram post design.',
   },
   {
     question: 'Does it use AI?',
@@ -30,7 +30,7 @@ export const HOME_FAQS = [
   {
     question: 'Is there an API?',
     answer:
-      'Yes. Enter your email on the signup page and we send a free API key. The HTTP API has a monthly render cap. Pro raises the quota.',
+      'Yes. Any app can list Instatools layouts over the API. Open an account with email, copy a key, and render PNGs. Free has a monthly cap. Pro is $19 a month.',
   },
 ]
 
@@ -235,7 +235,7 @@ export const HOME_PAGE = {
   id: 'home',
   path: '/',
   title: 'Free Instagram Post Maker | Instatools',
-  h1: 'Free Instagram Post Maker for creators.',
+  h1: 'Free Instagram posts for creators.',
   description: HOME_DESCRIPTION,
   lead:
     'Make scroll-stopping Instagram posts in your browser. Pick a layout, edit the photo and headline, then export HD PNG on your device.',
@@ -290,6 +290,154 @@ export const THEME_PAGES = THEME_CATALOG.map((theme) => ({
 }))
 
 export const INDEXABLE_PAGES = [HOME_PAGE, ...THEME_PAGES]
+
+export const DOCS_PAGE = {
+  id: 'docs',
+  path: '/docs/',
+  title: 'API docs | Instatools',
+  h1: 'JSON in. PNG out.',
+  description:
+    'JSON in, PNG out. Open an Instatools API account with email, copy your key, and render any Instagram layout. Public catalog. Free quota. Pro is $19 a month.',
+  keywords: 'Instatools API, Instagram post API, JSON to PNG, Instagram layout API',
+  robots: ROBOTS,
+  changefreq: 'weekly',
+  priority: '0.7',
+}
+
+export const DOCS_SUBPAGES = [
+  {
+    id: 'docs-quickstart',
+    slug: 'quickstart',
+    path: '/docs/quickstart/',
+    title: 'API quick start | Instatools',
+    h1: 'Render a post in five minutes.',
+    description:
+      'Open an Instatools API account with email, copy a key, and render a PNG in minutes. Public catalog. Free quota. Pro is $19 a month.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-auth',
+    slug: 'auth',
+    path: '/docs/auth/',
+    title: 'API auth | Instatools',
+    h1: 'Keys and login.',
+    description:
+      'Instatools dashboard login uses a magic link. Apps send a Bearer API key. Sessions start with sess_. Keys start with itk_. Rotate keys any time.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-templates',
+    slug: 'templates',
+    path: '/docs/templates/',
+    title: 'API templates | Instatools',
+    h1: 'Seventeen layouts.',
+    description:
+      'List every Instatools layout without a key. Each template includes defaults, fields, and JSON Schema so any app can render the same Instagram posts.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-designs',
+    slug: 'designs',
+    path: '/docs/designs/',
+    title: 'API designs | Instatools',
+    h1: 'Store a layout as JSON.',
+    description:
+      'Create, patch, replace, or delete stored Instatools designs. Send fields, settings, or custom JSON. Designs stay on your API account until you remove them.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-render',
+    slug: 'render',
+    path: '/docs/render/',
+    title: 'API render | Instatools',
+    h1: 'JSON to PNG.',
+    description:
+      'Render any Instatools layout to PNG with one POST. Use a stored design or send fields inline. Successful renders count against your monthly quota.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-limits',
+    slug: 'limits',
+    path: '/docs/limits/',
+    title: 'API limits | Instatools',
+    h1: 'Free and Pro caps.',
+    description:
+      'Instatools API Free includes 50 PNG renders a month. Pro is 2,000 renders and 500 stored designs. Renders reset on the first of each UTC month.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-reference',
+    slug: 'reference',
+    path: '/docs/reference/',
+    title: 'API reference | Instatools',
+    h1: 'Every route.',
+    description:
+      'Every Instatools API route: public catalog, signup, magic-link login, keys, designs, render, billing, and OpenAPI. Base URL lives on Cloudflare Workers.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+  {
+    id: 'docs-errors',
+    slug: 'errors',
+    path: '/docs/errors/',
+    title: 'API errors | Instatools',
+    h1: 'JSON error shape.',
+    description:
+      'Instatools API errors return JSON with an error code and message. Failed renders are not billed. Auth, quota, and validation errors use the same shape.',
+    keywords: DOCS_PAGE.keywords,
+    robots: ROBOTS,
+    changefreq: 'monthly',
+    priority: '0.5',
+  },
+]
+
+export const PRICING_PAGE = {
+  id: 'pricing',
+  path: '/pricing/',
+  title: 'API pricing | Instatools',
+  h1: 'API plans. Instatools stays free.',
+  description:
+    'Instatools API Free includes 50 PNG renders a month. Pro is $19 a month for 2,000 renders. Buy with an email. No API key required at checkout.',
+  keywords: 'Instatools pricing, Instagram API pricing, Instatools Pro',
+  robots: ROBOTS,
+  changefreq: 'monthly',
+  priority: '0.7',
+}
+
+export const ACCOUNT_PAGE = {
+  id: 'account',
+  path: '/account/',
+  title: 'API account | Instatools',
+  h1: 'Sign in with email.',
+  description:
+    'Sign in to your Instatools API account with an email login link. Copy keys, check quota, upgrade to Pro, or cancel billing. Cloudflare stores the session.',
+  keywords: 'Instatools account, API login, Instatools key',
+  robots: ROBOTS,
+  changefreq: 'monthly',
+  priority: '0.6',
+}
+
+export const MARKETING_EXTRA_PAGES = [DOCS_PAGE, ...DOCS_SUBPAGES, PRICING_PAGE, ACCOUNT_PAGE]
 
 export function jsonLdForPage(page) {
   const origin = SITE.origin
@@ -433,6 +581,17 @@ export function jsonLdForPage(page) {
         ],
       },
     )
+  } else if (page.id !== 'not-found' && page.id !== 'app') {
+    graph.push({
+      '@type': 'WebPage',
+      '@id': `${url}#webpage`,
+      url,
+      name: page.title,
+      description: page.description,
+      inLanguage: SITE.language,
+      isPartOf: { '@id': `${origin}/#website` },
+      primaryImageOfPage: image,
+    })
   }
 
   return { '@context': 'https://schema.org', '@graph': graph }
@@ -504,7 +663,7 @@ export function noscriptForPage(page) {
       <main>
         <h1>${escapeHtml(page.h1)}</h1>
 ${lead}        <p>${escapeHtml(page.description)}</p>
-        <p><a href="/make/">Open maker</a> · <a href="/docs/">API docs</a> · <a href="/signup/">Get a key</a></p>
+        <p><a href="/make/">Try now</a> · <a href="/docs/">API docs</a> · <a href="/pricing/">Pricing</a> · <a href="/account/">Account</a></p>
         <h2>Layouts ready to post</h2>
         <ul>
 ${links}
@@ -517,8 +676,7 @@ ${faqs}
 
 export function sitemapXml(lastmod = new Date().toISOString().slice(0, 10)) {
   const extra = [
-    { path: '/docs/', changefreq: 'weekly', priority: '0.7' },
-    { path: '/signup/', changefreq: 'monthly', priority: '0.6' },
+    ...MARKETING_EXTRA_PAGES,
     { path: '/privacy', changefreq: 'yearly', priority: '0.3' },
     { path: '/terms', changefreq: 'yearly', priority: '0.3' },
   ]
@@ -542,7 +700,8 @@ export function robotsTxt() {
 Allow: /
 Allow: /themes/
 Allow: /docs/
-Allow: /signup/
+Allow: /pricing/
+Allow: /account/
 Allow: /privacy
 Allow: /terms
 Allow: /llms.txt
@@ -564,14 +723,17 @@ export function llmsTxt() {
   const layouts = THEME_PAGES.map((page) => `- ${page.h1}: ${absoluteUrl(page.path)}`).join('\n')
   return `# Instatools
 
-> Free Instagram post maker. Edit layouts in the browser and export HD PNG locally. No signup.
+> Free Instagram posts in the browser. Edit layouts and export HD PNG locally. No signup.
 
-The public maker is local-only. Photos stay on the visitor's device.
+Instatools is local-only in the browser. Photos stay on the visitor's device.
 
-- Home: ${absoluteUrl('/')}
-- Maker: ${absoluteUrl('/make/')}
+- Homepage: ${absoluteUrl('/')}
+- App: ${absoluteUrl('/make/')}
 - API docs: ${absoluteUrl('/docs/')}
-- Get an API key: ${absoluteUrl('/signup/')}
+- API: https://instatools-api.nic-58f.workers.dev
+- Public catalog: https://instatools-api.nic-58f.workers.dev/v1/templates
+- Pricing: ${absoluteUrl('/pricing/')}
+- Account: ${absoluteUrl('/account/')}
 - Sitemap: ${absoluteUrl('/sitemap.xml')}
 
 ## Layouts
@@ -583,8 +745,7 @@ ${layouts}
 export function indexableUrls() {
   return [
     ...INDEXABLE_PAGES.map((page) => absoluteUrl(page.path)),
-    absoluteUrl('/docs/'),
-    absoluteUrl('/signup/'),
+    ...MARKETING_EXTRA_PAGES.map((page) => absoluteUrl(page.path)),
     `${SITE.origin}/privacy`,
     `${SITE.origin}/terms`,
   ]

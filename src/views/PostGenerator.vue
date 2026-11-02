@@ -86,11 +86,15 @@ async function exportPost() {
     <header class="topbar chrome">
       <div class="left">
         <BrandMark />
-        <router-link class="ui-btn ui-btn-ghost layouts-link hide-sm" to="/#templates">All layouts</router-link>
-        <a class="ui-btn ui-btn-ghost layouts-link hide-sm" href="/docs/">Docs</a>
+        <nav class="tool-nav hide-sm" aria-label="Site">
+          <router-link to="/#templates">Layouts</router-link>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+        </nav>
         <h1 class="sr-only">{{ page.h1 }}</h1>
       </div>
       <div class="actions">
+        <router-link class="ui-btn ui-btn-ghost api-link" to="/docs">API</router-link>
         <button class="ui-btn ui-btn-ghost hide-label" type="button" title="Reset theme" aria-label="Reset theme" @click="resetTheme">
           <PhArrowCounterClockwise :size="15" weight="bold" />
           <span>Reset</span>
@@ -175,9 +179,31 @@ async function exportPost() {
   gap: 12px;
   min-width: 0;
 }
+.tool-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.tool-nav a {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #f2f2f2;
+  white-space: nowrap;
+}
+.tool-nav a:hover {
+  background: #2a2a2a;
+}
+.api-link {
+  border-color: rgba(255, 255, 255, 0.16);
+}
 .actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .show-sm { display: none; }
-.layouts-link { font-size: 13px; }
 .body {
   flex: 1;
   min-height: 0;

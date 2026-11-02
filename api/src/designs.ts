@@ -97,9 +97,33 @@ export function parseDesignInput(
     next[key] = deepMerge(next[key] as JsonRecord, explicitSlice)
   }
 
-  if (isPlainObject(body.fields)) {
-    applyFields(next, template, body.fields)
+  const fieldBag = isPlainObject(body.fields)
+    ? body.fields
+    : isPlainObject(body.settings)
+      ? body.settings
+      : isPlainObject(body.custom)
+        ? body.custom
+        : null
+  if (fieldBag) applyFields(next, template, fieldBag)
+
+  const reserved = new Set([
+    'template',
+    'fields',
+    'settings',
+    'custom',
+    'post',
+    'design',
+    'type',
+    'style',
+    key,
+  ])
+  const topLevel: JsonRecord = {}
+  for (const field of template.fields) {
+    const leaf = field.path.split('.').pop() || field.path
+    if (reserved.has(leaf)) continue
+    if (body[leaf] !== undefined) topLevel[field.path] = body[leaf]
   }
+  if (Object.keys(topLevel).length) applyFields(next, template, topLevel)
 
   if (key === 'style') {
     if (!isPlainObject(next.style)) {

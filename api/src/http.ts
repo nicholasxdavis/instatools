@@ -133,12 +133,16 @@ export async function timingSafeEqualString(left: string, right: string) {
   return crypto.subtle.timingSafeEqual(new Uint8Array(leftHash), new Uint8Array(rightHash))
 }
 
-export function newApiKey() {
+export function newOpaqueToken(prefix: string) {
   const bytes = new Uint8Array(24)
   crypto.getRandomValues(bytes)
   let binary = ''
   for (const byte of bytes) binary += String.fromCharCode(byte)
-  return `itk_${btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '')}`
+  return `${prefix}_${btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '')}`
+}
+
+export function newApiKey() {
+  return newOpaqueToken('itk')
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i

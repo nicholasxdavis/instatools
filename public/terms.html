@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Terms of Service | Instatools</title>
-    <meta name="description" content="Instatools terms. Free local maker, email API keys, Pro billing, cancel anytime, acceptable use." />
+    <meta name="description" content="Instatools terms. Free browser app, email API keys, Pro billing, cancel anytime, acceptable use." />
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" content="#f7f7f8" />
     <meta name="color-scheme" content="light" />
@@ -14,20 +14,25 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Instatools" />
     <meta property="og:title" content="Terms of Service | Instatools" />
-    <meta property="og:description" content="Instatools terms. Free local maker, email API keys, Pro billing, and cancel anytime." />
+    <meta property="og:description" content="Instatools terms. Free browser app, email API keys, Pro billing, and cancel anytime." />
     <meta property="og:url" content="https://www.useinstatools.com/terms" />
     <meta property="og:image" content="https://www.useinstatools.com/og.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/page.css" />
   </head>
   <body>
     <div class="nav">
       <a href="/"><img src="/logo-dark.png" alt="Instatools" /></a>
       <nav class="nav-links" aria-label="Page">
-        <a href="/docs/">Docs</a>
-        <a href="/make/">Maker</a>
+        <a href="/#templates">Layouts</a>
+        <a href="/#api">API</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/docs">Docs</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/account">Account</a>
+        <a href="/make/">Try now</a>
         <a href="/privacy">Privacy</a>
       </nav>
     </div>
@@ -36,23 +41,23 @@
       <p class="lead">Updated 26 October 2026. By using Instatools you agree to these terms.</p>
 
       <h2>The product</h2>
-      <p>Instatools is a free browser tool for making Instagram posts. The public maker runs locally in your browser. The HTTP API is available after you submit an email. We send a key. Free keys have a monthly render cap. Pro keys have a higher cap for a monthly fee billed by Stripe.</p>
+      <p>Instatools is a free browser tool for making Instagram posts. The public app runs locally in your browser. The API is available after you open an account with an email. We email a login link. You copy a key from the dashboard. Free accounts have a monthly render cap. Pro has a higher cap for a monthly fee billed by Stripe.</p>
       <p>Instatools is not an AI generator. You pick a layout and edit it.</p>
 
       <h2>No affiliation</h2>
       <p>Instatools is not affiliated with, endorsed by, or sponsored by Instagram or Meta.</p>
 
       <h2>Your content</h2>
-      <p>You are responsible for the images, text, and other content you load into the maker or send to the API, and for anything you export or publish. You must follow applicable law and Instagram policies. Do not use Instatools to create illegal, infringing, or abusive material. We may revoke a key that ignores these rules or the published rate limits.</p>
+      <p>You are responsible for the images, text, and other content you load into Instatools or send to the API, and for anything you export or publish. You must follow applicable law and Instagram policies. Do not use Instatools to create illegal, infringing, or abusive material. We may revoke a key that ignores these rules or the published rate limits.</p>
 
       <h2>API keys</h2>
-      <p>Keys are secrets. Do not share them. If a key leaks, rotate it or request a new one with the same email. We hash keys at rest. Requesting a key again revokes the previous key for that email.</p>
+      <p>Keys are secrets. Do not share them. If a key leaks, rotate it from your account. We hash keys at rest. Login links expire after 15 minutes. Dashboard sessions live in Cloudflare KV.</p>
 
       <h2>Plans, billing, and cancel</h2>
-      <p>The maker stays free. API Free includes the published monthly render and design caps. API Pro is $19 per month unless we post a different price at checkout.</p>
+      <p>Instatools in the browser stays free. API Free includes the published monthly render and design caps. API Pro is $19 per month unless we post a different price at checkout.</p>
       <ul>
         <li>Pro renews each month until you cancel.</li>
-        <li>Cancel in the Stripe billing portal from the <a href="/docs/#/pricing">pricing page</a>.</li>
+        <li>Cancel in the Stripe billing portal from your <a href="/account">account</a>.</li>
         <li>Cancel takes effect at the end of the paid period. You keep Pro quota until then, then the key returns to Free.</li>
         <li>Failed payments can pause or cancel Pro. Stripe will email the cardholder.</li>
         <li>We do not prorate unused renders. Refunds are not owed for unused quota, except where the law requires one. If a charge looks wrong, email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a> within 14 days.</li>
@@ -68,7 +73,7 @@
       <p>To the maximum extent permitted by law, Instatools and Blacnova Development are not liable for indirect, incidental, special, consequential, or punitive damages, or for lost profits, arising from your use of the tools. Our total liability for the API is limited to the amount you paid us for Pro in the 3 months before the claim.</p>
 
       <h2>Account deletion</h2>
-      <p>Call <code>DELETE /v1/me</code> with your key, or email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. We revoke keys, delete stored API designs, and cancel an open Pro subscription.</p>
+      <p>Delete from your <a href="/account">account</a>, call <code>DELETE /v1/me</code>, or email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. We revoke keys, delete stored API designs, and cancel an open Pro subscription.</p>
 
       <h2>Changes</h2>
       <p>We may update these terms. Continued use after a change means you accept the updated terms. The date at the top is the latest version.</p>

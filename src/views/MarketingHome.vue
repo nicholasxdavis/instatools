@@ -1,153 +1,33 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import MarketingShell from '@/components/marketing/MarketingShell.vue'
 import { HOME_PAGE } from '@/seo/catalog'
 import { THEME_CARDS, themePath } from '@/themes/cards'
-import { publicUrl } from '@/utils/publicUrl'
 import '@/assets/marketing.css'
 
-const iconLayer = ref(null)
-let resizeTimer = 0
-const year = new Date().getFullYear()
 const faqs = HOME_PAGE.faqs
-const base = import.meta.env.BASE_URL
-const privacyHref = `${base}privacy`
-const termsHref = `${base}terms`
-const docsHref = `${base}docs/`
-const signupHref = `${base}signup/`
-const logoSrc = publicUrl('logo.png')
 
 function blurb(theme) {
   const text = theme.description || ''
   const cut = text.split('. ')[0]
   return cut.endsWith('.') ? cut : `${cut}.`
 }
-
-function paintIcons() {
-  const layer = iconLayer.value
-  if (!layer) return
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    layer.innerHTML = ''
-    return
-  }
-
-  const iconPaths = [
-    publicUrl('iconarmy/camera-svgrepo-com.svg'),
-    publicUrl('iconarmy/favorite-svgrepo-com.svg'),
-    publicUrl('iconarmy/flash-svgrepo-com.svg'),
-    publicUrl('iconarmy/instagram-167-svgrepo-com.svg'),
-    publicUrl('iconarmy/tools-svgrepo-com.svg'),
-  ]
-  const random = (min, max) => Math.random() * (max - min) + min
-  layer.innerHTML = ''
-  const cellSize = 220
-  const cols = Math.ceil(window.innerWidth / cellSize)
-  const rows = Math.ceil(Math.min(window.innerHeight, 900) / cellSize)
-  const fragment = document.createDocumentFragment()
-
-  for (let row = 0; row < rows; row += 1) {
-    for (let col = 0; col < cols; col += 1) {
-      if (Math.random() < 0.28) continue
-      const icon = document.createElement('span')
-      const size = random(96, 128)
-      const x = (col + 0.5) * cellSize + random(-28, 28)
-      const y = (row + 0.5) * cellSize + random(-28, 28)
-      icon.className = 'icon-pattern-item'
-      icon.style.left = `${x - size / 2}px`
-      icon.style.top = `${y - size / 2}px`
-      icon.style.width = `${size}px`
-      icon.style.height = `${size}px`
-      icon.style.opacity = random(0.05, 0.1).toFixed(3)
-      icon.style.transform = `rotate(${random(-24, 24).toFixed(1)}deg)`
-      icon.style.backgroundImage = `url("${iconPaths[(row * cols + col) % iconPaths.length]}")`
-      fragment.appendChild(icon)
-    }
-  }
-  layer.appendChild(fragment)
-}
-
-function onResize() {
-  window.clearTimeout(resizeTimer)
-  resizeTimer = window.setTimeout(paintIcons, 160)
-}
-
-onMounted(() => {
-  paintIcons()
-  window.addEventListener('resize', onResize, { passive: true })
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', onResize)
-  window.clearTimeout(resizeTimer)
-})
 </script>
 
 <template>
-  <div class="marketing">
-    <div ref="iconLayer" class="icon-pattern-bg" aria-hidden="true" />
-
-    <a class="m-skip" href="#content">Skip to content</a>
-
-    <header class="m-nav" aria-label="Primary">
-      <router-link class="m-nav-logo" to="/" aria-label="Instatools home">
-        <img :src="logoSrc" width="120" height="44" alt="Instatools" decoding="async" />
-      </router-link>
-      <nav class="m-nav-center" aria-label="Page">
-        <a href="#how">How it works</a>
-        <a href="#templates">Layouts</a>
-        <a href="#faq">FAQ</a>
-        <a :href="docsHref">Docs</a>
-      </nav>
-      <div class="m-nav-actions">
-        <div class="m-nav-mobile-api">
-          <a :href="docsHref">Docs</a>
-          <a :href="signupHref">API</a>
-        </div>
-        <a class="m-support" :href="signupHref">Get a key</a>
-        <router-link class="btn-try" to="/make">Try now</router-link>
-        <a
-          class="m-support"
-          href="https://buymeacoffee.com/galore"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Support Us
-        </a>
-      </div>
-    </header>
-
+  <MarketingShell icons>
     <main id="content">
       <section class="m-hero" aria-labelledby="marketing-title">
         <h1 id="marketing-title">
           Free Instagram
           <br />
-          Post Maker for
+          posts for
           <span class="m-hero-mark">creators.</span>
         </h1>
         <p class="m-lead">{{ HOME_PAGE.lead }}</p>
         <p class="m-trust">No AI · No signup · Your photos stay on your device</p>
         <div class="m-hero-actions">
-          <router-link class="btn-try btn-try-lg" to="/make">Try now</router-link>
-          <a class="btn-ghost" href="#templates">Browse layouts</a>
-        </div>
-      </section>
-
-      <section id="how" class="m-how" aria-labelledby="how-title">
-        <div class="m-how-shell">
-          <h2 id="how-title">How it works</h2>
-          <ol class="m-how-steps">
-            <li>
-              <strong>Pick a layout</strong>
-              <span>News, sports, tweets, fashion, and more. Each one is ready to edit.</span>
-            </li>
-            <li>
-              <strong>Swap your photo and text</strong>
-              <span>Upload from your phone or desktop. Tune type size, colors, and crops in the sidebar.</span>
-            </li>
-            <li>
-              <strong>Export and post</strong>
-              <span>Download a 1080px PNG on your device and upload straight to Instagram.</span>
-            </li>
-          </ol>
+          <router-link class="m-hero-btn m-hero-btn-primary" to="/make">Try now</router-link>
+          <a class="m-hero-btn m-hero-btn-secondary" href="#templates">Browse layouts</a>
         </div>
       </section>
 
@@ -187,6 +67,19 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
+      <section id="api" class="m-api" aria-labelledby="api-title">
+        <div class="m-api-shell">
+          <p class="m-docs-kicker">API</p>
+          <h2 id="api-title">Same layouts over the API.</h2>
+          <p>JSON in. PNG out. Any app can list the catalog. Email login. Buy Pro without pasting a key. Instatools in the browser stays free and local.</p>
+          <div class="m-api-actions">
+            <router-link class="m-hero-btn m-hero-btn-primary" to="/account">Open account</router-link>
+            <router-link class="m-hero-btn m-hero-btn-secondary" to="/docs">Read the docs</router-link>
+            <router-link class="m-hero-btn m-hero-btn-secondary" to="/pricing">Pricing</router-link>
+          </div>
+        </div>
+      </section>
+
       <section id="faq" class="m-faq" aria-labelledby="faq-title">
         <div class="m-faq-shell">
           <h2 id="faq-title">Frequently asked questions</h2>
@@ -199,30 +92,5 @@ onBeforeUnmount(() => {
         </div>
       </section>
     </main>
-
-    <footer class="m-footer">
-      <h2>
-        Built for creators,
-        <br />
-        <span class="m-footer-grad">open for everyone.</span>
-      </h2>
-      <router-link class="btn-try btn-try-lg" to="/make">Try now</router-link>
-      <nav class="m-footer-links" aria-label="Footer">
-        <a href="#how">How it works</a>
-        <a href="#templates">Layouts</a>
-        <a href="#faq">FAQ</a>
-        <a :href="docsHref">API docs</a>
-        <a :href="signupHref">Get a key</a>
-        <a :href="privacyHref">Privacy</a>
-        <a :href="termsHref">Terms</a>
-        <a href="https://github.com/nicholasxdavis/instatools" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <router-link to="/make">Open maker</router-link>
-        <a href="https://buymeacoffee.com/galore" target="_blank" rel="noopener noreferrer">Support Us</a>
-      </nav>
-      <p class="m-copy">
-        © {{ year }} Instatools by
-        <a href="https://www.blacnova.net" target="_blank" rel="noopener noreferrer">Blacnova Development</a>
-      </p>
-    </footer>
-  </div>
+  </MarketingShell>
 </template>

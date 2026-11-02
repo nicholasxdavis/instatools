@@ -2,8 +2,9 @@
 
 Cloudflare Worker. Other apps authenticate with an API key, edit templates as JSON, and render PNG. Anyone can get a free key by email. Pro raises the monthly render quota.
 
-Docs: https://www.useinstatools.com/docs/  
-Signup: https://www.useinstatools.com/signup/
+Docs: https://www.useinstatools.com/docs  
+Account: https://www.useinstatools.com/account  
+Pricing: https://www.useinstatools.com/pricing
 
 ## Run locally
 
@@ -52,7 +53,7 @@ Create, patch, or render with any of:
 { "template": "launch", "fields": { "headline": "Ship it" } }
 ```
 
-The renderer compiles the same Vue templates as the public maker.
+The renderer compiles the same Vue templates as the public site.
 
 ## Deploy
 

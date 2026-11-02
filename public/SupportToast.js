@@ -93,7 +93,7 @@ class SupportToast {
 
             .support-toast-text {
                 font-size: 15px; /* Refined text size */
-                font-weight: 600;
+                font-weight: 500;
                 color: #ffffff;
                 letter-spacing: -0.2px;
                 white-space: nowrap;

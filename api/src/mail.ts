@@ -40,18 +40,19 @@ async function sendBrevo(env: Env, payload: Record<string, unknown>) {
   if (!response.ok) {
     const detail = await response.text().catch(() => '')
     console.error('brevo_send_failed', response.status, detail.slice(0, 300))
-    throw new HttpError(502, 'mail_failed', 'Could not send the API key email. Try again in a minute.')
+    throw new HttpError(502, 'mail_failed', 'Could not send the email. Try again in a minute.')
   }
 }
 
 export async function sendApiKeyEmail(env: Env, input: { email: string; key: string; rotated: boolean }) {
   const origin = siteOrigin(env)
-  const docs = `${origin}/docs/`
-  const pricing = `${origin}/docs/#/pricing`
+  const docs = `${origin}/docs`
+  const pricing = `${origin}/pricing`
+  const account = `${origin}/account`
   const subject = input.rotated ? 'Your new Instatools API key' : 'Your Instatools API key'
   const intro = input.rotated
     ? 'You asked for a key again, so we issued a new one and revoked the previous key.'
-    : 'Here is your Instatools API key. The public maker stays free in the browser. This key is for the HTTP API.'
+    : 'Here is your Instatools API key. Instatools in the browser stays free. This key is for the HTTP API.'
   const htmlContent = `<!doctype html>
 <html>
   <body style="margin:0;padding:32px;background:#f7f7f8;font-family:Inter,Segoe UI,sans-serif;color:#0f172a;">
@@ -60,8 +61,8 @@ export async function sendApiKeyEmail(env: Env, input: { email: string; key: str
       <h1 style="margin:0 0 12px;font-size:28px;letter-spacing:-0.04em;">Your API key</h1>
       <p style="margin:0 0 16px;line-height:1.5;color:#475569;">${intro}</p>
       <p style="margin:0 0 20px;padding:14px 16px;background:#f1f5f9;border-radius:10px;font-family:ui-monospace,Consolas,monospace;font-size:14px;word-break:break-all;">${input.key}</p>
-      <p style="margin:0 0 8px;line-height:1.5;color:#475569;">Keep it private. Treat it like a password. Docs: <a href="${docs}">${docs}</a></p>
-      <p style="margin:0;line-height:1.5;color:#475569;">Free plan includes 50 PNG renders per month. Upgrade anytime: <a href="${pricing}">${pricing}</a></p>
+      <p style="margin:0 0 8px;line-height:1.5;color:#475569;">Keep it private. Treat it like a password. Account: <a href="${account}">${account}</a></p>
+      <p style="margin:0;line-height:1.5;color:#475569;">Docs: <a href="${docs}">${docs}</a>. Upgrade: <a href="${pricing}">${pricing}</a></p>
     </div>
   </body>
 </html>`
@@ -71,6 +72,7 @@ ${intro}
 
 ${input.key}
 
+Account: ${account}
 Docs: ${docs}
 Upgrade: ${pricing}
 Base URL: ${apiPublicUrl()}
@@ -79,6 +81,36 @@ Base URL: ${apiPublicUrl()}
     sender: sender(env),
     to: [{ email: input.email }],
     subject,
+    htmlContent,
+    textContent,
+  })
+}
+
+export async function sendLoginEmail(env: Env, input: { email: string; token: string }) {
+  const origin = siteOrigin(env)
+  const link = `${origin}/account?login=${encodeURIComponent(input.token)}`
+  const htmlContent = `<!doctype html>
+<html>
+  <body style="margin:0;padding:32px;background:#f7f7f8;font-family:Inter,Segoe UI,sans-serif;color:#0f172a;">
+    <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;">
+      <p style="margin:0 0 8px;font-weight:800;letter-spacing:-0.04em;">Instatools</p>
+      <h1 style="margin:0 0 12px;font-size:28px;letter-spacing:-0.04em;">Sign in</h1>
+      <p style="margin:0 0 16px;line-height:1.5;color:#475569;">This link opens your API account. It expires in 15 minutes. Instatools in the browser stays free.</p>
+      <p style="margin:0 0 20px;"><a href="${link}" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:999px;">Open account</a></p>
+      <p style="margin:0;line-height:1.5;color:#475569;font-size:13px;">If the button does not work: ${link}</p>
+    </div>
+  </body>
+</html>`
+  const textContent = `Sign in to Instatools
+
+Open this link within 15 minutes:
+
+${link}
+`
+  await sendBrevo(env, {
+    sender: sender(env),
+    to: [{ email: input.email }],
+    subject: 'Sign in to Instatools',
     htmlContent,
     textContent,
   })

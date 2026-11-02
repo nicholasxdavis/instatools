@@ -332,7 +332,7 @@ async function onUpload(event) {
   min-width: 3.4em;
   font-size: 12px;
   color: #8a8a8a;
-  font-weight: 600;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }

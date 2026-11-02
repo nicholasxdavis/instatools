@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { HOME_PAGE, INDEXABLE_PAGES, THEME_PAGES } from '../src/seo/catalog.js'
+import { HOME_PAGE, INDEXABLE_PAGES, MARKETING_EXTRA_PAGES, THEME_PAGES } from '../src/seo/catalog.js'
 import { SITE, absoluteUrl } from '../src/seo/site.js'
 
 function meta(page, name) {
@@ -28,8 +28,17 @@ test.describe('catalog quality', () => {
   })
 
   test('catalog copy has no em or en dashes', () => {
-    const blob = JSON.stringify(INDEXABLE_PAGES)
+    const blob = JSON.stringify([...INDEXABLE_PAGES, ...MARKETING_EXTRA_PAGES])
     expect(blob).not.toMatch(/[—–]/)
+  })
+
+  test('marketing extra pages stay in SEO range', () => {
+    for (const page of MARKETING_EXTRA_PAGES) {
+      expect(page.title.length).toBeGreaterThanOrEqual(15)
+      expect(page.title.length).toBeLessThanOrEqual(60)
+      expect(page.description.length).toBeGreaterThanOrEqual(110)
+      expect(page.description.length).toBeLessThanOrEqual(165)
+    }
   })
 })
 
@@ -61,7 +70,11 @@ test.describe('static documents', () => {
     expect(xml).toContain(`<loc>${SITE.origin}/privacy</loc>`)
     expect(xml).toContain(`<loc>${SITE.origin}/terms</loc>`)
     expect(xml).toContain(`<loc>${absoluteUrl('/docs/')}</loc>`)
-    expect(xml).toContain(`<loc>${absoluteUrl('/signup/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/docs/quickstart/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/docs/templates/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/docs/render/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/pricing/')}</loc>`)
+    expect(xml).toContain(`<loc>${absoluteUrl('/account/')}</loc>`)
   })
 
   test('web manifest is valid JSON', async ({ request }) => {

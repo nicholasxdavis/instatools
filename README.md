@@ -1,25 +1,26 @@
 <p align="center">
-  <img src="public/logo-dark.png" alt="Instatools" height="56" />
+  <img src="https://www.useinstatools.com/logo-dark.png" alt="Instatools" height="48" />
 </p>
 
 # Instatools
 
-Free Instagram post maker. No AI.
+Free Instagram posts in your browser. No AI.
 
 Pick a layout, drop in your photo and headline, export an HD PNG on your device. No signup. Photos never leave the browser.
 
 **Live site:** [useinstatools.com](https://www.useinstatools.com/)
 
 <p align="center">
-  <img src="public/og.png" alt="Instatools homepage" />
+  <img src="https://www.useinstatools.com/og.png" alt="Instatools homepage" width="720" />
 </p>
 
 <p align="center">
-  <img src="public/themes/cards/template1.png" alt="News Classic layout" width="46%" />
-  <img src="public/themes/cards/template16.png" alt="Launch layout" width="46%" />
+  <img src="https://www.useinstatools.com/themes/cards/template1.png" alt="News layout" width="280" />
+  &nbsp;
+  <img src="https://www.useinstatools.com/themes/cards/template6.png" alt="Sports layout" width="280" />
 </p>
 
-## Run the maker
+## Run it locally
 
 ```bash
 npm install
@@ -30,7 +31,7 @@ Open the URL Vite prints (usually `http://127.0.0.1:5173`).
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | Local maker |
+| `npm run dev` | Local app |
 | `npm run build` | Production build into `dist/` |
 | `npm run deploy:cf` | Build and deploy Cloudflare Pages |
 
@@ -40,7 +41,7 @@ News, sports, tweets, fashion, rap cutouts, campaign ads, and more. Each one is 
 
 ## API
 
-Email signup. We send a key. Create a design, patch fields, render PNG. Free has a monthly cap. Pro raises it.
+Email login. Copy a key from your account. Create a design, patch fields, render PNG. Buy Pro with that same email, even before you have a key. Free has a monthly cap. Pro raises it.
 
 ```bash
 cd api
@@ -56,17 +57,16 @@ curl http://127.0.0.1:8787/v1/templates \
   -H "Authorization: Bearer itk_dev_local_testing_key"
 ```
 
-Docs: [useinstatools.com/docs](https://www.useinstatools.com/docs/)  
-Get a key: [useinstatools.com/signup](https://www.useinstatools.com/signup/)  
-Pricing: [useinstatools.com/docs/#/pricing](https://www.useinstatools.com/docs/#/pricing)
+Docs: [useinstatools.com/docs](https://www.useinstatools.com/docs)  
+Account: [useinstatools.com/account](https://www.useinstatools.com/account)  
+Pricing: [useinstatools.com/pricing](https://www.useinstatools.com/pricing)
 
-The renderer compiles the same Vue templates as the public maker.
+The renderer compiles the same Vue templates as the public site.
 
 ## Repo layout
 
 ```
-src/          Maker and marketing site
-docs/         API docs (served at /docs/)
+src/          Site, editor, docs, pricing, account
 api/          Cloudflare Worker
 public/       Static files
 ```

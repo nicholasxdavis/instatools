@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Privacy Policy | Instatools</title>
-    <meta name="description" content="Instatools privacy policy. The maker stays in your browser. API keys, email, Stripe billing, and how to delete your data." />
+    <meta name="description" content="Instatools privacy policy. Editing stays in your browser. API keys, email, Stripe billing, and how to delete your data." />
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" content="#f7f7f8" />
     <meta name="color-scheme" content="light" />
@@ -14,42 +14,48 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Instatools" />
     <meta property="og:title" content="Privacy Policy | Instatools" />
-    <meta property="og:description" content="Instatools privacy policy. The maker stays in your browser. API keys, email, and Stripe billing." />
+    <meta property="og:description" content="Instatools privacy policy. Editing stays in your browser. API keys, email, and Stripe billing." />
     <meta property="og:url" content="https://www.useinstatools.com/privacy" />
     <meta property="og:image" content="https://www.useinstatools.com/og.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/page.css" />
   </head>
   <body>
     <div class="nav">
       <a href="/"><img src="/logo-dark.png" alt="Instatools" /></a>
       <nav class="nav-links" aria-label="Page">
-        <a href="/docs/">Docs</a>
-        <a href="/make/">Maker</a>
+        <a href="/#templates">Layouts</a>
+        <a href="/#api">API</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/docs">Docs</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/account">Account</a>
+        <a href="/make/">Try now</a>
         <a href="/terms">Terms</a>
       </nav>
     </div>
     <main>
       <h1>Privacy Policy</h1>
-      <p class="lead">Updated 26 October 2026. The public maker is built so your work stays on your device. The HTTP API stores only what it needs to run keys, quota, and billing.</p>
+      <p class="lead">Updated 26 October 2026. Instatools in the browser is built so your work stays on your device. The API stores only what it needs to run keys, quota, and billing.</p>
 
       <h2>Who we are</h2>
       <p>Instatools is operated by Blacnova Development. Contact: <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. Site: <a href="https://www.useinstatools.com">useinstatools.com</a>.</p>
 
-      <h2>Public maker</h2>
-      <p>Design, photos, headlines, and export run in your browser. We do not upload your images or design JSON to Instatools servers when you create or download a post in the maker. Saved layouts live in this browser on this device.</p>
-      <p>You can use the maker without an account.</p>
+      <h2>The browser app</h2>
+      <p>Design, photos, headlines, and export run in your browser. We do not upload your images or design JSON to Instatools servers when you create or download a post. Saved layouts live in this browser on this device.</p>
+      <p>You can use Instatools without an account.</p>
 
-      <h2>API signup</h2>
-      <p>If you request an API key we store:</p>
+      <h2>API account</h2>
+      <p>If you open an API account we store:</p>
       <ul>
         <li>The email you submit</li>
         <li>A hashed copy of the API key (not the raw key)</li>
-        <li>Plan, usage counts, and saved API designs you create over HTTP</li>
+        <li>Hashed login and dashboard session tokens in Cloudflare KV</li>
+        <li>Plan, usage counts, and saved API designs you create over the API</li>
       </ul>
-      <p>We email the key from Blacnova Development (<a href="mailto:nic@blacnova.net">nic@blacnova.net</a>) using Brevo. Do not send passwords in any form on this site. The HTTP response never includes the key.</p>
+      <p>We email login links and keys from Blacnova Development (<a href="mailto:nic@blacnova.net">nic@blacnova.net</a>) using Brevo. There is no password. Do not send secrets in any form on this site.</p>
 
       <h2>Billing</h2>
       <p>If you upgrade to Pro, Stripe processes the payment. We store your plan, Stripe customer id, and subscription id so quota can follow the subscription. Stripe also stores the card and invoices. Cancel in the Stripe billing portal. Access stays Pro until the paid period ends, then the key drops back to the free cap.</p>
@@ -63,14 +69,14 @@
       <h2>Processors</h2>
       <ul>
         <li>Cloudflare: hosting, Worker, KV, Web Analytics</li>
-        <li>Brevo: transactional email for API keys</li>
+        <li>Brevo: transactional email for login links and API keys</li>
         <li>Stripe: Pro checkout, invoices, and cancellation</li>
-        <li>Google Fonts and jsDelivr: fonts and docs scripts</li>
+        <li>Google Fonts: type on this site</li>
       </ul>
 
       <h2>Retention and deletion</h2>
-      <p>Maker data stays in your browser until you clear it. API data stays until you delete the account or we have to remove it for abuse or legal reasons.</p>
-      <p>Delete API data with <code>DELETE /v1/me</code> using your key, or email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. That revokes keys, deletes stored designs, and cancels an open Pro subscription. Stripe may keep invoices as required by payment law.</p>
+      <p>Browser data stays on your device until you clear it. API data stays until you delete the account or we have to remove it for abuse or legal reasons.</p>
+      <p>Delete API data from your <a href="/account">account</a>, with <code>DELETE /v1/me</code>, or email <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>. That revokes keys and sessions, deletes stored designs, and cancels an open Pro subscription. Stripe may keep invoices as required by payment law.</p>
 
       <h2>Children</h2>
       <p>The API is not directed at children under 13. Do not sign up with a child’s email.</p>
@@ -78,7 +84,7 @@
       <h2>What we do not do</h2>
       <ul>
         <li>We do not sell your photos or emails.</li>
-        <li>We do not require an account to export a PNG from the maker.</li>
+        <li>We do not require an account to export a PNG from Instatools.</li>
         <li>We do not use a model to generate posts.</li>
       </ul>
 

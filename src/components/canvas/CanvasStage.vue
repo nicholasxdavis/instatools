@@ -169,7 +169,7 @@ onUnmounted(() => {
   background: transparent;
   color: #fff;
   font-size: 16px;
-  font-weight: 650;
+  font-weight: 500;
   min-width: 34px;
   height: 30px;
   border-radius: 999px;
@@ -182,7 +182,7 @@ onUnmounted(() => {
 .zoom .pct {
   min-width: 52px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.02em;
 }
 

@@ -76,7 +76,7 @@ const store = useEditorStore()
 }
 .card .name {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;

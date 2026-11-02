@@ -5,10 +5,13 @@ import {
   authMiddleware,
   createApp,
   ensureBootstrap,
+  exchangeLogin,
+  findOrCreateAppByEmail,
   publicApp,
   requireAdmin,
   rotateKey,
   signupWithEmail,
+  startLogin,
   wipeApp,
   type AppRecord,
 } from './auth'
@@ -24,10 +27,11 @@ import {
   parseDesignInput,
   updateDesign,
 } from './designs'
-import { errorResponse, json, readJson } from './http'
+import { errorResponse, HttpError, json, readJson, sha256Hex } from './http'
+import { assertEmail } from './mail'
 import { openApiDocument } from './openapi'
 import { PLANS, siteOrigin } from './plans'
-import { assertDesignQuota, assertRenderQuota, consumeRender, quotaSnapshot } from './quota'
+import { assertDesignQuota, assertRenderQuota, clientIp, consumeRender, hitRateLimit, quotaSnapshot } from './quota'
 import { pngResponse, renderPng } from './render'
 import { cancelSubscription, createCheckoutSession, createPortalSession, verifyStripeSignature, type StripeEvent } from './stripe'
 
@@ -61,10 +65,14 @@ api.notFound(() => json({ error: 'not_found', message: 'No such route.' }, 404))
 api.get('/', (c) => json({
   service: 'instatools-api',
   access: 'public',
-  docs: `${siteOrigin(c.env)}/docs/`,
-  signup: `${siteOrigin(c.env)}/signup/`,
-  pricing: `${siteOrigin(c.env)}/docs/#/pricing`,
+  docs: `${siteOrigin(c.env)}/docs`,
+  account: `${siteOrigin(c.env)}/account`,
+  signup: `${siteOrigin(c.env)}/account`,
+  pricing: `${siteOrigin(c.env)}/pricing`,
   health: '/v1/health',
+  templates: '/v1/templates',
+  openapi: '/v1/openapi.json',
+  auth: 'Bearer itk_... or sess_... on render and designs. Catalog is public.',
   plans: PLANS,
 }))
 
@@ -84,10 +92,53 @@ api.get('/v1/health', () => json({
 
 api.get('/v1/plans', () => json({ plans: PLANS }))
 
+api.get('/v1/openapi.json', (c) => json(openApiDocument(new URL(c.req.url).origin)))
+
+api.get('/v1/templates', () => json({
+  templates: listTemplates(),
+  canvas: catalog.canvas,
+  fonts: catalog.fonts,
+  colors: catalog.colors,
+}))
+
+api.get('/v1/templates/:id', (c) => json(templateDetail(requireTemplate(c.req.param('id')))))
+
+api.get('/v1/templates/:id/schema', (c) => json(requireTemplate(c.req.param('id')).jsonSchema))
+
 api.post('/v1/signup', async (c) => {
   const body = await readJson(c.req.raw)
   const result = await signupWithEmail(c.env, c.req.raw, body.email, body.website || body._gotcha)
   return json(result, result.created ? 201 : 200)
+})
+
+api.post('/v1/auth/login', async (c) => {
+  const body = await readJson(c.req.raw)
+  return json(await startLogin(c.env, c.req.raw, body.email, body.website || body._gotcha))
+})
+
+api.post('/v1/auth/exchange', async (c) => {
+  const body = await readJson(c.req.raw)
+  const result = await exchangeLogin(c.env, body.token)
+  return json({
+    session: result.session,
+    key: result.key || null,
+    app: publicApp(result.app),
+    hint: result.key ? 'Store this key now. It cannot be read back.' : undefined,
+  })
+})
+
+api.post('/v1/billing/checkout-email', async (c) => {
+  const body = await readJson(c.req.raw)
+  const normalized = assertEmail(body.email)
+  const ip = clientIp(c.req.raw)
+  await hitRateLimit(c.env, `rl:checkout:ip:${ip}`, 8, 3600)
+  await hitRateLimit(c.env, `rl:checkout:email:${await sha256Hex(normalized)}`, 5, 86400)
+  const { app } = await findOrCreateAppByEmail(c.env, normalized)
+  if (app.plan === 'pro') {
+    throw new HttpError(409, 'already_subscribed', 'This email already has Pro. Sign in to manage billing.')
+  }
+  const session = await createCheckoutSession(c.env, app)
+  return json({ url: session.url })
 })
 
 api.post('/v1/apps', async (c) => {
@@ -119,8 +170,6 @@ api.post('/v1/billing/webhook', async (c) => {
 
 const v1 = new Hono<{ Bindings: Env; Variables: Vars }>()
 v1.use('*', authMiddleware)
-
-v1.get('/openapi.json', (c) => json(openApiDocument(new URL(c.req.url).origin)))
 
 v1.get('/me', async (c) => {
   const app = c.get('app')
@@ -157,17 +206,6 @@ v1.delete('/me', async (c) => {
   await wipeApp(c.env, app, c.get('apiKey'))
   return json({ ok: true, deleted: true })
 })
-
-v1.get('/templates', () => json({
-  templates: listTemplates(),
-  canvas: catalog.canvas,
-  fonts: catalog.fonts,
-  colors: catalog.colors,
-}))
-
-v1.get('/templates/:id', (c) => json(templateDetail(requireTemplate(c.req.param('id')))))
-
-v1.get('/templates/:id/schema', (c) => json(requireTemplate(c.req.param('id')).jsonSchema))
 
 v1.get('/designs', async (c) => {
   const limit = Number(c.req.query('limit') || '50')

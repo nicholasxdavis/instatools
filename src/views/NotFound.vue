@@ -11,7 +11,7 @@ import BrandMark from '@/components/brand/BrandMark.vue'
     <section class="copy" aria-labelledby="missing-title">
       <p class="code">404</p>
       <h1 id="missing-title">Page not found</h1>
-      <p>That link does not match an Instatools page. Open the maker or pick a layout.</p>
+      <p>That link does not match an Instatools page. Open the app or pick a layout.</p>
       <router-link class="ui-btn ui-btn-primary" to="/make">
         <PhArrowLeft :size="15" weight="bold" />
         Try now
@@ -46,13 +46,13 @@ import BrandMark from '@/components/brand/BrandMark.vue'
 }
 .code {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.12em;
   color: #8a8a8a;
 }
 h1 {
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.03em;
 }
 p {

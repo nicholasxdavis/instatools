@@ -39,8 +39,8 @@ export async function createCheckoutSession(env: Env, app: AppRecord) {
     mode: 'subscription',
     'line_items[0][price]': price,
     'line_items[0][quantity]': 1,
-    success_url: `${origin}/docs/#/pricing?checkout=success`,
-    cancel_url: `${origin}/docs/#/pricing?checkout=cancel`,
+    success_url: `${origin}/account?checkout=success`,
+    cancel_url: `${origin}/pricing?checkout=cancel`,
     client_reference_id: app.id,
     billing_address_collection: 'auto',
     'custom_text[submit][message]':
@@ -67,7 +67,7 @@ export async function createPortalSession(env: Env, app: AppRecord) {
   }
   const session = await stripeRequest(env, 'POST', '/billing_portal/sessions', {
     customer: app.stripeCustomerId,
-    return_url: `${siteOrigin(env)}/docs/#/pricing`,
+    return_url: `${siteOrigin(env)}/account`,
   })
   const url = typeof session.url === 'string' ? session.url : ''
   if (!url) throw new HttpError(502, 'stripe_error', 'Stripe did not return a portal URL.')

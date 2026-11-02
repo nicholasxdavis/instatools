@@ -88,7 +88,7 @@ function onKey(event) {
 .sheet h2 {
   margin: 0 0 8px;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.02em;
 }
 .sheet p {

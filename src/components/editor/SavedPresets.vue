@@ -157,7 +157,7 @@ function themeName(preset) {
 }
 .preset:hover { background: #2a2a2a; }
 .preset:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.preset strong { display: block; font-size: 13px; font-weight: 650; }
+.preset strong { display: block; font-size: 13px; font-weight: 500; }
 .preset span { font-size: 12px; color: #8a8a8a; }
 .delete {
   display: inline-flex;

@@ -29,7 +29,7 @@ body:not(.ready) {
 .app-nav a,
 .app-nav li ul a {
   color: rgba(255, 255, 255, 0.82) !important;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 13px;
 }
 
@@ -50,7 +50,7 @@ body:not(.ready) {
 }
 
 .sidebar .app-name {
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.04em;
 }
 
@@ -70,7 +70,7 @@ body:not(.ready) {
 .sidebar-nav ul li a:hover,
 .sidebar .sidebar-nav a {
   color: #475569;
-  font-weight: 650;
+  font-weight: 500;
 }
 
 .sidebar-nav ul li a:hover {
@@ -133,7 +133,7 @@ body:not(.ready) {
 .markdown-section h3,
 .markdown-section h4 {
   color: #0f172a;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.04em;
 }
 
@@ -145,7 +145,7 @@ body:not(.ready) {
 
 .markdown-section a {
   color: #e1306c;
-  font-weight: 650;
+  font-weight: 500;
 }
 
 .markdown-section hr {
@@ -184,7 +184,7 @@ body:not(.ready) {
 .markdown-section th {
   background: #f8fafc;
   color: #0f172a;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .markdown-section tr:nth-child(2n) {
@@ -210,7 +210,7 @@ body:not(.ready) {
   justify-content: center;
   border-radius: 999px;
   padding: 10px 18px;
-  font-weight: 800;
+  font-weight: 500;
   text-decoration: none !important;
 }
 
@@ -240,7 +240,7 @@ body:not(.ready) {
   display: grid;
   gap: 6px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 500;
   color: #475569;
 }
 
@@ -258,7 +258,7 @@ body:not(.ready) {
   border-radius: 999px;
   padding: 12px 18px;
   font: inherit;
-  font-weight: 800;
+  font-weight: 500;
   color: #fff;
   background: #0f172a;
   cursor: pointer;

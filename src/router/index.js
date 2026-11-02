@@ -3,6 +3,9 @@ import { getThemeBySlug } from '../themes'
 
 const MarketingHome = () => import('../views/MarketingHome.vue')
 const PostGenerator = () => import('../views/PostGenerator.vue')
+const DocsView = () => import('../views/DocsView.vue')
+const PricingView = () => import('../views/PricingView.vue')
+const AccountView = () => import('../views/AccountView.vue')
 const NotFound = () => import('../views/NotFound.vue')
 
 const router = createRouter({
@@ -53,6 +56,42 @@ const router = createRouter({
       },
     },
     {
+      path: '/docs',
+      name: 'docs',
+      component: DocsView,
+      meta: { shell: 'marketing' },
+    },
+    {
+      path: '/docs/:slug',
+      name: 'docs-page',
+      component: DocsView,
+      meta: { shell: 'marketing' },
+    },
+    {
+      path: '/pricing',
+      name: 'pricing',
+      component: PricingView,
+      meta: { shell: 'marketing' },
+    },
+    {
+      path: '/account',
+      name: 'account',
+      component: AccountView,
+      meta: { shell: 'marketing' },
+    },
+    {
+      path: '/signup',
+      redirect: '/account',
+    },
+    {
+      path: '/signup/',
+      redirect: '/account',
+    },
+    {
+      path: '/apply',
+      redirect: '/account',
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFound,
@@ -62,7 +101,7 @@ const router = createRouter({
   scrollBehavior(to, from, saved) {
     if (saved) return saved
     if (to.hash) return { el: to.hash, behavior: 'smooth' }
-    if (to.name === 'home') return { top: 0 }
+    if (to.meta.shell === 'marketing') return { top: 0 }
     return undefined
   },
 })
