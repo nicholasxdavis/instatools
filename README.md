@@ -2,8 +2,6 @@
   <img src="https://www.useinstatools.com/logo-dark.png" alt="Instatools" height="48" />
 </p>
 
-# Instatools
-
 Free Instagram posts in your browser. No AI.
 
 Pick a layout, drop in your photo and headline, export an HD PNG on your device. No signup. Photos never leave the browser.
