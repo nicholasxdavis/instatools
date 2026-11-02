@@ -10,16 +10,6 @@ Pick a layout, drop in your photo and headline, export an HD PNG on your device.
 
 **Live site:** [useinstatools.com](https://www.useinstatools.com/)
 
-<p align="center">
-  <img src="https://www.useinstatools.com/og.png" alt="Instatools homepage" width="720" />
-</p>
-
-<p align="center">
-  <img src="https://www.useinstatools.com/themes/cards/template1.png" alt="News layout" width="280" />
-  &nbsp;
-  <img src="https://www.useinstatools.com/themes/cards/template6.png" alt="Sports layout" width="280" />
-</p>
-
 ## Run it locally
 
 ```bash
