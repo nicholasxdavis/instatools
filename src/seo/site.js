@@ -11,6 +11,7 @@ export const SITE = {
   sameAs: [
     'https://buymeacoffee.com/galore',
     'https://github.com/nicholasxdavis/instatools',
+    'https://www.producthunt.com/products/instatools-for-instagram-posts',
   ],
   ogImage: {
     path: '/og.png',

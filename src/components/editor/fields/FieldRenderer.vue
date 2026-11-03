@@ -23,7 +23,7 @@ const sliderLocal = ref(null)
 let sliderRaf = 0
 let sliderPending = null
 let sliderLastCommit = 0
-const SLIDER_THROTTLE_MS = 72
+const SLIDER_THROTTLE_MS = 32
 
 const sliderCurrent = computed(() => {
   if (props.field.type === 'slider' && sliderDragging.value && sliderLocal.value != null) {
@@ -410,12 +410,12 @@ async function onUpload(event) {
 
 @media (max-width: 899px) {
   .slider-row {
-    min-height: 40px;
-    gap: 10px;
+    min-height: 48px;
+    gap: 12px;
   }
   .slider-row .slider-input {
-    min-height: 28px;
-    padding: 10px 0;
+    min-height: 36px;
+    padding: 12px 0;
   }
 }
 </style>

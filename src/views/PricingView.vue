@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import MarketingShell from '@/components/marketing/MarketingShell.vue'
+import { FREE_THEME_COUNT, PRO_THEME_COUNT, THEME_COUNT } from '@/seo/catalog'
 import { apiRequest } from '@/config/api'
 import '@/assets/marketing.css'
 
@@ -40,9 +41,9 @@ async function startCheckout() {
   <MarketingShell footer="mini">
     <main id="content" class="m-pricing">
       <p class="m-docs-kicker">Pricing</p>
-      <h1>API plans. Instatools stays free.</h1>
+      <h1>Free layouts. Pro unlocks more.</h1>
       <p class="m-docs-lead">
-        Buy Pro with an email. No API key to paste. Cancel in your account when you want.
+        Most of the editor stays free. Pro adds {{ PRO_THEME_COUNT }} premium layouts and a bigger API quota. Buy with an email. Cancel in your account.
       </p>
 
       <div class="m-plan-row">
@@ -50,21 +51,21 @@ async function startCheckout() {
           <h2>Free</h2>
           <p class="m-plan-price">$0</p>
           <ul>
-            <li>50 PNG renders per month</li>
-            <li>25 saved designs</li>
-            <li>All 17 layouts</li>
-            <li>Email account</li>
+            <li>{{ FREE_THEME_COUNT }} free layouts in the browser</li>
+            <li>Local HD PNG export</li>
+            <li>50 API PNG renders / month</li>
+            <li>25 saved API designs</li>
           </ul>
-          <router-link class="btn-ghost" to="/account">Get a free key</router-link>
+          <router-link class="btn-ghost" to="/account">Open account</router-link>
         </div>
         <div class="m-plan-card m-plan-card-pro">
           <h2>Pro</h2>
           <p class="m-plan-price">$19<span> / month</span></p>
           <ul>
-            <li>2,000 PNG renders per month</li>
-            <li>500 saved designs</li>
-            <li>Stripe invoices</li>
-            <li>Cancel at period end</li>
+            <li>All {{ THEME_COUNT }} layouts, including {{ PRO_THEME_COUNT }} Pro layouts</li>
+            <li>Cutout Stack, Launch, Smoke Cutout, World Tape, Match Tape</li>
+            <li>2,000 API PNG renders / month</li>
+            <li>500 saved API designs</li>
           </ul>
           <form class="m-plan-form" @submit.prevent="startCheckout">
             <label>

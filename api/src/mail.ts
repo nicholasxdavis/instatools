@@ -94,8 +94,8 @@ export async function sendLoginEmail(env: Env, input: { email: string; token: st
   <body style="margin:0;padding:32px;background:#f7f7f8;font-family:Inter,Segoe UI,sans-serif;color:#0f172a;">
     <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;">
       <p style="margin:0 0 8px;font-weight:800;letter-spacing:-0.04em;">Instatools</p>
-      <h1 style="margin:0 0 12px;font-size:28px;letter-spacing:-0.04em;">Sign in</h1>
-      <p style="margin:0 0 16px;line-height:1.5;color:#475569;">This link opens your API account. It expires in 15 minutes. Instatools in the browser stays free.</p>
+      <h1 style="margin:0 0 12px;font-size:28px;letter-spacing:-0.04em;">Sign in to Instatools</h1>
+      <p style="margin:0 0 16px;line-height:1.5;color:#475569;">This link opens your Instatools account. Unlock Pro layouts, manage API keys, redeem a code, or handle billing. It expires in 15 minutes.</p>
       <p style="margin:0 0 20px;"><a href="${link}" style="display:inline-block;background:#0f172a;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:999px;">Open account</a></p>
       <p style="margin:0;line-height:1.5;color:#475569;font-size:13px;">If the button does not work: ${link}</p>
     </div>
@@ -103,7 +103,8 @@ export async function sendLoginEmail(env: Env, input: { email: string; token: st
 </html>`
   const textContent = `Sign in to Instatools
 
-Open this link within 15 minutes:
+This link opens your Instatools account for Pro layouts, API keys, redeem codes, and billing.
+It expires in 15 minutes:
 
 ${link}
 `

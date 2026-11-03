@@ -32,6 +32,7 @@ export function openApiDocument(origin: string) {
         get: { summary: 'Current app and quota' },
         delete: { summary: 'Delete account, designs, keys, and cancel Pro' },
       },
+      '/v1/me/redeem': { post: { summary: 'Redeem a one-time Pro promo code' } },
       '/v1/me/keys': { post: { summary: 'Rotate API key' } },
       '/v1/templates': { get: { security: [], summary: 'List every premade layout. No key required.' } },
       '/v1/templates/{id}': { get: { security: [], summary: 'Defaults, fields, and JSON Schema. Id or slug.' } },

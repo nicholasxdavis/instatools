@@ -1,16 +1,42 @@
 <script setup>
+import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { PhGithubLogo } from '@phosphor-icons/vue/compact'
 import MarketingShell from '@/components/marketing/MarketingShell.vue'
-import { HOME_PAGE } from '@/seo/catalog'
+import { FREE_THEME_COUNT, HOME_PAGE, PRO_THEME_COUNT, THEME_COUNT } from '@/seo/catalog'
 import { THEME_CARDS, themePath } from '@/themes/cards'
 import '@/assets/marketing.css'
 
 const faqs = HOME_PAGE.faqs
+const bmcHost = ref(null)
+let bmcScript = null
 
 function blurb(theme) {
   const text = theme.description || ''
   const cut = text.split('. ')[0]
   return cut.endsWith('.') ? cut : `${cut}.`
 }
+
+onMounted(() => {
+  if (!bmcHost.value || bmcHost.value.querySelector('script[data-name="bmc-button"]')) return
+  bmcScript = document.createElement('script')
+  bmcScript.type = 'text/javascript'
+  bmcScript.src = 'https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js'
+  bmcScript.dataset.name = 'bmc-button'
+  bmcScript.dataset.slug = 'galore'
+  bmcScript.dataset.color = '#FFDD00'
+  bmcScript.dataset.emoji = '☕'
+  bmcScript.dataset.font = 'Lato'
+  bmcScript.dataset.text = 'Buy me a coffee'
+  bmcScript.dataset.outlineColor = '#000000'
+  bmcScript.dataset.fontColor = '#000000'
+  bmcScript.dataset.coffeeColor = '#ffffff'
+  bmcHost.value.appendChild(bmcScript)
+})
+
+onBeforeUnmount(() => {
+  bmcScript?.remove()
+  bmcScript = null
+})
 </script>
 
 <template>
@@ -18,16 +44,44 @@ function blurb(theme) {
     <main id="content">
       <section class="m-hero" aria-labelledby="marketing-title">
         <h1 id="marketing-title">
-          Free Instagram
+          Make Instagram
           <br />
-          posts for
-          <span class="m-hero-mark">creators.</span>
+          posts that
+          <span class="m-hero-mark">stand out.</span>
         </h1>
         <p class="m-lead">{{ HOME_PAGE.lead }}</p>
-        <p class="m-trust">No AI · No signup · Your photos stay on your device</p>
+        <p class="m-trust">Free · No signup · No AI · Files stay on your device</p>
         <div class="m-hero-actions">
           <router-link class="m-hero-btn m-hero-btn-primary" to="/make">Try now</router-link>
           <a class="m-hero-btn m-hero-btn-secondary" href="#templates">Browse layouts</a>
+        </div>
+        <div class="m-badges" aria-label="Community links">
+          <a
+            class="m-badge-ph"
+            href="https://www.producthunt.com/products/instatools-for-instagram-posts?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-instatools-for-instagram-posts"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              alt="Instatools for Instagram Posts - Canva alternative for Instagram creators, Create posts easy. | Product Hunt"
+              width="250"
+              height="54"
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1302268&theme=light&t=1793666359034"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+          <a
+            class="m-badge-github"
+            href="https://github.com/nicholasxdavis/instatools"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instatools on GitHub"
+          >
+            <PhGithubLogo :size="28" weight="fill" aria-hidden="true" />
+            <span>GitHub</span>
+          </a>
+          <div ref="bmcHost" class="m-badge-bmc" />
         </div>
       </section>
 
@@ -36,7 +90,8 @@ function blurb(theme) {
           <div class="m-templates-head">
             <h2 id="templates-title">Layouts ready to post.</h2>
             <p>
-              {{ THEME_CARDS.length }} Instagram layouts for news, sports, finance, tweets, fashion, campaigns, and more. Open one, edit it, export HD on your device.
+              {{ THEME_COUNT }} Instagram layouts for news, sports, finance, tweets, fashion, and more.
+              {{ FREE_THEME_COUNT }} are free. {{ PRO_THEME_COUNT }} Pro layouts unlock with Pro.
             </p>
           </div>
           <div class="m-grid">
@@ -47,6 +102,7 @@ function blurb(theme) {
               :to="themePath(theme)"
             >
               <div class="m-card-thumb">
+                <span v-if="theme.pro" class="m-pro-badge">Pro</span>
                 <picture>
                   <source :srcset="theme.cardImage" type="image/webp" />
                   <img
@@ -67,11 +123,23 @@ function blurb(theme) {
         </div>
       </section>
 
+      <section id="why" class="m-why" aria-labelledby="why-title">
+        <div class="m-why-shell">
+          <h2 id="why-title">A Canva alternative built for Instagram.</h2>
+          <p>
+            Skip the blank page. Instatools is an Instagram post maker with ready layouts for news, sports, tweets, fashion, and ads.
+            Drop in your photo, tune the headline, and export HD PNG in your browser.
+          </p>
+        </div>
+      </section>
+
       <section id="api" class="m-api" aria-labelledby="api-title">
         <div class="m-api-shell">
-          <p class="m-docs-kicker">API</p>
-          <h2 id="api-title">Same layouts over the API.</h2>
-          <p>JSON in. PNG out. Any app can list the catalog. Email login. Buy Pro without pasting a key. Instatools in the browser stays free and local.</p>
+          <p class="m-docs-kicker">Instatools Pro</p>
+          <h2 id="api-title">Pro unlocks layouts and the API.</h2>
+          <p>
+            Free layouts stay free in the browser. Pro adds Cutout Stack, Launch, Smoke Cutout, World Tape, and Match Tape, plus higher API render limits. JSON in. PNG out.
+          </p>
           <div class="m-api-actions">
             <router-link class="m-hero-btn m-hero-btn-primary" to="/account">Open account</router-link>
             <router-link class="m-hero-btn m-hero-btn-secondary" to="/docs">Read the docs</router-link>

@@ -187,18 +187,21 @@ onUnmounted(() => {
 }
 
 @media (max-width: 899px) {
-  .frame { padding: 12px 12px 52px; }
+  .frame { padding: 10px 10px 64px; }
   .zoom {
-    bottom: 10px;
-    padding: 4px;
+    bottom: 12px;
+    padding: 5px;
+    gap: 4px;
+    border-radius: 14px;
   }
   .zoom button {
-    min-width: 40px;
-    height: 34px;
-    font-size: 18px;
+    min-width: 44px;
+    height: 40px;
+    font-size: 20px;
+    border-radius: 10px;
   }
   .zoom .pct {
-    min-width: 56px;
+    min-width: 58px;
     font-size: 13px;
   }
 }

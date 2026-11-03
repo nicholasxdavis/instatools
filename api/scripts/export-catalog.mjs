@@ -25,9 +25,16 @@ const NOTES = {
   template15: 'Campaign - photo field, clean type, optional framed cutout',
   template16: 'SaaS ad - logo, CTA, product shot',
   template17: 'Smoke cutout - rapper PNGs on red glow stage',
+  template18: 'Player of the Week - right stack badge + type over athlete photo',
+  template19: 'Breaking News - slash banner + byline over photo fade',
+  template20: 'Full-Time - glass scoreboard bar over match photo',
+  template21: 'Impact - mid-frame giant headline + caption over athlete',
+  template22: 'Trending - team wash + huge TRENDING type over photo',
+  template23: 'World Tape - dual photo + red badge + black gossip footer (1:1) [Pro]',
+  template24: 'Match Tape - grain wash + crests + FULL-TIME score (1:1) [Pro]',
 }
 
-const SQUARE = new Set(['template7'])
+const SQUARE = new Set(['template7', 'template23', 'template24'])
 
 function fieldToSchema(field) {
   switch (field.type) {
@@ -154,6 +161,7 @@ try {
       name: theme.name,
       note: NOTES[theme.id] || theme.description,
       description: theme.description,
+      pro: Boolean(theme.pro),
       square,
       size: {
         width: POST_WIDTH,

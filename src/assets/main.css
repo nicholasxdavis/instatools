@@ -406,25 +406,47 @@ input[type='range']::-moz-range-thumb {
 }
 
 @media (max-width: 899px) {
+  .field-label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
   .control-input,
   .control-textarea,
   .control-select {
     font-size: 16px;
-    padding: 8px 10px;
+    padding: 12px 12px;
+    border-radius: 10px;
+    min-height: 44px;
+  }
+  .control-textarea {
+    min-height: 88px;
+  }
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  .ui-btn {
+    min-height: 40px;
   }
   input[type='range'] {
-    height: 6px;
+    height: 8px;
     touch-action: none;
   }
-  input[type='range']::-webkit-slider-runnable-track { height: 6px; }
+  input[type='range']::-webkit-slider-runnable-track { height: 8px; }
   input[type='range']::-webkit-slider-thumb {
-    width: 20px;
-    height: 20px;
-    margin-top: -7px;
+    width: 24px;
+    height: 24px;
+    margin-top: -8px;
   }
   input[type='range']::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+  }
+  .chrome .control-input,
+  .chrome .control-textarea,
+  .chrome .control-select {
+    background-color: #262626;
   }
 }
 

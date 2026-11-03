@@ -14,6 +14,13 @@ import Template14Preview from './template14/Preview.vue'
 import Template15Preview from './template15/Preview.vue'
 import Template16Preview from './template16/Preview.vue'
 import Template17Preview from './template17/Preview.vue'
+import Template18Preview from './template18/Preview.vue'
+import Template19Preview from './template19/Preview.vue'
+import Template20Preview from './template20/Preview.vue'
+import Template21Preview from './template21/Preview.vue'
+import Template22Preview from './template22/Preview.vue'
+import Template23Preview from './template23/Preview.vue'
+import Template24Preview from './template24/Preview.vue'
 import { THEME_CATALOG } from '@/seo/catalog'
 import { THEME_FIELDS } from './fields'
 import { publicUrl } from '@/utils/publicUrl'
@@ -60,11 +67,48 @@ const PREVIEWS = {
     fields: THEME_FIELDS.template17,
     note: 'Smoke cutout - rapper PNGs on red glow stage',
   },
+  template18: {
+    component: Template18Preview,
+    fields: THEME_FIELDS.template18,
+    note: 'Player of the Week - right stack badge + type over athlete photo',
+  },
+  template19: {
+    component: Template19Preview,
+    fields: THEME_FIELDS.template19,
+    note: 'Breaking News - square banner + byline over photo fade',
+  },
+  template20: {
+    component: Template20Preview,
+    fields: THEME_FIELDS.template20,
+    note: 'Full-Time - glass scoreboard bar over match photo',
+  },
+  template21: {
+    component: Template21Preview,
+    fields: THEME_FIELDS.template21,
+    note: 'Impact - mid-frame giant headline + caption over athlete',
+  },
+  template22: {
+    component: Template22Preview,
+    fields: THEME_FIELDS.template22,
+    note: 'Trending - team wash + huge TRENDING type over photo',
+  },
+  template23: {
+    component: Template23Preview,
+    fields: THEME_FIELDS.template23,
+    square: true,
+    note: 'World Tape - dual photo + red badge + black gossip footer (1:1) [Pro]',
+  },
+  template24: {
+    component: Template24Preview,
+    fields: THEME_FIELDS.template24,
+    square: true,
+    note: 'Match Tape - grain wash + crests + FULL-TIME score (1:1) [Pro]',
+  },
 }
 
 export const THEMES = THEME_CATALOG.map((theme) => ({
   ...theme,
-  previewImage: publicUrl(`themes/${theme.id}.png`),
+  previewImage: publicUrl(`themes/cards/${theme.id}.png`),
   cardImage: publicUrl(`themes/cards/${theme.id}.webp`),
   cardImageFallback: publicUrl(`themes/cards/${theme.id}.png`),
   ...PREVIEWS[theme.id],

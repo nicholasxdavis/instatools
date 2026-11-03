@@ -1,9 +1,14 @@
+import { publicUrl } from '@/utils/publicUrl'
+
 /** Public CDN for default demo media (CORS-friendly via jsDelivr). */
 export const CDN_ORIGIN = 'https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src'
 
 /** Holder and textures live on CDN, not copied into site public/. */
 const H = `${CDN_ORIGIN}/holder`
 const T = `${CDN_ORIGIN}/textures`
+
+/** Site-hosted HD demos (same-origin → canvas-safe). */
+const D = (file) => publicUrl(`demo/${file}`)
 
 export const TEXTURES = {
   brickwall: `${T}/brickwall.png`,
@@ -55,4 +60,19 @@ export const MEDIA = {
   allM8Dashboard: `${H}/all-m8-dashboard.webp`,
   store: `${H}/store.jpg`,
   randomCeoLady: `${H}/random-ceo-lady.webp`,
+  alexSingleton: D('alex-singleton.jpg'),
+  paytonPritchard: D('payton-pritchard.jpg'),
+  liverpoolBorini: D('liverpool-borini.jpg'),
+  tarikCohen: D('tarik-cohen.jpg'),
+  mikeEvans: D('mike-evans.jpg'),
+  kaiCenat: D('kai-cenat.jpg'),
+  twitchIncomeChart: D('twitch-income-chart.png'),
+  ziaSymbol: D('zia-symbol.png'),
+  aaronJones: D('aaron-jones.jpg'),
+  khalilMack: D('khalil-mack.jpg'),
+  matchFullTime: D('match-fulltime.jpg'),
+  liverpoolCrest: D('liverpool-crest-white.png'),
+  arsenalCrest: D('arsenal-crest.png'),
+  plLion: D('pl-lion.png'),
+  wMark: D('w-mark.svg'),
 }

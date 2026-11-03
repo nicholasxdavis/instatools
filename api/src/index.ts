@@ -15,7 +15,7 @@ import {
   wipeApp,
   type AppRecord,
 } from './auth'
-import { catalog, requireTemplate, templateDetail, listTemplates } from './catalog'
+import { assertTemplatePlan, catalog, requireTemplate, templateDetail, listTemplates } from './catalog'
 import {
   countDesigns,
   createDesign,
@@ -30,7 +30,8 @@ import {
 import { errorResponse, HttpError, json, readJson, sha256Hex } from './http'
 import { assertEmail } from './mail'
 import { openApiDocument } from './openapi'
-import { PLANS, siteOrigin } from './plans'
+import { effectivePlanId, PLANS, siteOrigin } from './plans'
+import { redeemPromoCode } from './promo'
 import { assertDesignQuota, assertRenderQuota, clientIp, consumeRender, hitRateLimit, quotaSnapshot } from './quota'
 import { pngResponse, renderPng } from './render'
 import { cancelSubscription, createCheckoutSession, createPortalSession, verifyStripeSignature, type StripeEvent } from './stripe'
@@ -178,6 +179,22 @@ v1.get('/me', async (c) => {
   return json({ app: publicApp(app), quota })
 })
 
+v1.post('/me/redeem', async (c) => {
+  const body = await readJson(c.req.raw)
+  const result = await redeemPromoCode(c.env, c.get('app'), body.code)
+  c.set('app', result.app)
+  const quota = await quotaSnapshot(c.env, result.app)
+  quota.designsUsed = await countDesigns(c.env, result.app.id)
+  return json({
+    ok: true,
+    message: result.message,
+    expiresAt: result.expiresAt,
+    label: result.label,
+    app: publicApp(result.app),
+    quota,
+  })
+})
+
 v1.post('/me/keys', async (c) => {
   const rotated = await rotateKey(c.env, c.get('app'), c.get('apiKey'))
   return json({
@@ -215,7 +232,10 @@ v1.get('/designs', async (c) => {
 v1.post('/designs', async (c) => {
   const app = c.get('app')
   await assertDesignQuota(c.env, app, await countDesigns(c.env, app.id))
-  const { record } = await createDesign(c.env, app.id, await readJson(c.req.raw))
+  const body = await readJson(c.req.raw)
+  const { template } = parseDesignInput(body)
+  assertTemplatePlan(template, effectivePlanId(app))
+  const { record } = await createDesign(c.env, app.id, body)
   return json(designResponse(record), 201)
 })
 
@@ -225,12 +245,25 @@ v1.get('/designs/:id', async (c) => {
 })
 
 v1.patch('/designs/:id', async (c) => {
-  const { record } = await updateDesign(c.env, c.get('app').id, c.req.param('id'), await readJson(c.req.raw), false)
+  const app = c.get('app')
+  const body = await readJson(c.req.raw)
+  const current = await getDesign(c.env, app.id, c.req.param('id'))
+  const preview = parseDesignInput(
+    { template: current.record.template, ...(body && typeof body === 'object' ? body : {}) },
+    current.template,
+    current.record.post,
+  )
+  assertTemplatePlan(preview.template, effectivePlanId(app))
+  const { record } = await updateDesign(c.env, app.id, c.req.param('id'), body, false)
   return json(designResponse(record))
 })
 
 v1.put('/designs/:id', async (c) => {
-  const { record } = await updateDesign(c.env, c.get('app').id, c.req.param('id'), await readJson(c.req.raw), true)
+  const app = c.get('app')
+  const body = await readJson(c.req.raw)
+  const { template } = parseDesignInput(body)
+  assertTemplatePlan(template, effectivePlanId(app))
+  const { record } = await updateDesign(c.env, app.id, c.req.param('id'), body, true)
   return json(designResponse(record))
 })
 
@@ -243,6 +276,7 @@ v1.post('/designs/:id/render', async (c) => {
   const app = c.get('app')
   await assertRenderQuota(c.env, app)
   const { record, template } = await getDesign(c.env, app.id, c.req.param('id'))
+  assertTemplatePlan(template, effectivePlanId(app))
   const png = await renderPng(c.env, c.req.raw, record.post, template)
   const usage = await consumeRender(c.env, app)
   return pngResponse(png, template, record.id, usage)
@@ -252,6 +286,7 @@ v1.post('/render', async (c) => {
   const app = c.get('app')
   await assertRenderQuota(c.env, app)
   const { template, post } = parseDesignInput(await readJson(c.req.raw))
+  assertTemplatePlan(template, effectivePlanId(app))
   const png = await renderPng(c.env, c.req.raw, post, template)
   const usage = await consumeRender(c.env, app)
   return pngResponse(png, template, undefined, usage)

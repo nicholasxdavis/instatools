@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-26T23:57:12.822Z",
+  "generatedAt": "2026-11-02T23:16:49.349Z",
   "canvas": {
     "width": 1080,
     "height": 1350,
@@ -12,6 +12,7 @@
     "Anton",
     "Bebas Neue",
     "DM Sans",
+    "Impact",
     "Inter",
     "Montserrat",
     "Oswald",
@@ -51,6 +52,7 @@
       "name": "News (Classic)",
       "note": "Breaking news - giant headline over photo",
       "description": "Create bold news-style Instagram posts with giant headlines and captions. Free online maker. Export HD 1080x1350 PNG for meme and news pages.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -137,6 +139,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -878,6 +881,7 @@
       "name": "Clean (No Jumper)",
       "note": "Interview bar - clean headline over image",
       "description": "Design clean interview Instagram posts with a headline bar over your photo. Free for rap and media pages. Edit text, add a watermark, export locally.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -1277,6 +1281,7 @@
       "name": "Wealth (Split)",
       "note": "Wealth split - photo plus headline column",
       "description": "Build money and luxury Instagram posts with a photo-plus-headline split. Free online tool for finance pages. Export sharp 1080x1350 graphics on your device.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -1345,6 +1350,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -1793,6 +1799,7 @@
       "name": "Magazine (XXL)",
       "note": "Magazine cover - oversized XXL type",
       "description": "Turn photos into magazine-cover Instagram posts with oversized type. Free cover-style layouts. Export pixel-perfect PNG right in your browser.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -1852,6 +1859,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -2393,6 +2401,7 @@
       "name": "Dual Image",
       "note": "Dual image - side-by-side compare",
       "description": "Compare two photos on one Instagram post with a bold stacked headline. Free dual-image layouts. Export locally as 1080x1350 PNG.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -2525,6 +2534,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -3037,6 +3047,7 @@
       "name": "Sports (Hurdels)",
       "note": "Sports news - bold type and action photo",
       "description": "Create sports Instagram posts with giant headlines and action photos. Free for game-day and locker-room pages. Export HD graphics from your browser.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -3161,6 +3172,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -3308,6 +3320,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -3801,6 +3814,7 @@
       "name": "Twitter/X Post",
       "note": "Tweet card - square X/Twitter graphic",
       "description": "Convert any tweet into a square Instagram graphic. Edit handle, text, and likes, then export a clean 1080x1080 PNG free in your browser.",
+      "pro": false,
       "square": true,
       "size": {
         "width": 1080,
@@ -4296,6 +4310,7 @@
       "name": "Sports (Hurdels 2)",
       "note": "Sports alt - hard-hitting player graphic",
       "description": "Design hard-hitting sports Instagram graphics with bold type and player photos. Free alternate sports layout. Export high-res PNG on your device.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -4420,6 +4435,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -4567,6 +4583,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -5060,6 +5077,7 @@
       "name": "Toad Creek",
       "note": "Local spot - bold headline over venue photo",
       "description": "Create Instagram posts for restaurants, venues, and local spots with bold headlines over photos. Free online. Export 1080x1350 PNG locally.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -5159,6 +5177,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -5512,6 +5531,7 @@
       "name": "Grunge Print",
       "note": "Grunge poster - distressed music print",
       "description": "Design distressed poster Instagram posts with grunge type and texture. Free for music and culture pages. Export PNG from your browser.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -5572,6 +5592,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -5745,6 +5766,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -6128,6 +6150,7 @@
       "name": "Editorial",
       "note": "Editorial - fashion serif over photo",
       "description": "Create fashion and culture Instagram posts with a photo and big serif headline. Free magazine look. Export HD 1080x1350 PNG on your device.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -6638,7 +6661,8 @@
       "slug": "cutout-stack",
       "name": "Cutout Stack",
       "note": "Transparent PNGs - rappers, products, etc.",
-      "description": "Stack transparent PNG cutouts into collage Instagram posts for rappers and products. Free online. Export a sharp local PNG.",
+      "description": "Stack transparent PNG cutouts into collage Instagram posts for rappers and products. Pro layout. Export a sharp local PNG.",
+      "pro": true,
       "square": false,
       "size": {
         "width": 1080,
@@ -6892,6 +6916,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -7616,6 +7641,7 @@
       "name": "Pulse",
       "note": "Live alert - signal rail + huge type",
       "description": "Build live-alert Instagram posts with a signal rail and massive type. Free for breaking news pages. Export scroll-stopping 1080x1350 PNG.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -7703,6 +7729,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -8548,6 +8575,7 @@
       "name": "Hazard",
       "note": "Sports - hazard stripes + bottom type",
       "description": "Create athlete Instagram posts with hazard stripe rails and huge centered headlines. Free sports news look. Export HD PNG in your browser.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -8608,6 +8636,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -9139,6 +9168,7 @@
       "name": "Campaign",
       "note": "Campaign - photo field, clean type, optional framed cutout",
       "description": "Create campaign Instagram posts with a photo background, clean overlay type, and optional framed cutout. Free marketing look. Export HD 1080x1350 PNG locally.",
+      "pro": false,
       "square": false,
       "size": {
         "width": 1080,
@@ -11009,7 +11039,8 @@
       "slug": "launch",
       "name": "Launch",
       "note": "SaaS ad - logo, CTA, product shot",
-      "description": "Create SaaS-style Instagram ads with a logo, headline, CTA button, and product shot. Free marketing layout. Export HD 1080x1350 PNG locally.",
+      "description": "Create SaaS-style Instagram ads with a logo, headline, CTA button, and product shot. Pro marketing layout. Export HD 1080x1350 PNG locally.",
+      "pro": true,
       "square": false,
       "size": {
         "width": 1080,
@@ -12278,7 +12309,8 @@
       "slug": "smoke-cutout",
       "name": "Smoke Cutout",
       "note": "Smoke cutout - rapper PNGs on red glow stage",
-      "description": "Stack rapper PNG cutouts with smoke and glow on a dark stage. Free collage layout for hip-hop posts. Export sharp 1080x1350 PNG locally.",
+      "description": "Stack rapper PNG cutouts with smoke and glow on a dark stage. Pro collage layout for hip-hop posts. Export sharp 1080x1350 PNG locally.",
+      "pro": true,
       "square": false,
       "size": {
         "width": 1080,
@@ -12532,6 +12564,7 @@
             "Anton",
             "Bebas Neue",
             "DM Sans",
+            "Impact",
             "Inter",
             "Montserrat",
             "Oswald",
@@ -13240,6 +13273,5768 @@
                 "maximum": 120
               },
               "logoPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template18",
+      "slug": "award-week",
+      "name": "Player of the Week",
+      "note": "Player of the Week - right stack badge + type over athlete photo",
+      "description": "Create award-style sports Instagram posts with a badge, stacked PLAYER OF THE WEEK type, matchup line, and stars over a photo. Free HD 1080x1350 export.",
+      "pro": false,
+      "square": false,
+      "size": {
+        "width": 1080,
+        "height": 1350
+      },
+      "stateKey": "t18",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template18.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "textarea",
+          "path": "t18.headline",
+          "label": "Headline",
+          "hint": "Use [brackets] for accent words. Line breaks stay.",
+          "rows": 4
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t18.badgeText",
+          "label": "Badge",
+          "togglePath": "t18.showBadge"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t18.matchup",
+          "label": "Matchup",
+          "togglePath": "t18.showMatchup"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t18.playerRole",
+          "label": "Role"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t18.player",
+          "label": "Player",
+          "togglePath": "t18.showPlayer"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t18.bgImage",
+          "label": "Background"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t18.imageScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t18.imagePosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t18.imagePosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t18.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t18.fontFamily",
+          "label": "Font",
+          "customPath": "t18.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.fontSize",
+          "label": "Headline size",
+          "min": 72,
+          "max": 180,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t18.fontWeight",
+          "label": "Weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t18.headlineColor",
+          "label": "Headline"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t18.highlightColor",
+          "label": "Highlight [ ]"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t18.textAlign",
+          "label": "Align",
+          "options": [
+            {
+              "label": "Left",
+              "value": "left"
+            },
+            {
+              "label": "Center",
+              "value": "center"
+            },
+            {
+              "label": "Right",
+              "value": "right"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "toggle",
+          "path": "t18.uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.lineHeight",
+          "label": "Line height",
+          "min": 0.7,
+          "max": 1.3,
+          "step": 0.01
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.letterSpacing",
+          "label": "Letter spacing",
+          "min": -0.06,
+          "max": 0.08,
+          "step": 0.005,
+          "unit": "em"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.paddingH",
+          "label": "Padding X",
+          "min": 24,
+          "max": 100,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.paddingTop",
+          "label": "Padding top",
+          "min": 40,
+          "max": 220,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.paddingBottom",
+          "label": "Padding bottom",
+          "min": 32,
+          "max": 140,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t18.metaFontFamily",
+          "label": "Font",
+          "customPath": "t18.customMetaFontFamily",
+          "fonts": [
+            "DM Sans",
+            "Plus Jakarta Sans",
+            "Inter",
+            "Poppins",
+            "Montserrat",
+            "Roboto Condensed"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.badgeSize",
+          "label": "Badge size",
+          "min": 14,
+          "max": 36,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t18.badgeColor",
+          "label": "Badge text"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t18.badgeBorder",
+          "label": "Badge border"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t18.accentColor",
+          "label": "Accent"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.matchupSize",
+          "label": "Matchup size",
+          "min": 14,
+          "max": 40,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t18.playerSize",
+          "label": "Player size",
+          "min": 16,
+          "max": 42,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t18.playerColor",
+          "label": "Player color"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t18.overlayColor",
+          "label": "Overlay"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.overlayOpacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t18.fadeColor",
+          "label": "Fade color"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.fadeHeight",
+          "label": "Side wash width",
+          "min": 24,
+          "max": 80,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.fadeStrength",
+          "label": "Fade strength",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.vignetteOpacity",
+          "label": "Vignette",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t18.showStars",
+          "label": "Stars"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.starCount",
+          "label": "Star count",
+          "min": 1,
+          "max": 5,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t18.starColor",
+          "label": "Star color"
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t18.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t18.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.watermarkSize",
+          "label": "Size",
+          "min": 60,
+          "max": 320,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t18.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template18",
+        "t18": {
+          "headline": "PLAYER\nOF THE\nWEEK",
+          "badgeText": "OFFENSIVE",
+          "matchup": "VS. REDSKINS",
+          "playerRole": "RB",
+          "player": "TARIK COHEN",
+          "bgImage": "/demo/tarik-cohen.jpg",
+          "imagePosX": 38,
+          "imagePosY": 28,
+          "imageScale": 100,
+          "bgOpacity": 1,
+          "fontFamily": "Anton",
+          "customFontFamily": "",
+          "fontSize": 118,
+          "fontWeight": 400,
+          "headlineColor": "#FFFFFF",
+          "highlightColor": "#E64100",
+          "lineHeight": 0.92,
+          "letterSpacing": -0.01,
+          "textAlign": "right",
+          "uppercase": true,
+          "paddingH": 56,
+          "paddingTop": 100,
+          "paddingBottom": 64,
+          "accentColor": "#E64100",
+          "overlayColor": "#000000",
+          "overlayOpacity": 0.05,
+          "fadeColor": "#000000",
+          "fadeHeight": 48,
+          "fadeStrength": 0.78,
+          "vignetteOpacity": 0.3,
+          "showBadge": true,
+          "badgeColor": "#FFFFFF",
+          "badgeBorder": "#E64100",
+          "badgeBg": "transparent",
+          "badgeSize": 18,
+          "badgeLetterSpacing": 0.18,
+          "showMatchup": true,
+          "matchupSize": 20,
+          "matchupLetterSpacing": 0.22,
+          "showPlayer": true,
+          "playerColor": "#FFFFFF",
+          "playerSize": 24,
+          "playerLetterSpacing": 0.06,
+          "metaFontFamily": "Inter",
+          "customMetaFontFamily": "",
+          "showStars": true,
+          "starCount": 3,
+          "starColor": "#FFFFFF",
+          "showWatermark": true,
+          "watermarkUrl": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/watermark.png",
+          "watermarkSize": 160,
+          "watermarkOpacity": 0.85,
+          "watermarkPosX": 94,
+          "watermarkPosY": 5
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template18 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t18"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template18"
+          },
+          "t18": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "headline": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "badgeText": {
+                "type": "string",
+                "title": "Badge"
+              },
+              "showBadge": {
+                "type": "boolean"
+              },
+              "matchup": {
+                "type": "string",
+                "title": "Matchup"
+              },
+              "showMatchup": {
+                "type": "boolean"
+              },
+              "playerRole": {
+                "type": "string",
+                "title": "Role"
+              },
+              "player": {
+                "type": "string",
+                "title": "Player"
+              },
+              "showPlayer": {
+                "type": "boolean"
+              },
+              "bgImage": {
+                "type": "string",
+                "title": "Background",
+                "description": "Image URL or data URI"
+              },
+              "imageScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imagePosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "imagePosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "fontSize": {
+                "type": "number",
+                "title": "Headline size",
+                "minimum": 72,
+                "maximum": 180
+              },
+              "fontWeight": {
+                "type": "number",
+                "title": "Weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "headlineColor": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "highlightColor": {
+                "type": "string",
+                "title": "Highlight [ ]"
+              },
+              "textAlign": {
+                "type": "string",
+                "title": "Align",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              },
+              "uppercase": {
+                "type": "boolean",
+                "title": "Uppercase"
+              },
+              "lineHeight": {
+                "type": "number",
+                "title": "Line height",
+                "minimum": 0.7,
+                "maximum": 1.3,
+                "multipleOf": 0.01
+              },
+              "letterSpacing": {
+                "type": "number",
+                "title": "Letter spacing",
+                "minimum": -0.06,
+                "maximum": 0.08,
+                "multipleOf": 0.005
+              },
+              "paddingH": {
+                "type": "number",
+                "title": "Padding X",
+                "minimum": 24,
+                "maximum": 100
+              },
+              "paddingTop": {
+                "type": "number",
+                "title": "Padding top",
+                "minimum": 40,
+                "maximum": 220
+              },
+              "paddingBottom": {
+                "type": "number",
+                "title": "Padding bottom",
+                "minimum": 32,
+                "maximum": 140
+              },
+              "metaFontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customMetaFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "badgeSize": {
+                "type": "number",
+                "title": "Badge size",
+                "minimum": 14,
+                "maximum": 36
+              },
+              "badgeColor": {
+                "type": "string",
+                "title": "Badge text"
+              },
+              "badgeBorder": {
+                "type": "string",
+                "title": "Badge border"
+              },
+              "accentColor": {
+                "type": "string",
+                "title": "Accent"
+              },
+              "matchupSize": {
+                "type": "number",
+                "title": "Matchup size",
+                "minimum": 14,
+                "maximum": 40
+              },
+              "playerSize": {
+                "type": "number",
+                "title": "Player size",
+                "minimum": 16,
+                "maximum": 42
+              },
+              "playerColor": {
+                "type": "string",
+                "title": "Player color"
+              },
+              "overlayColor": {
+                "type": "string",
+                "title": "Overlay"
+              },
+              "overlayOpacity": {
+                "type": "number",
+                "title": "Overlay opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fadeColor": {
+                "type": "string",
+                "title": "Fade color"
+              },
+              "fadeHeight": {
+                "type": "number",
+                "title": "Side wash width",
+                "minimum": 24,
+                "maximum": 80
+              },
+              "fadeStrength": {
+                "type": "number",
+                "title": "Fade strength",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "vignetteOpacity": {
+                "type": "number",
+                "title": "Vignette",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "showStars": {
+                "type": "boolean",
+                "title": "Stars"
+              },
+              "starCount": {
+                "type": "number",
+                "title": "Star count",
+                "minimum": 1,
+                "maximum": 5,
+                "multipleOf": 1
+              },
+              "starColor": {
+                "type": "string",
+                "title": "Star color"
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 60,
+                "maximum": 320
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template19",
+      "slug": "breaking-slash",
+      "name": "Breaking News",
+      "note": "Breaking News - slash banner + byline over photo fade",
+      "description": "Build ESPN-style breaking news Instagram posts with a slash banner, byline rules, and bottom copy over a photo. Free HD PNG export in your browser.",
+      "pro": false,
+      "square": false,
+      "size": {
+        "width": 1080,
+        "height": 1350
+      },
+      "stateKey": "t19",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template19.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t19.bannerText",
+          "label": "Banner",
+          "togglePath": "t19.showBanner"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t19.byline",
+          "label": "Byline",
+          "togglePath": "t19.showByline"
+        },
+        {
+          "group": "Content",
+          "type": "textarea",
+          "path": "t19.body",
+          "label": "Body",
+          "rows": 4
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t19.bgImage",
+          "label": "Background"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t19.imageScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t19.imagePosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t19.imagePosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t19.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t19.fontFamily",
+          "label": "Font",
+          "customPath": "t19.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t19.bannerSize",
+          "label": "Banner size",
+          "min": 28,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t19.bannerColor",
+          "label": "Banner text"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t19.bannerBg",
+          "label": "Banner fill"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t19.bannerBorder",
+          "label": "Banner border"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t19.metaFontFamily",
+          "label": "Font",
+          "customPath": "t19.customMetaFontFamily",
+          "fonts": [
+            "DM Sans",
+            "Plus Jakarta Sans",
+            "Inter",
+            "Poppins",
+            "Montserrat",
+            "Roboto Condensed"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t19.bylineSize",
+          "label": "Byline size",
+          "min": 14,
+          "max": 36,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t19.bylineColor",
+          "label": "Byline color"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t19.bodySize",
+          "label": "Body size",
+          "min": 18,
+          "max": 48,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t19.bodyWeight",
+          "label": "Body weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t19.bodyColor",
+          "label": "Body color"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t19.bodyLineHeight",
+          "label": "Body line height",
+          "min": 1.05,
+          "max": 1.6,
+          "step": 0.01
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t19.textAlign",
+          "label": "Align",
+          "options": [
+            {
+              "label": "Left",
+              "value": "left"
+            },
+            {
+              "label": "Center",
+              "value": "center"
+            },
+            {
+              "label": "Right",
+              "value": "right"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t19.paddingH",
+          "label": "Padding X",
+          "min": 24,
+          "max": 100,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t19.paddingBottom",
+          "label": "Padding bottom",
+          "min": 32,
+          "max": 140,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t19.overlayColor",
+          "label": "Overlay"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.overlayOpacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t19.fadeColor",
+          "label": "Fade color"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.fadeHeight",
+          "label": "Fade height",
+          "min": 20,
+          "max": 70,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.fadeStrength",
+          "label": "Fade strength",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t19.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t19.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.watermarkSize",
+          "label": "Size",
+          "min": 60,
+          "max": 320,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t19.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template19",
+        "t19": {
+          "bannerText": "BREAKING NEWS",
+          "byline": "FROM SHAMS CHARANIA",
+          "body": "Payton Pritchard and the Boston Celtics have agreed to a 4-year, $90 million contract extension.",
+          "bgImage": "/demo/payton-pritchard.jpg",
+          "imagePosX": 46,
+          "imagePosY": 28,
+          "imageScale": 100,
+          "bgOpacity": 1,
+          "fontFamily": "Anton",
+          "customFontFamily": "",
+          "bannerSize": 52,
+          "bannerLetterSpacing": 0.02,
+          "bannerBg": "#0a0a0a",
+          "bannerBorder": "#CC0000",
+          "bannerColor": "#FFFFFF",
+          "showBanner": true,
+          "showByline": true,
+          "bylineSize": 18,
+          "bylineColor": "#FFFFFF",
+          "bylineLetterSpacing": 0.16,
+          "bodySize": 30,
+          "bodyWeight": 600,
+          "bodyColor": "#FFFFFF",
+          "bodyLineHeight": 1.32,
+          "bodyLetterSpacing": -0.01,
+          "bodyMaxWidth": 88,
+          "textAlign": "center",
+          "paddingH": 48,
+          "paddingBottom": 64,
+          "metaFontFamily": "Inter",
+          "customMetaFontFamily": "",
+          "overlayColor": "#000000",
+          "overlayOpacity": 0.06,
+          "fadeColor": "#050505",
+          "fadeHeight": 52,
+          "fadeStrength": 0.94,
+          "showWatermark": true,
+          "watermarkUrl": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/watermark.png",
+          "watermarkSize": 150,
+          "watermarkOpacity": 0.88,
+          "watermarkPosX": 94,
+          "watermarkPosY": 5
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template19 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t19"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template19"
+          },
+          "t19": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "bannerText": {
+                "type": "string",
+                "title": "Banner"
+              },
+              "showBanner": {
+                "type": "boolean"
+              },
+              "byline": {
+                "type": "string",
+                "title": "Byline"
+              },
+              "showByline": {
+                "type": "boolean"
+              },
+              "body": {
+                "type": "string",
+                "title": "Body"
+              },
+              "bgImage": {
+                "type": "string",
+                "title": "Background",
+                "description": "Image URL or data URI"
+              },
+              "imageScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imagePosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "imagePosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "bannerSize": {
+                "type": "number",
+                "title": "Banner size",
+                "minimum": 28,
+                "maximum": 80
+              },
+              "bannerColor": {
+                "type": "string",
+                "title": "Banner text"
+              },
+              "bannerBg": {
+                "type": "string",
+                "title": "Banner fill"
+              },
+              "bannerBorder": {
+                "type": "string",
+                "title": "Banner border"
+              },
+              "metaFontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customMetaFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "bylineSize": {
+                "type": "number",
+                "title": "Byline size",
+                "minimum": 14,
+                "maximum": 36
+              },
+              "bylineColor": {
+                "type": "string",
+                "title": "Byline color"
+              },
+              "bodySize": {
+                "type": "number",
+                "title": "Body size",
+                "minimum": 18,
+                "maximum": 48
+              },
+              "bodyWeight": {
+                "type": "number",
+                "title": "Body weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "bodyColor": {
+                "type": "string",
+                "title": "Body color"
+              },
+              "bodyLineHeight": {
+                "type": "number",
+                "title": "Body line height",
+                "minimum": 1.05,
+                "maximum": 1.6,
+                "multipleOf": 0.01
+              },
+              "textAlign": {
+                "type": "string",
+                "title": "Align",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              },
+              "paddingH": {
+                "type": "number",
+                "title": "Padding X",
+                "minimum": 24,
+                "maximum": 100
+              },
+              "paddingBottom": {
+                "type": "number",
+                "title": "Padding bottom",
+                "minimum": 32,
+                "maximum": 140
+              },
+              "overlayColor": {
+                "type": "string",
+                "title": "Overlay"
+              },
+              "overlayOpacity": {
+                "type": "number",
+                "title": "Overlay opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fadeColor": {
+                "type": "string",
+                "title": "Fade color"
+              },
+              "fadeHeight": {
+                "type": "number",
+                "title": "Fade height",
+                "minimum": 20,
+                "maximum": 70
+              },
+              "fadeStrength": {
+                "type": "number",
+                "title": "Fade strength",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 60,
+                "maximum": 320
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template20",
+      "slug": "scoreline",
+      "name": "Full-Time",
+      "note": "Full-Time - glass scoreboard bar over match photo",
+      "description": "Design full-time score Instagram posts with a glass scoreboard bar, team names, and big scores over action photos. Free HD 1080x1350 export.",
+      "pro": false,
+      "square": false,
+      "size": {
+        "width": 1080,
+        "height": 1350
+      },
+      "stateKey": "t20",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template20.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t20.homeName",
+          "label": "Home team"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t20.awayName",
+          "label": "Away team"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t20.homeScore",
+          "label": "Home score"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t20.awayScore",
+          "label": "Away score"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t20.statusText",
+          "label": "Status",
+          "togglePath": "t20.showStatus"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t20.centerMark",
+          "label": "Center mark",
+          "togglePath": "t20.showCenterMark"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t20.bgImage",
+          "label": "Background"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t20.imageScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t20.imagePosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t20.imagePosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t20.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t20.homeCrest",
+          "label": "Home crest"
+        },
+        {
+          "group": "Content",
+          "type": "toggle",
+          "path": "t20.showCrests",
+          "label": "Show crests"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t20.awayCrest",
+          "label": "Away crest"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t20.fontFamily",
+          "label": "Font",
+          "customPath": "t20.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t20.fontSize",
+          "label": "Score size",
+          "min": 48,
+          "max": 140,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t20.scoreColor",
+          "label": "Score color"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t20.metaFontFamily",
+          "label": "Font",
+          "customPath": "t20.customMetaFontFamily",
+          "fonts": [
+            "DM Sans",
+            "Plus Jakarta Sans",
+            "Inter",
+            "Poppins",
+            "Montserrat",
+            "Roboto Condensed"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t20.teamSize",
+          "label": "Team size",
+          "min": 14,
+          "max": 36,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t20.teamColor",
+          "label": "Team color"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t20.statusSize",
+          "label": "Status size",
+          "min": 12,
+          "max": 28,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t20.statusColor",
+          "label": "Status color"
+        },
+        {
+          "group": "Bar & look",
+          "type": "color",
+          "path": "t20.barColor",
+          "label": "Bar color"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.barOpacity",
+          "label": "Bar opacity",
+          "min": 0.4,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.barBottom",
+          "label": "Bar bottom",
+          "min": 24,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.barInset",
+          "label": "Bar inset",
+          "min": 8,
+          "max": 64,
+          "unit": "px"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.barRadius",
+          "label": "Bar corners",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        {
+          "group": "Bar & look",
+          "type": "color",
+          "path": "t20.bgColor",
+          "label": "Background"
+        },
+        {
+          "group": "Bar & look",
+          "type": "color",
+          "path": "t20.overlayColor",
+          "label": "Overlay"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.overlayOpacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.bottomFadeHeight",
+          "label": "Bottom fade",
+          "min": 10,
+          "max": 60,
+          "unit": "%"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.bottomFadeStrength",
+          "label": "Fade strength",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Bar & look",
+          "type": "toggle",
+          "path": "t20.showDots",
+          "label": "Dots"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.dotCount",
+          "label": "Dot count",
+          "min": 2,
+          "max": 6,
+          "step": 1
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.activeDot",
+          "label": "Active dot",
+          "min": 0,
+          "max": 5,
+          "step": 1
+        },
+        {
+          "group": "Bar & look",
+          "type": "color",
+          "path": "t20.dotColor",
+          "label": "Dot color"
+        },
+        {
+          "group": "Bar & look",
+          "type": "image",
+          "path": "t20.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Bar & look",
+          "type": "toggle",
+          "path": "t20.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.watermarkSize",
+          "label": "Size",
+          "min": 60,
+          "max": 320,
+          "unit": "px"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Bar & look",
+          "type": "slider",
+          "path": "t20.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template20",
+        "t20": {
+          "homeName": "LIVERPOOL",
+          "awayName": "ARSENAL",
+          "homeScore": "2",
+          "awayScore": "2",
+          "statusText": "FULL-TIME",
+          "scorer": "",
+          "bgImage": "/demo/liverpool-borini.jpg",
+          "imagePosX": 50,
+          "imagePosY": 18,
+          "imageScale": 100,
+          "bgOpacity": 1,
+          "fontFamily": "Anton",
+          "customFontFamily": "",
+          "fontSize": 84,
+          "scoreColor": "#FFFFFF",
+          "letterSpacing": 0.01,
+          "metaFontFamily": "Inter",
+          "customMetaFontFamily": "",
+          "teamSize": 18,
+          "teamColor": "#FFFFFF",
+          "teamLetterSpacing": 0.06,
+          "statusSize": 14,
+          "statusColor": "rgba(255,255,255,0.88)",
+          "statusLetterSpacing": 0.18,
+          "showStatus": true,
+          "showCenterMark": true,
+          "centerMark": "LIVE",
+          "markSize": 14,
+          "markColor": "#FFFFFF",
+          "showScorer": false,
+          "scorerSize": 16,
+          "scorerColor": "#FFFFFF",
+          "scorerLetterSpacing": 0.03,
+          "barColor": "#1A0A2E",
+          "barOpacity": 0.86,
+          "barBottom": 48,
+          "barInset": 24,
+          "barRadius": 14,
+          "barPadV": 18,
+          "barPadH": 22,
+          "showCrests": false,
+          "homeCrest": "",
+          "awayCrest": "",
+          "overlayColor": "#000000",
+          "overlayOpacity": 0.06,
+          "bottomFadeHeight": 36,
+          "bottomFadeStrength": 0.5,
+          "showDots": true,
+          "dotCount": 4,
+          "activeDot": 0,
+          "dotColor": "#FFFFFF",
+          "showWatermark": true,
+          "watermarkUrl": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/watermark.png",
+          "watermarkSize": 140,
+          "watermarkOpacity": 0.8,
+          "watermarkPosX": 8,
+          "watermarkPosY": 5
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template20 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t20"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template20"
+          },
+          "t20": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "homeName": {
+                "type": "string",
+                "title": "Home team"
+              },
+              "awayName": {
+                "type": "string",
+                "title": "Away team"
+              },
+              "homeScore": {
+                "type": "string",
+                "title": "Home score"
+              },
+              "awayScore": {
+                "type": "string",
+                "title": "Away score"
+              },
+              "statusText": {
+                "type": "string",
+                "title": "Status"
+              },
+              "showStatus": {
+                "type": "boolean"
+              },
+              "centerMark": {
+                "type": "string",
+                "title": "Center mark"
+              },
+              "showCenterMark": {
+                "type": "boolean"
+              },
+              "bgImage": {
+                "type": "string",
+                "title": "Background",
+                "description": "Image URL or data URI"
+              },
+              "imageScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imagePosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "imagePosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "homeCrest": {
+                "type": "string",
+                "title": "Home crest",
+                "description": "Image URL or data URI"
+              },
+              "showCrests": {
+                "type": "boolean",
+                "title": "Show crests"
+              },
+              "awayCrest": {
+                "type": "string",
+                "title": "Away crest",
+                "description": "Image URL or data URI"
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "fontSize": {
+                "type": "number",
+                "title": "Score size",
+                "minimum": 48,
+                "maximum": 140
+              },
+              "scoreColor": {
+                "type": "string",
+                "title": "Score color"
+              },
+              "metaFontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customMetaFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "teamSize": {
+                "type": "number",
+                "title": "Team size",
+                "minimum": 14,
+                "maximum": 36
+              },
+              "teamColor": {
+                "type": "string",
+                "title": "Team color"
+              },
+              "statusSize": {
+                "type": "number",
+                "title": "Status size",
+                "minimum": 12,
+                "maximum": 28
+              },
+              "statusColor": {
+                "type": "string",
+                "title": "Status color"
+              },
+              "barColor": {
+                "type": "string",
+                "title": "Bar color"
+              },
+              "barOpacity": {
+                "type": "number",
+                "title": "Bar opacity",
+                "minimum": 0.4,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "barBottom": {
+                "type": "number",
+                "title": "Bar bottom",
+                "minimum": 24,
+                "maximum": 160
+              },
+              "barInset": {
+                "type": "number",
+                "title": "Bar inset",
+                "minimum": 8,
+                "maximum": 64
+              },
+              "barRadius": {
+                "type": "number",
+                "title": "Bar corners",
+                "minimum": 0,
+                "maximum": 40
+              },
+              "bgColor": {
+                "type": "string",
+                "title": "Background"
+              },
+              "overlayColor": {
+                "type": "string",
+                "title": "Overlay"
+              },
+              "overlayOpacity": {
+                "type": "number",
+                "title": "Overlay opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "bottomFadeHeight": {
+                "type": "number",
+                "title": "Bottom fade",
+                "minimum": 10,
+                "maximum": 60
+              },
+              "bottomFadeStrength": {
+                "type": "number",
+                "title": "Fade strength",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "showDots": {
+                "type": "boolean",
+                "title": "Dots"
+              },
+              "dotCount": {
+                "type": "number",
+                "title": "Dot count",
+                "minimum": 2,
+                "maximum": 6,
+                "multipleOf": 1
+              },
+              "activeDot": {
+                "type": "number",
+                "title": "Active dot",
+                "minimum": 0,
+                "maximum": 5,
+                "multipleOf": 1
+              },
+              "dotColor": {
+                "type": "string",
+                "title": "Dot color"
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 60,
+                "maximum": 320
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template21",
+      "slug": "impact",
+      "name": "Impact",
+      "note": "Impact - mid-frame giant headline + caption over athlete",
+      "description": "Create bold sports Instagram posts with giant mid-frame headlines over athlete photos, a bottom caption, and carousel dots. Free HD 1080x1350 export.",
+      "pro": false,
+      "square": false,
+      "size": {
+        "width": 1080,
+        "height": 1350
+      },
+      "stateKey": "t21",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template21.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "textarea",
+          "path": "t21.headline",
+          "label": "Headline",
+          "hint": "Use [brackets] for accent words. Line breaks stay.",
+          "rows": 4
+        },
+        {
+          "group": "Content",
+          "type": "textarea",
+          "path": "t21.caption",
+          "label": "Caption",
+          "rows": 3,
+          "togglePath": "t21.showCaption"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t21.bgImage",
+          "label": "Background"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t21.imageScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t21.imagePosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t21.imagePosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t21.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t21.fontFamily",
+          "label": "Font",
+          "customPath": "t21.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.fontSize",
+          "label": "Headline size",
+          "min": 72,
+          "max": 200,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t21.fontWeight",
+          "label": "Weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t21.headlineColor",
+          "label": "Headline"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t21.highlightColor",
+          "label": "Highlight [ ]"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t21.textAlign",
+          "label": "Align",
+          "options": [
+            {
+              "label": "Left",
+              "value": "left"
+            },
+            {
+              "label": "Center",
+              "value": "center"
+            },
+            {
+              "label": "Right",
+              "value": "right"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "toggle",
+          "path": "t21.uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.lineHeight",
+          "label": "Line spacing",
+          "min": 0.75,
+          "max": 1.5,
+          "step": 0.01
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.letterSpacing",
+          "label": "Letter spacing",
+          "min": -0.06,
+          "max": 0.08,
+          "step": 0.005,
+          "unit": "em"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.paddingH",
+          "label": "Padding X",
+          "min": 16,
+          "max": 100,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.headlineTop",
+          "label": "Headline position",
+          "min": 20,
+          "max": 70,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.paddingBottom",
+          "label": "Caption bottom",
+          "min": 40,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.shadowBlur",
+          "label": "Shadow blur",
+          "min": 0,
+          "max": 60,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.shadowOpacity",
+          "label": "Shadow opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t21.metaFontFamily",
+          "label": "Font",
+          "customPath": "t21.customMetaFontFamily",
+          "fonts": [
+            "DM Sans",
+            "Plus Jakarta Sans",
+            "Inter",
+            "Poppins",
+            "Montserrat",
+            "Roboto Condensed"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t21.captionSize",
+          "label": "Caption size",
+          "min": 14,
+          "max": 40,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t21.captionWeight",
+          "label": "Caption weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t21.captionColor",
+          "label": "Caption color"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t21.overlayColor",
+          "label": "Overlay"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.overlayOpacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t21.fadeColor",
+          "label": "Fade color"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.fadeHeight",
+          "label": "Fade height",
+          "min": 20,
+          "max": 80,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.fadeStrength",
+          "label": "Fade strength",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t21.showDots",
+          "label": "Dots"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.dotCount",
+          "label": "Dot count",
+          "min": 2,
+          "max": 6,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.activeDot",
+          "label": "Active dot",
+          "min": 0,
+          "max": 5,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t21.dotColor",
+          "label": "Dot color"
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t21.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t21.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.watermarkSize",
+          "label": "Size",
+          "min": 60,
+          "max": 320,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t21.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template21",
+        "t21": {
+          "headline": "HOLY\n[SH*T]",
+          "caption": "THE BEARS ARE GOING TO WIN A SUPERBOWL..",
+          "bgImage": "/demo/khalil-mack.jpg",
+          "imagePosX": 46,
+          "imagePosY": 30,
+          "imageScale": 100,
+          "bgOpacity": 1,
+          "fontFamily": "Anton",
+          "customFontFamily": "",
+          "fontSize": 168,
+          "fontWeight": 400,
+          "headlineColor": "#FFFFFF",
+          "highlightColor": "#E64100",
+          "lineHeight": 0.99,
+          "letterSpacing": -0.01,
+          "textAlign": "center",
+          "uppercase": true,
+          "paddingH": 28,
+          "headlineTop": 50,
+          "paddingBottom": 64,
+          "shadowBlur": 28,
+          "shadowOpacity": 0.78,
+          "showCaption": true,
+          "captionSize": 22,
+          "captionWeight": 700,
+          "captionColor": "#FFFFFF",
+          "captionLetterSpacing": 0.05,
+          "captionLineHeight": 1.25,
+          "captionMaxWidth": 90,
+          "metaFontFamily": "Inter",
+          "customMetaFontFamily": "",
+          "overlayColor": "#000000",
+          "overlayOpacity": 0.04,
+          "fadeColor": "#000000",
+          "fadeHeight": 40,
+          "fadeStrength": 0.78,
+          "showDots": true,
+          "dotCount": 5,
+          "activeDot": 0,
+          "dotColor": "#FFFFFF",
+          "showWatermark": true,
+          "watermarkUrl": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/watermark.png",
+          "watermarkSize": 150,
+          "watermarkOpacity": 0.85,
+          "watermarkPosX": 94,
+          "watermarkPosY": 5
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template21 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t21"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template21"
+          },
+          "t21": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "headline": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "caption": {
+                "type": "string",
+                "title": "Caption"
+              },
+              "showCaption": {
+                "type": "boolean"
+              },
+              "bgImage": {
+                "type": "string",
+                "title": "Background",
+                "description": "Image URL or data URI"
+              },
+              "imageScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imagePosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "imagePosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "fontSize": {
+                "type": "number",
+                "title": "Headline size",
+                "minimum": 72,
+                "maximum": 200
+              },
+              "fontWeight": {
+                "type": "number",
+                "title": "Weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "headlineColor": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "highlightColor": {
+                "type": "string",
+                "title": "Highlight [ ]"
+              },
+              "textAlign": {
+                "type": "string",
+                "title": "Align",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              },
+              "uppercase": {
+                "type": "boolean",
+                "title": "Uppercase"
+              },
+              "lineHeight": {
+                "type": "number",
+                "title": "Line spacing",
+                "minimum": 0.75,
+                "maximum": 1.5,
+                "multipleOf": 0.01
+              },
+              "letterSpacing": {
+                "type": "number",
+                "title": "Letter spacing",
+                "minimum": -0.06,
+                "maximum": 0.08,
+                "multipleOf": 0.005
+              },
+              "paddingH": {
+                "type": "number",
+                "title": "Padding X",
+                "minimum": 16,
+                "maximum": 100
+              },
+              "headlineTop": {
+                "type": "number",
+                "title": "Headline position",
+                "minimum": 20,
+                "maximum": 70
+              },
+              "paddingBottom": {
+                "type": "number",
+                "title": "Caption bottom",
+                "minimum": 40,
+                "maximum": 160
+              },
+              "shadowBlur": {
+                "type": "number",
+                "title": "Shadow blur",
+                "minimum": 0,
+                "maximum": 60
+              },
+              "shadowOpacity": {
+                "type": "number",
+                "title": "Shadow opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "metaFontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customMetaFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "captionSize": {
+                "type": "number",
+                "title": "Caption size",
+                "minimum": 14,
+                "maximum": 40
+              },
+              "captionWeight": {
+                "type": "number",
+                "title": "Caption weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "captionColor": {
+                "type": "string",
+                "title": "Caption color"
+              },
+              "overlayColor": {
+                "type": "string",
+                "title": "Overlay"
+              },
+              "overlayOpacity": {
+                "type": "number",
+                "title": "Overlay opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fadeColor": {
+                "type": "string",
+                "title": "Fade color"
+              },
+              "fadeHeight": {
+                "type": "number",
+                "title": "Fade height",
+                "minimum": 20,
+                "maximum": 80
+              },
+              "fadeStrength": {
+                "type": "number",
+                "title": "Fade strength",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "showDots": {
+                "type": "boolean",
+                "title": "Dots"
+              },
+              "dotCount": {
+                "type": "number",
+                "title": "Dot count",
+                "minimum": 2,
+                "maximum": 6,
+                "multipleOf": 1
+              },
+              "activeDot": {
+                "type": "number",
+                "title": "Active dot",
+                "minimum": 0,
+                "maximum": 5,
+                "multipleOf": 1
+              },
+              "dotColor": {
+                "type": "string",
+                "title": "Dot color"
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 60,
+                "maximum": 320
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template22",
+      "slug": "trending",
+      "name": "Trending",
+      "note": "Trending - team wash + huge TRENDING type over photo",
+      "description": "Build trending sports Instagram posts with a team-color wash and huge TRENDING type over the athlete photo. Free HD PNG export.",
+      "pro": false,
+      "square": false,
+      "size": {
+        "width": 1080,
+        "height": 1350
+      },
+      "stateKey": "t22",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template22.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "textarea",
+          "path": "t22.headline",
+          "label": "Headline",
+          "hint": "Usually TRENDING or a short hype word. [brackets] work.",
+          "rows": 4
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t22.bgImage",
+          "label": "Background"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.imageScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.imagePosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.imagePosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t22.markUrl",
+          "label": "Center mark"
+        },
+        {
+          "group": "Content",
+          "type": "toggle",
+          "path": "t22.showMark",
+          "label": "Show mark"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.markSize",
+          "label": "Size",
+          "min": 80,
+          "max": 360,
+          "unit": "px"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.markBottom",
+          "label": "Bottom",
+          "min": 120,
+          "max": 420,
+          "unit": "px"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t22.markOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Banner",
+          "type": "toggle",
+          "path": "t22.showBanner",
+          "label": "Banner mode"
+        },
+        {
+          "group": "Banner",
+          "type": "font",
+          "path": "t22.fontFamily",
+          "label": "Font",
+          "customPath": "t22.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Banner",
+          "type": "slider",
+          "path": "t22.bannerSize",
+          "label": "Banner size",
+          "min": 36,
+          "max": 100,
+          "unit": "px"
+        },
+        {
+          "group": "Banner",
+          "type": "color",
+          "path": "t22.bannerBg",
+          "label": "Banner fill"
+        },
+        {
+          "group": "Banner",
+          "type": "color",
+          "path": "t22.bannerBorder",
+          "label": "Banner border"
+        },
+        {
+          "group": "Banner",
+          "type": "slider",
+          "path": "t22.bannerBorderWidth",
+          "label": "Border width",
+          "min": 0,
+          "max": 10,
+          "unit": "px"
+        },
+        {
+          "group": "Banner",
+          "type": "color",
+          "path": "t22.bannerColor",
+          "label": "Banner text"
+        },
+        {
+          "group": "Banner",
+          "type": "color",
+          "path": "t22.highlightColor",
+          "label": "Highlight [ ]"
+        },
+        {
+          "group": "Banner",
+          "type": "slider",
+          "path": "t22.fontSize",
+          "label": "Plain headline size",
+          "min": 64,
+          "max": 180,
+          "unit": "px"
+        },
+        {
+          "group": "Banner",
+          "type": "color",
+          "path": "t22.headlineColor",
+          "label": "Plain headline"
+        },
+        {
+          "group": "Banner",
+          "type": "select",
+          "path": "t22.textAlign",
+          "label": "Align",
+          "options": [
+            {
+              "label": "Left",
+              "value": "left"
+            },
+            {
+              "label": "Center",
+              "value": "center"
+            },
+            {
+              "label": "Right",
+              "value": "right"
+            }
+          ]
+        },
+        {
+          "group": "Banner",
+          "type": "toggle",
+          "path": "t22.uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "group": "Banner",
+          "type": "slider",
+          "path": "t22.paddingH",
+          "label": "Padding X",
+          "min": 12,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Banner",
+          "type": "slider",
+          "path": "t22.paddingBottom",
+          "label": "Padding bottom",
+          "min": 24,
+          "max": 120,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t22.overlayColor",
+          "label": "Overlay"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.overlayOpacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t22.fadeColor",
+          "label": "Wash color"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.fadeHeight",
+          "label": "Wash height",
+          "min": 20,
+          "max": 70,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.fadeStrength",
+          "label": "Wash strength",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t22.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t22.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.watermarkSize",
+          "label": "Size",
+          "min": 60,
+          "max": 320,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t22.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template22",
+        "t22": {
+          "headline": "TRENDING",
+          "bgImage": "/demo/mike-evans.jpg",
+          "imagePosX": 48,
+          "imagePosY": 32,
+          "imageScale": 100,
+          "bgOpacity": 1,
+          "fontFamily": "Anton",
+          "customFontFamily": "",
+          "fontSize": 140,
+          "fontWeight": 400,
+          "headlineColor": "#FFFFFF",
+          "headlineFadeColor": "#C8C8C8",
+          "highlightColor": "#FFFFFF",
+          "lineHeight": 0.88,
+          "letterSpacing": 0.01,
+          "textAlign": "center",
+          "uppercase": true,
+          "paddingH": 24,
+          "paddingBottom": 42,
+          "showBanner": false,
+          "bannerBg": "#C6011F",
+          "bannerBorder": "#FFFFFF",
+          "bannerBorderWidth": 4,
+          "bannerColor": "#FFFFFF",
+          "bannerSize": 64,
+          "bannerLetterSpacing": 0.02,
+          "showMark": false,
+          "markUrl": "",
+          "markSize": 180,
+          "markBottom": 210,
+          "markOpacity": 1,
+          "overlayColor": "#000000",
+          "overlayOpacity": 0.04,
+          "fadeColor": "#6B0000",
+          "fadeHeight": 38,
+          "fadeStrength": 0.88,
+          "showWatermark": true,
+          "watermarkUrl": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/watermark.png",
+          "watermarkSize": 150,
+          "watermarkOpacity": 0.85,
+          "watermarkPosX": 94,
+          "watermarkPosY": 5
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template22 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t22"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template22"
+          },
+          "t22": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "headline": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "bgImage": {
+                "type": "string",
+                "title": "Background",
+                "description": "Image URL or data URI"
+              },
+              "imageScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imagePosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "imagePosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "markUrl": {
+                "type": "string",
+                "title": "Center mark",
+                "description": "Image URL or data URI"
+              },
+              "showMark": {
+                "type": "boolean",
+                "title": "Show mark"
+              },
+              "markSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 80,
+                "maximum": 360
+              },
+              "markBottom": {
+                "type": "number",
+                "title": "Bottom",
+                "minimum": 120,
+                "maximum": 420
+              },
+              "markOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "showBanner": {
+                "type": "boolean",
+                "title": "Banner mode"
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "bannerSize": {
+                "type": "number",
+                "title": "Banner size",
+                "minimum": 36,
+                "maximum": 100
+              },
+              "bannerBg": {
+                "type": "string",
+                "title": "Banner fill"
+              },
+              "bannerBorder": {
+                "type": "string",
+                "title": "Banner border"
+              },
+              "bannerBorderWidth": {
+                "type": "number",
+                "title": "Border width",
+                "minimum": 0,
+                "maximum": 10
+              },
+              "bannerColor": {
+                "type": "string",
+                "title": "Banner text"
+              },
+              "highlightColor": {
+                "type": "string",
+                "title": "Highlight [ ]"
+              },
+              "fontSize": {
+                "type": "number",
+                "title": "Plain headline size",
+                "minimum": 64,
+                "maximum": 180
+              },
+              "headlineColor": {
+                "type": "string",
+                "title": "Plain headline"
+              },
+              "textAlign": {
+                "type": "string",
+                "title": "Align",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              },
+              "uppercase": {
+                "type": "boolean",
+                "title": "Uppercase"
+              },
+              "paddingH": {
+                "type": "number",
+                "title": "Padding X",
+                "minimum": 12,
+                "maximum": 80
+              },
+              "paddingBottom": {
+                "type": "number",
+                "title": "Padding bottom",
+                "minimum": 24,
+                "maximum": 120
+              },
+              "overlayColor": {
+                "type": "string",
+                "title": "Overlay"
+              },
+              "overlayOpacity": {
+                "type": "number",
+                "title": "Overlay opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fadeColor": {
+                "type": "string",
+                "title": "Wash color"
+              },
+              "fadeHeight": {
+                "type": "number",
+                "title": "Wash height",
+                "minimum": 20,
+                "maximum": 70
+              },
+              "fadeStrength": {
+                "type": "number",
+                "title": "Wash strength",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 60,
+                "maximum": 320
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template23",
+      "slug": "world-tape",
+      "name": "World Tape",
+      "note": "World Tape - dual photo + red badge + black gossip footer (1:1) [Pro]",
+      "description": "Build 1080x1080 viral gossip Instagram posts with a dual photo top, red badge, and bold condensed headline on a black footer. Pro layout. Export HD PNG.",
+      "pro": true,
+      "square": true,
+      "size": {
+        "width": 1080,
+        "height": 1080
+      },
+      "stateKey": "t23",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template23.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "textarea",
+          "path": "t23.headline",
+          "label": "Headline",
+          "hint": "All-caps gossip headline. [brackets] tint accent words.",
+          "rows": 4
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t23.badgeText",
+          "label": "Badge",
+          "togglePath": "t23.showBadge"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t23.siteText",
+          "label": "Site line",
+          "togglePath": "t23.showSite"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t23.imageLeft",
+          "label": "Left / main photo"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.leftPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.leftPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.leftScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t23.imageRight",
+          "label": "Right photo"
+        },
+        {
+          "group": "Content",
+          "type": "toggle",
+          "path": "t23.showDual",
+          "label": "Split dual photos"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.rightPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.rightPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.rightScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.leftWidth",
+          "label": "Left width",
+          "min": 30,
+          "max": 70,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.imageSplit",
+          "label": "Photo height",
+          "min": 50,
+          "max": 75,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t23.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t23.fontFamily",
+          "label": "Font",
+          "customPath": "t23.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.fontSize",
+          "label": "Headline size",
+          "min": 40,
+          "max": 96,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t23.fontWeight",
+          "label": "Weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t23.headlineColor",
+          "label": "Headline"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t23.highlightColor",
+          "label": "Highlight [ ]"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t23.textAlign",
+          "label": "Align",
+          "options": [
+            {
+              "label": "Left",
+              "value": "left"
+            },
+            {
+              "label": "Center",
+              "value": "center"
+            },
+            {
+              "label": "Right",
+              "value": "right"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "toggle",
+          "path": "t23.uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.lineHeight",
+          "label": "Line height",
+          "min": 0.75,
+          "max": 1.15,
+          "step": 0.01
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.letterSpacing",
+          "label": "Letter spacing",
+          "min": -0.05,
+          "max": 0.06,
+          "step": 0.005,
+          "unit": "em"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.paddingH",
+          "label": "Padding X",
+          "min": 20,
+          "max": 100,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.paddingTop",
+          "label": "Footer top pad",
+          "min": 12,
+          "max": 64,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.paddingBottom",
+          "label": "Footer bottom pad",
+          "min": 10,
+          "max": 56,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t23.metaFontFamily",
+          "label": "Font",
+          "customPath": "t23.customMetaFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.badgeSize",
+          "label": "Badge size",
+          "min": 12,
+          "max": 32,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t23.badgeBg",
+          "label": "Badge fill"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t23.badgeColor",
+          "label": "Badge text"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.badgeOffset",
+          "label": "Badge overlap",
+          "min": -40,
+          "max": 12,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t23.siteSize",
+          "label": "Site size",
+          "min": 10,
+          "max": 22,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t23.siteColor",
+          "label": "Site color"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t23.siteRuleColor",
+          "label": "Site rules"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t23.footerBg",
+          "label": "Footer"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t23.ribbonColor",
+          "label": "Corner color"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t23.showRibbon",
+          "label": "Show corner mark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.ribbonSize",
+          "label": "Corner size",
+          "min": 60,
+          "max": 140,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t23.logoUrl",
+          "label": "Corner logo"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.logoSize",
+          "label": "Logo size",
+          "min": 20,
+          "max": 60,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t23.imageSeparator",
+          "label": "Photo divider"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t23.separatorColor",
+          "label": "Divider color"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.separatorWidth",
+          "label": "Divider width",
+          "min": 1,
+          "max": 8,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t23.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t23.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.watermarkSize",
+          "label": "Size",
+          "min": 60,
+          "max": 320,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t23.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template23",
+        "t23": {
+          "headline": "Kai Cenat leads Twitch creators with $927K, followed by xQc in second at $357K.",
+          "badgeText": "VIA NOBODY",
+          "siteText": "WORLDSTAR.COM",
+          "imageLeft": "/demo/kai-cenat.jpg",
+          "imageRight": "/demo/twitch-income-chart.png",
+          "leftPosX": 48,
+          "leftPosY": 42,
+          "leftScale": 100,
+          "rightPosX": 4,
+          "rightPosY": 12,
+          "rightScale": 100,
+          "leftWidth": 43,
+          "showDual": true,
+          "imageSeparator": false,
+          "separatorWidth": 2,
+          "separatorColor": "#000000",
+          "imageSplit": 64,
+          "bgOpacity": 1,
+          "showRibbon": true,
+          "ribbonColor": "#000000",
+          "ribbonSize": 140,
+          "logoUrl": "/demo/zia-symbol.png",
+          "logoSize": 60,
+          "showBadge": true,
+          "badgeBg": "#ba5518",
+          "badgeColor": "#FFFFFF",
+          "badgeSize": 20,
+          "badgeLetterSpacing": 0.06,
+          "badgeOffset": -14,
+          "fontFamily": "Impact",
+          "customFontFamily": "",
+          "fontSize": 72,
+          "fontWeight": 400,
+          "headlineColor": "#FFFFFF",
+          "highlightColor": "#CC0000",
+          "lineHeight": 0.98,
+          "letterSpacing": -0.01,
+          "textAlign": "center",
+          "uppercase": true,
+          "paddingH": 52,
+          "paddingTop": 34,
+          "paddingBottom": 26,
+          "footerBg": "#000000",
+          "showSite": true,
+          "siteColor": "#C8C8C8",
+          "siteSize": 13,
+          "siteLetterSpacing": 0.16,
+          "siteRuleColor": "#ba5518",
+          "siteGap": 18,
+          "metaFontFamily": "Impact",
+          "customMetaFontFamily": "",
+          "showWatermark": false,
+          "watermarkUrl": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/holder/watermark.png",
+          "watermarkSize": 120,
+          "watermarkOpacity": 0.75,
+          "watermarkPosX": 94,
+          "watermarkPosY": 6
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template23 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t23"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template23"
+          },
+          "t23": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "headline": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "badgeText": {
+                "type": "string",
+                "title": "Badge"
+              },
+              "showBadge": {
+                "type": "boolean"
+              },
+              "siteText": {
+                "type": "string",
+                "title": "Site line"
+              },
+              "showSite": {
+                "type": "boolean"
+              },
+              "imageLeft": {
+                "type": "string",
+                "title": "Left / main photo",
+                "description": "Image URL or data URI"
+              },
+              "leftPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "leftPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "leftScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imageRight": {
+                "type": "string",
+                "title": "Right photo",
+                "description": "Image URL or data URI"
+              },
+              "showDual": {
+                "type": "boolean",
+                "title": "Split dual photos"
+              },
+              "rightPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "rightPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "rightScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "leftWidth": {
+                "type": "number",
+                "title": "Left width",
+                "minimum": 30,
+                "maximum": 70
+              },
+              "imageSplit": {
+                "type": "number",
+                "title": "Photo height",
+                "minimum": 50,
+                "maximum": 75
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "fontSize": {
+                "type": "number",
+                "title": "Headline size",
+                "minimum": 40,
+                "maximum": 96
+              },
+              "fontWeight": {
+                "type": "number",
+                "title": "Weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "headlineColor": {
+                "type": "string",
+                "title": "Headline"
+              },
+              "highlightColor": {
+                "type": "string",
+                "title": "Highlight [ ]"
+              },
+              "textAlign": {
+                "type": "string",
+                "title": "Align",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              },
+              "uppercase": {
+                "type": "boolean",
+                "title": "Uppercase"
+              },
+              "lineHeight": {
+                "type": "number",
+                "title": "Line height",
+                "minimum": 0.75,
+                "maximum": 1.15,
+                "multipleOf": 0.01
+              },
+              "letterSpacing": {
+                "type": "number",
+                "title": "Letter spacing",
+                "minimum": -0.05,
+                "maximum": 0.06,
+                "multipleOf": 0.005
+              },
+              "paddingH": {
+                "type": "number",
+                "title": "Padding X",
+                "minimum": 20,
+                "maximum": 100
+              },
+              "paddingTop": {
+                "type": "number",
+                "title": "Footer top pad",
+                "minimum": 12,
+                "maximum": 64
+              },
+              "paddingBottom": {
+                "type": "number",
+                "title": "Footer bottom pad",
+                "minimum": 10,
+                "maximum": 56
+              },
+              "metaFontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customMetaFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "badgeSize": {
+                "type": "number",
+                "title": "Badge size",
+                "minimum": 12,
+                "maximum": 32
+              },
+              "badgeBg": {
+                "type": "string",
+                "title": "Badge fill"
+              },
+              "badgeColor": {
+                "type": "string",
+                "title": "Badge text"
+              },
+              "badgeOffset": {
+                "type": "number",
+                "title": "Badge overlap",
+                "minimum": -40,
+                "maximum": 12
+              },
+              "siteSize": {
+                "type": "number",
+                "title": "Site size",
+                "minimum": 10,
+                "maximum": 22
+              },
+              "siteColor": {
+                "type": "string",
+                "title": "Site color"
+              },
+              "siteRuleColor": {
+                "type": "string",
+                "title": "Site rules"
+              },
+              "footerBg": {
+                "type": "string",
+                "title": "Footer"
+              },
+              "ribbonColor": {
+                "type": "string",
+                "title": "Corner color"
+              },
+              "showRibbon": {
+                "type": "boolean",
+                "title": "Show corner mark"
+              },
+              "ribbonSize": {
+                "type": "number",
+                "title": "Corner size",
+                "minimum": 60,
+                "maximum": 140
+              },
+              "logoUrl": {
+                "type": "string",
+                "title": "Corner logo",
+                "description": "Image URL or data URI"
+              },
+              "logoSize": {
+                "type": "number",
+                "title": "Logo size",
+                "minimum": 20,
+                "maximum": 60
+              },
+              "imageSeparator": {
+                "type": "boolean",
+                "title": "Photo divider"
+              },
+              "separatorColor": {
+                "type": "string",
+                "title": "Divider color"
+              },
+              "separatorWidth": {
+                "type": "number",
+                "title": "Divider width",
+                "minimum": 1,
+                "maximum": 8
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 60,
+                "maximum": 320
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "template24",
+      "slug": "match-tape",
+      "name": "Match Tape",
+      "note": "Match Tape - grain wash + crests + FULL-TIME score (1:1) [Pro]",
+      "description": "Design 1080x1080 full-time score Instagram posts with film grain, purple wash, crest tiles, and a Premier League–style scoreboard over match action. Pro layout. Export HD PNG.",
+      "pro": true,
+      "square": true,
+      "size": {
+        "width": 1080,
+        "height": 1080
+      },
+      "stateKey": "t24",
+      "previewImage": "https://cdn.jsdelivr.net/gh/nicholasxdavis/instatools-cdn@master/src/ui/templates/template24.png",
+      "fields": [
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.homeName",
+          "label": "Home team"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.awayName",
+          "label": "Away team"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.homeScore",
+          "label": "Home score"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.awayScore",
+          "label": "Away score"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.statusText",
+          "label": "Status",
+          "hint": "Use [bold] and {italic} spans.",
+          "togglePath": "t24.showStatus"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.scorer",
+          "label": "Scorer",
+          "hint": "Example: [16'] Kai Havertz — [bold] {italic}.",
+          "togglePath": "t24.showScorer"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t24.bgImage",
+          "label": "Background"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t24.imageScale",
+          "label": "Zoom",
+          "min": 100,
+          "max": 250,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t24.imagePosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t24.imagePosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "slider",
+          "path": "t24.bgOpacity",
+          "label": "Photo opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t24.homeCrest",
+          "label": "Home crest"
+        },
+        {
+          "group": "Content",
+          "type": "toggle",
+          "path": "t24.showCrests",
+          "label": "Show crests"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t24.awayCrest",
+          "label": "Away crest"
+        },
+        {
+          "group": "Content",
+          "type": "image",
+          "path": "t24.centerMarkUrl",
+          "label": "Center mark image"
+        },
+        {
+          "group": "Content",
+          "type": "toggle",
+          "path": "t24.showCenterMark",
+          "label": "Show center mark"
+        },
+        {
+          "group": "Content",
+          "type": "text",
+          "path": "t24.centerMark",
+          "label": "Fallback text"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t24.fontFamily",
+          "label": "Font",
+          "customPath": "t24.customFontFamily",
+          "fonts": [
+            "Archivo Black",
+            "Anton",
+            "Bebas Neue",
+            "DM Sans",
+            "Impact",
+            "Inter",
+            "Montserrat",
+            "Oswald",
+            "Plus Jakarta Sans",
+            "Poppins",
+            "Roboto Condensed",
+            "Teko",
+            "Rubik Dirt",
+            "Playfair Display",
+            "Newsreader",
+            "Libre Baskerville",
+            "Georgia",
+            "Arial"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.fontSize",
+          "label": "Score size",
+          "min": 56,
+          "max": 200,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t24.scoreColor",
+          "label": "Score color"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.scoreGap",
+          "label": "Score gap",
+          "min": 0,
+          "max": 48,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "font",
+          "path": "t24.metaFontFamily",
+          "label": "Font",
+          "customPath": "t24.customMetaFontFamily",
+          "fonts": [
+            "DM Sans",
+            "Plus Jakarta Sans",
+            "Inter",
+            "Poppins",
+            "Montserrat",
+            "Roboto Condensed"
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.teamSize",
+          "label": "Team size",
+          "min": 12,
+          "max": 48,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t24.teamColor",
+          "label": "Team color"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t24.teamWeight",
+          "label": "Team weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t24.teamStyle",
+          "label": "Team style",
+          "options": [
+            {
+              "label": "Normal",
+              "value": "normal"
+            },
+            {
+              "label": "Italic",
+              "value": "italic"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.teamLetterSpacing",
+          "label": "Team tracking",
+          "min": -0.04,
+          "max": 0.2,
+          "step": 0.005,
+          "unit": "em"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.teamGap",
+          "label": "Crest → name gap",
+          "min": 0,
+          "max": 28,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.statusSize",
+          "label": "Status size",
+          "min": 10,
+          "max": 36,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t24.statusColor",
+          "label": "Status color"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t24.statusWeight",
+          "label": "Status weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t24.statusStyle",
+          "label": "Status style",
+          "options": [
+            {
+              "label": "Normal",
+              "value": "normal"
+            },
+            {
+              "label": "Italic",
+              "value": "italic"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.statusLetterSpacing",
+          "label": "Status tracking",
+          "min": -0.04,
+          "max": 0.4,
+          "step": 0.01,
+          "unit": "em"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.statusGap",
+          "label": "Status gap",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.statusOffsetX",
+          "label": "Status offset X",
+          "min": -80,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.statusOffsetY",
+          "label": "Status offset Y",
+          "min": -80,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.markSize",
+          "label": "Mark size",
+          "min": 12,
+          "max": 96,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t24.markColor",
+          "label": "Mark color"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.markOpacity",
+          "label": "Mark opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.markGap",
+          "label": "Mark gap",
+          "min": 0,
+          "max": 48,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.markOffsetX",
+          "label": "Mark offset X",
+          "min": -60,
+          "max": 60,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.markOffsetY",
+          "label": "Mark offset Y",
+          "min": -60,
+          "max": 60,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.scorerSize",
+          "label": "Scorer size",
+          "min": 11,
+          "max": 36,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "color",
+          "path": "t24.scorerColor",
+          "label": "Scorer color"
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t24.scorerWeight",
+          "label": "Scorer weight",
+          "options": [
+            {
+              "label": "Light",
+              "value": 300
+            },
+            {
+              "label": "Regular",
+              "value": 400
+            },
+            {
+              "label": "Medium",
+              "value": 500
+            },
+            {
+              "label": "Semibold",
+              "value": 600
+            },
+            {
+              "label": "Bold",
+              "value": 700
+            },
+            {
+              "label": "Extrabold",
+              "value": 800
+            },
+            {
+              "label": "Black",
+              "value": 900
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "select",
+          "path": "t24.scorerStyle",
+          "label": "Scorer style",
+          "options": [
+            {
+              "label": "Normal",
+              "value": "normal"
+            },
+            {
+              "label": "Italic",
+              "value": "italic"
+            }
+          ]
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.scorerLetterSpacing",
+          "label": "Scorer tracking",
+          "min": -0.04,
+          "max": 0.2,
+          "step": 0.005,
+          "unit": "em"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.scorerGap",
+          "label": "Scorer gap",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.scorerOffsetX",
+          "label": "Scorer offset X",
+          "min": -80,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Typography",
+          "type": "slider",
+          "path": "t24.scorerOffsetY",
+          "label": "Scorer offset Y",
+          "min": -80,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t24.washColor",
+          "label": "Wash color"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.washOpacity",
+          "label": "Wash opacity",
+          "min": 0.05,
+          "max": 1,
+          "step": 0.01,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.washHeight",
+          "label": "Wash height",
+          "min": 24,
+          "max": 60,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.boardBottom",
+          "label": "Board bottom",
+          "min": 24,
+          "max": 140,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.boardInset",
+          "label": "Board inset",
+          "min": 16,
+          "max": 80,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t24.crestTileColor",
+          "label": "Crest tile"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.crestTileOpacity",
+          "label": "Tile opacity",
+          "min": 0.2,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.crestSize",
+          "label": "Crest size",
+          "min": 40,
+          "max": 140,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.crestRadius",
+          "label": "Crest corners",
+          "min": 0,
+          "max": 28,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.noiseAmount",
+          "label": "Grain",
+          "min": 0,
+          "max": 1,
+          "step": 0.02
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t24.overlayColor",
+          "label": "Overlay"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.overlayOpacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.02,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t24.showPattern",
+          "label": "Wash pattern"
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t24.patternUrl",
+          "label": "Pattern mark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternSize",
+          "label": "Pattern size",
+          "min": 28,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternOpacity",
+          "label": "Pattern opacity",
+          "min": 0,
+          "max": 0.5,
+          "step": 0.01,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternCount",
+          "label": "Icon count",
+          "min": 1,
+          "max": 36,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternGap",
+          "label": "Icon spacing",
+          "min": 20,
+          "max": 240,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t24.patternRandom",
+          "label": "Random spacing"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternJitter",
+          "label": "Random amount",
+          "min": 0,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternPadTop",
+          "label": "Pad top",
+          "min": 0,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternPadLeft",
+          "label": "Pad left",
+          "min": 0,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternPadRight",
+          "label": "Pad right",
+          "min": 0,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternPadBottom",
+          "label": "Pad bottom",
+          "min": 0,
+          "max": 160,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.patternSeed",
+          "label": "Shuffle seed",
+          "min": 1,
+          "max": 99,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t24.showDots",
+          "label": "Dots"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.dotCount",
+          "label": "Dot count",
+          "min": 2,
+          "max": 6,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.activeDot",
+          "label": "Active dot",
+          "min": 0,
+          "max": 5,
+          "step": 1
+        },
+        {
+          "group": "Look",
+          "type": "color",
+          "path": "t24.dotColor",
+          "label": "Dot color"
+        },
+        {
+          "group": "Look",
+          "type": "image",
+          "path": "t24.watermarkUrl",
+          "label": "Watermark"
+        },
+        {
+          "group": "Look",
+          "type": "toggle",
+          "path": "t24.showWatermark",
+          "label": "Show watermark"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.watermarkSize",
+          "label": "Size",
+          "min": 40,
+          "max": 220,
+          "unit": "px"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.watermarkOpacity",
+          "label": "Opacity",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.watermarkPosX",
+          "label": "Position X",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        },
+        {
+          "group": "Look",
+          "type": "slider",
+          "path": "t24.watermarkPosY",
+          "label": "Position Y",
+          "min": 0,
+          "max": 100,
+          "unit": "%"
+        }
+      ],
+      "defaults": {
+        "template": "template24",
+        "t24": {
+          "homeName": "LIVERPOOL",
+          "awayName": "ARSENAL",
+          "homeScore": "0",
+          "awayScore": "1",
+          "statusText": "FULL-TIME",
+          "scorer": "[16'] Kai Havertz",
+          "bgImage": "/demo/match-fulltime.jpg",
+          "imagePosX": 53,
+          "imagePosY": 0,
+          "imageScale": 100,
+          "bgOpacity": 1,
+          "fontFamily": "Anton",
+          "customFontFamily": "",
+          "fontSize": 160,
+          "scoreColor": "#FFFFFF",
+          "letterSpacing": 0.01,
+          "scoreGap": 14,
+          "metaFontFamily": "Inter",
+          "customMetaFontFamily": "",
+          "teamSize": 41,
+          "teamColor": "#FFFFFF",
+          "teamLetterSpacing": 0.14,
+          "teamWeight": 800,
+          "teamStyle": "normal",
+          "teamGap": 28,
+          "statusSize": 24,
+          "statusColor": "rgba(255,255,255,0.92)",
+          "statusLetterSpacing": 0.2,
+          "statusWeight": 800,
+          "statusStyle": "normal",
+          "statusGap": 6,
+          "statusOffsetX": 0,
+          "statusOffsetY": 30,
+          "showStatus": true,
+          "showCenterMark": false,
+          "centerMark": "FT",
+          "centerMarkUrl": "/demo/pl-lion.png",
+          "markSize": 36,
+          "markColor": "#FFFFFF",
+          "markOpacity": 1,
+          "markGap": 14,
+          "markOffsetX": 0,
+          "markOffsetY": 0,
+          "showScorer": true,
+          "scorerSize": 18,
+          "scorerColor": "rgba(255,255,255,0.88)",
+          "scorerLetterSpacing": 0.02,
+          "scorerWeight": 600,
+          "scorerStyle": "normal",
+          "scorerGap": 6,
+          "scorerOffsetX": 0,
+          "scorerOffsetY": 0,
+          "showCrests": true,
+          "homeCrest": "/demo/liverpool-crest-white.png",
+          "awayCrest": "/demo/arsenal-crest.png",
+          "crestSize": 96,
+          "crestRadius": 0,
+          "crestTileColor": "#cba3f0",
+          "crestTileOpacity": 0.64,
+          "washColor": "#A855F7",
+          "washOpacity": 0.46,
+          "washHeight": 40,
+          "showPattern": true,
+          "patternUrl": "/demo/zia-symbol.png",
+          "patternSize": 98,
+          "patternOpacity": 0.25,
+          "patternCount": 8,
+          "patternGap": 183,
+          "patternRandom": true,
+          "patternJitter": 93,
+          "patternPadTop": 0,
+          "patternPadLeft": 79,
+          "patternPadRight": 0,
+          "patternPadBottom": 0,
+          "patternSeed": 49,
+          "boardBottom": 52,
+          "boardInset": 34,
+          "noiseAmount": 0.12,
+          "overlayColor": "#FFFFFF",
+          "overlayOpacity": 0.08,
+          "showDots": true,
+          "dotCount": 2,
+          "activeDot": 5,
+          "dotColor": "#FFFFFF",
+          "showWatermark": true,
+          "watermarkUrl": "/demo/liverpool-crest-white.png",
+          "watermarkSize": 105,
+          "watermarkOpacity": 0.92,
+          "watermarkPosX": 3,
+          "watermarkPosY": 1
+        }
+      },
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "template24 design",
+        "type": "object",
+        "required": [
+          "template",
+          "t24"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "template": {
+            "const": "template24"
+          },
+          "t24": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "homeName": {
+                "type": "string",
+                "title": "Home team"
+              },
+              "awayName": {
+                "type": "string",
+                "title": "Away team"
+              },
+              "homeScore": {
+                "type": "string",
+                "title": "Home score"
+              },
+              "awayScore": {
+                "type": "string",
+                "title": "Away score"
+              },
+              "statusText": {
+                "type": "string",
+                "title": "Status"
+              },
+              "showStatus": {
+                "type": "boolean"
+              },
+              "scorer": {
+                "type": "string",
+                "title": "Scorer"
+              },
+              "showScorer": {
+                "type": "boolean"
+              },
+              "bgImage": {
+                "type": "string",
+                "title": "Background",
+                "description": "Image URL or data URI"
+              },
+              "imageScale": {
+                "type": "number",
+                "title": "Zoom",
+                "minimum": 100,
+                "maximum": 250
+              },
+              "imagePosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "imagePosY": {
+                "type": "number",
+                "title": "Position Y",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "bgOpacity": {
+                "type": "number",
+                "title": "Photo opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "homeCrest": {
+                "type": "string",
+                "title": "Home crest",
+                "description": "Image URL or data URI"
+              },
+              "showCrests": {
+                "type": "boolean",
+                "title": "Show crests"
+              },
+              "awayCrest": {
+                "type": "string",
+                "title": "Away crest",
+                "description": "Image URL or data URI"
+              },
+              "centerMarkUrl": {
+                "type": "string",
+                "title": "Center mark image",
+                "description": "Image URL or data URI"
+              },
+              "showCenterMark": {
+                "type": "boolean",
+                "title": "Show center mark"
+              },
+              "centerMark": {
+                "type": "string",
+                "title": "Fallback text"
+              },
+              "fontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "fontSize": {
+                "type": "number",
+                "title": "Score size",
+                "minimum": 56,
+                "maximum": 200
+              },
+              "scoreColor": {
+                "type": "string",
+                "title": "Score color"
+              },
+              "scoreGap": {
+                "type": "number",
+                "title": "Score gap",
+                "minimum": 0,
+                "maximum": 48
+              },
+              "metaFontFamily": {
+                "type": "string",
+                "title": "Font"
+              },
+              "customMetaFontFamily": {
+                "type": "string",
+                "title": "Custom font"
+              },
+              "teamSize": {
+                "type": "number",
+                "title": "Team size",
+                "minimum": 12,
+                "maximum": 48
+              },
+              "teamColor": {
+                "type": "string",
+                "title": "Team color"
+              },
+              "teamWeight": {
+                "type": "number",
+                "title": "Team weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "teamStyle": {
+                "type": "string",
+                "title": "Team style",
+                "enum": [
+                  "normal",
+                  "italic"
+                ]
+              },
+              "teamLetterSpacing": {
+                "type": "number",
+                "title": "Team tracking",
+                "minimum": -0.04,
+                "maximum": 0.2,
+                "multipleOf": 0.005
+              },
+              "teamGap": {
+                "type": "number",
+                "title": "Crest → name gap",
+                "minimum": 0,
+                "maximum": 28
+              },
+              "statusSize": {
+                "type": "number",
+                "title": "Status size",
+                "minimum": 10,
+                "maximum": 36
+              },
+              "statusColor": {
+                "type": "string",
+                "title": "Status color"
+              },
+              "statusWeight": {
+                "type": "number",
+                "title": "Status weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "statusStyle": {
+                "type": "string",
+                "title": "Status style",
+                "enum": [
+                  "normal",
+                  "italic"
+                ]
+              },
+              "statusLetterSpacing": {
+                "type": "number",
+                "title": "Status tracking",
+                "minimum": -0.04,
+                "maximum": 0.4,
+                "multipleOf": 0.01
+              },
+              "statusGap": {
+                "type": "number",
+                "title": "Status gap",
+                "minimum": 0,
+                "maximum": 40
+              },
+              "statusOffsetX": {
+                "type": "number",
+                "title": "Status offset X",
+                "minimum": -80,
+                "maximum": 80
+              },
+              "statusOffsetY": {
+                "type": "number",
+                "title": "Status offset Y",
+                "minimum": -80,
+                "maximum": 80
+              },
+              "markSize": {
+                "type": "number",
+                "title": "Mark size",
+                "minimum": 12,
+                "maximum": 96
+              },
+              "markColor": {
+                "type": "string",
+                "title": "Mark color"
+              },
+              "markOpacity": {
+                "type": "number",
+                "title": "Mark opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "markGap": {
+                "type": "number",
+                "title": "Mark gap",
+                "minimum": 0,
+                "maximum": 48
+              },
+              "markOffsetX": {
+                "type": "number",
+                "title": "Mark offset X",
+                "minimum": -60,
+                "maximum": 60
+              },
+              "markOffsetY": {
+                "type": "number",
+                "title": "Mark offset Y",
+                "minimum": -60,
+                "maximum": 60
+              },
+              "scorerSize": {
+                "type": "number",
+                "title": "Scorer size",
+                "minimum": 11,
+                "maximum": 36
+              },
+              "scorerColor": {
+                "type": "string",
+                "title": "Scorer color"
+              },
+              "scorerWeight": {
+                "type": "number",
+                "title": "Scorer weight",
+                "enum": [
+                  300,
+                  400,
+                  500,
+                  600,
+                  700,
+                  800,
+                  900
+                ]
+              },
+              "scorerStyle": {
+                "type": "string",
+                "title": "Scorer style",
+                "enum": [
+                  "normal",
+                  "italic"
+                ]
+              },
+              "scorerLetterSpacing": {
+                "type": "number",
+                "title": "Scorer tracking",
+                "minimum": -0.04,
+                "maximum": 0.2,
+                "multipleOf": 0.005
+              },
+              "scorerGap": {
+                "type": "number",
+                "title": "Scorer gap",
+                "minimum": 0,
+                "maximum": 40
+              },
+              "scorerOffsetX": {
+                "type": "number",
+                "title": "Scorer offset X",
+                "minimum": -80,
+                "maximum": 80
+              },
+              "scorerOffsetY": {
+                "type": "number",
+                "title": "Scorer offset Y",
+                "minimum": -80,
+                "maximum": 80
+              },
+              "washColor": {
+                "type": "string",
+                "title": "Wash color"
+              },
+              "washOpacity": {
+                "type": "number",
+                "title": "Wash opacity",
+                "minimum": 0.05,
+                "maximum": 1,
+                "multipleOf": 0.01
+              },
+              "washHeight": {
+                "type": "number",
+                "title": "Wash height",
+                "minimum": 24,
+                "maximum": 60
+              },
+              "boardBottom": {
+                "type": "number",
+                "title": "Board bottom",
+                "minimum": 24,
+                "maximum": 140
+              },
+              "boardInset": {
+                "type": "number",
+                "title": "Board inset",
+                "minimum": 16,
+                "maximum": 80
+              },
+              "crestTileColor": {
+                "type": "string",
+                "title": "Crest tile"
+              },
+              "crestTileOpacity": {
+                "type": "number",
+                "title": "Tile opacity",
+                "minimum": 0.2,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "crestSize": {
+                "type": "number",
+                "title": "Crest size",
+                "minimum": 40,
+                "maximum": 140
+              },
+              "crestRadius": {
+                "type": "number",
+                "title": "Crest corners",
+                "minimum": 0,
+                "maximum": 28
+              },
+              "noiseAmount": {
+                "type": "number",
+                "title": "Grain",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "overlayColor": {
+                "type": "string",
+                "title": "Overlay"
+              },
+              "overlayOpacity": {
+                "type": "number",
+                "title": "Overlay opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.02
+              },
+              "showPattern": {
+                "type": "boolean",
+                "title": "Wash pattern"
+              },
+              "patternUrl": {
+                "type": "string",
+                "title": "Pattern mark",
+                "description": "Image URL or data URI"
+              },
+              "patternSize": {
+                "type": "number",
+                "title": "Pattern size",
+                "minimum": 28,
+                "maximum": 160
+              },
+              "patternOpacity": {
+                "type": "number",
+                "title": "Pattern opacity",
+                "minimum": 0,
+                "maximum": 0.5,
+                "multipleOf": 0.01
+              },
+              "patternCount": {
+                "type": "number",
+                "title": "Icon count",
+                "minimum": 1,
+                "maximum": 36,
+                "multipleOf": 1
+              },
+              "patternGap": {
+                "type": "number",
+                "title": "Icon spacing",
+                "minimum": 20,
+                "maximum": 240
+              },
+              "patternRandom": {
+                "type": "boolean",
+                "title": "Random spacing"
+              },
+              "patternJitter": {
+                "type": "number",
+                "title": "Random amount",
+                "minimum": 0,
+                "maximum": 160
+              },
+              "patternPadTop": {
+                "type": "number",
+                "title": "Pad top",
+                "minimum": 0,
+                "maximum": 160
+              },
+              "patternPadLeft": {
+                "type": "number",
+                "title": "Pad left",
+                "minimum": 0,
+                "maximum": 160
+              },
+              "patternPadRight": {
+                "type": "number",
+                "title": "Pad right",
+                "minimum": 0,
+                "maximum": 160
+              },
+              "patternPadBottom": {
+                "type": "number",
+                "title": "Pad bottom",
+                "minimum": 0,
+                "maximum": 160
+              },
+              "patternSeed": {
+                "type": "number",
+                "title": "Shuffle seed",
+                "minimum": 1,
+                "maximum": 99,
+                "multipleOf": 1
+              },
+              "showDots": {
+                "type": "boolean",
+                "title": "Dots"
+              },
+              "dotCount": {
+                "type": "number",
+                "title": "Dot count",
+                "minimum": 2,
+                "maximum": 6,
+                "multipleOf": 1
+              },
+              "activeDot": {
+                "type": "number",
+                "title": "Active dot",
+                "minimum": 0,
+                "maximum": 5,
+                "multipleOf": 1
+              },
+              "dotColor": {
+                "type": "string",
+                "title": "Dot color"
+              },
+              "watermarkUrl": {
+                "type": "string",
+                "title": "Watermark",
+                "description": "Image URL or data URI"
+              },
+              "showWatermark": {
+                "type": "boolean",
+                "title": "Show watermark"
+              },
+              "watermarkSize": {
+                "type": "number",
+                "title": "Size",
+                "minimum": 40,
+                "maximum": 220
+              },
+              "watermarkOpacity": {
+                "type": "number",
+                "title": "Opacity",
+                "minimum": 0,
+                "maximum": 1,
+                "multipleOf": 0.05
+              },
+              "watermarkPosX": {
+                "type": "number",
+                "title": "Position X",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "watermarkPosY": {
                 "type": "number",
                 "title": "Position Y",
                 "minimum": 0,

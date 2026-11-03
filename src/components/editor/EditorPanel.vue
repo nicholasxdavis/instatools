@@ -172,7 +172,26 @@ function onTabKey(event) {
 
 @media (max-width: 899px) {
   .editor { height: 100%; }
-  .tabs button { height: 38px; font-size: 12px; }
-  .section { padding: 12px 12px 14px; }
+  .tabs {
+    padding: 4px 6px 0;
+    gap: 2px;
+  }
+  .tabs button {
+    height: 44px;
+    font-size: 13px;
+    gap: 6px;
+    border-radius: 10px 10px 0 0;
+  }
+  .stack {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  .section {
+    gap: 10px;
+    padding: 14px 14px 16px;
+  }
+  .section h2 {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
 }
 </style>

@@ -158,7 +158,7 @@ watch(
         </template>
 
         <template v-else-if="slug === 'templates'">
-          <p>Catalog is public. No API key. Use a slug or an id.</p>
+          <p>Catalog is public. No API key. Use a slug or an id. Templates marked <code>pro: true</code> need a Pro plan to render.</p>
           <CodeBlock :code="templatesList" />
           <p>Every premade layout:</p>
           <div class="m-docs-table-wrap">
@@ -168,14 +168,14 @@ watch(
               </thead>
               <tbody>
                 <tr v-for="theme in THEME_CATALOG" :key="theme.id">
-                  <td>{{ theme.name }}</td>
+                  <td>{{ theme.name }}{{ theme.pro ? ' (Pro)' : '' }}</td>
                   <td><code>{{ theme.slug }}</code></td>
                   <td><code>{{ theme.id }}</code></td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p>Detail payload includes <code>defaults</code>, <code>fields</code>, and <code>jsonSchema</code>. Canvas is 1080x1350 except the tweet layout, which is 1080x1080.</p>
+          <p>Detail payload includes <code>defaults</code>, <code>fields</code>, and <code>jsonSchema</code>. Canvas is 1080x1350 except square layouts (tweet, World Tape, Match Tape), which are 1080x1080.</p>
           <p>Custom settings use the field paths from that payload. Send them as <code>fields</code>, <code>settings</code>, or top-level keys.</p>
         </template>
 
@@ -200,7 +200,7 @@ watch(
               <ul>
                 <li>50 PNG renders / month</li>
                 <li>25 saved designs</li>
-                <li>All 17 layouts</li>
+                <li>Free layouts only</li>
               </ul>
             </div>
             <div class="m-plan-card m-plan-card-pro">
@@ -209,7 +209,7 @@ watch(
               <ul>
                 <li>2,000 PNG renders / month</li>
                 <li>500 saved designs</li>
-                <li>Cancel anytime</li>
+                <li>Pro layouts: Cutout Stack, Launch, Smoke Cutout, World Tape, Match Tape</li>
               </ul>
               <router-link class="btn-try" to="/pricing">Get Pro</router-link>
             </div>

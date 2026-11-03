@@ -49,9 +49,9 @@ const logoSrc = publicUrl('logo.png')
     <footer class="m-footer" :class="{ 'm-footer-mini': footer === 'mini' }">
       <template v-if="footer === 'full'">
         <h2>
-          Built for creators,
+          Built for Instagram,
           <br />
-          <span class="m-footer-grad">open for everyone.</span>
+          <span class="m-footer-grad">ready to post.</span>
         </h2>
         <router-link class="btn-try btn-try-lg" to="/make">Try now</router-link>
       </template>

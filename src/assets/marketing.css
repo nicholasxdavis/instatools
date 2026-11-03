@@ -302,6 +302,64 @@
   margin: 0 auto;
 }
 
+.marketing .m-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 16px;
+  width: min(100%, 40rem);
+  margin: 22px auto 0;
+}
+
+.marketing .m-badge-ph {
+  display: inline-flex;
+  line-height: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.marketing .m-badge-ph img {
+  display: block;
+  width: 250px;
+  max-width: 100%;
+  height: auto;
+}
+
+.marketing .m-badge-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.marketing .m-badge-github:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.marketing .m-badge-bmc {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.marketing .m-badge-bmc a,
+.marketing .m-badge-bmc img {
+  display: block;
+  max-width: 100%;
+}
+
 .marketing .m-hero-btn {
   display: flex;
   align-items: center;
@@ -382,6 +440,30 @@
   outline-offset: 3px;
 }
 
+.marketing .m-why {
+  width: min(100% - 48px, 52rem);
+  margin: 0 auto 56px;
+  scroll-margin-top: 96px;
+  text-align: center;
+}
+.marketing .m-why-shell {
+  padding: 0 8px;
+}
+.marketing .m-why h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.55rem, 4vw, 2.1rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: #0f172a;
+}
+.marketing .m-why p {
+  margin: 0 auto;
+  max-width: 40rem;
+  color: #475569;
+  font-size: clamp(15px, 2vw, 17px);
+  line-height: 1.6;
+}
+
 .marketing .m-templates {
   width: min(100% - 48px, 80rem);
   margin: 0 auto 96px;
@@ -450,10 +532,25 @@
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 .marketing .m-card-thumb {
+  position: relative;
   aspect-ratio: 4 / 5;
   border-radius: 18px;
   overflow: hidden;
   background: #111;
+}
+.marketing .m-pro-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #e1306c;
 }
 .marketing .m-card-thumb img {
   width: 100%;
@@ -668,6 +765,13 @@
   .marketing .m-hero-actions {
     width: min(100%, 22rem);
     grid-template-columns: 1fr 1fr;
+  }
+  .marketing .m-badges {
+    width: min(100%, 22rem);
+    gap: 10px;
+  }
+  .marketing .m-badge-ph img {
+    width: min(250px, 100%);
   }
   .marketing .m-api {
     width: min(100% - 32px, 80rem);
@@ -1151,7 +1255,8 @@ html.shell-marketing body {
   color: inherit;
 }
 
-.marketing input[type='email'] {
+.marketing input[type='email'],
+.marketing input[type='text'] {
   width: 100%;
   font: inherit;
   font-weight: 500;
@@ -1163,7 +1268,8 @@ html.shell-marketing body {
   box-sizing: border-box;
 }
 
-.marketing input[type='email']:focus {
+.marketing input[type='email']:focus,
+.marketing input[type='text']:focus {
   outline: none;
   border-color: rgba(225, 48, 108, 0.55);
   box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.12);

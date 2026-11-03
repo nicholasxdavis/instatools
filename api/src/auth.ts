@@ -1,7 +1,7 @@
 import type { Context, Next } from 'hono'
 import { HttpError, newApiKey, newId, newOpaqueToken, nowIso, sha256Hex, timingSafeEqualString } from './http'
 import { sendApiKeyEmail, sendLoginEmail, assertEmail, normalizeEmail } from './mail'
-import { type PlanId, planOf } from './plans'
+import { effectivePlanId, type PlanId } from './plans'
 import { clientIp, hitRateLimit } from './quota'
 
 export type AppRecord = {
@@ -9,6 +9,9 @@ export type AppRecord = {
   name: string
   email?: string
   plan?: PlanId
+  proUntil?: string
+  proSource?: 'stripe' | 'redeem' | string
+  promoCode?: string
   stripeCustomerId?: string
   stripeSubscriptionId?: string
   createdAt: string
@@ -223,12 +226,32 @@ export async function signupWithEmail(env: Env, request: Request, rawEmail: unkn
   }
 }
 
+export async function hydrateAppPlan(env: Env, app: AppRecord) {
+  const plan = effectivePlanId(app)
+  if (plan === 'pro') {
+    if (app.plan !== 'pro') return saveApp(env, { ...app, plan: 'pro' })
+    return app
+  }
+  // Expired redeem (or stale pro flag without Stripe) demotes to free.
+  if (app.plan === 'pro' && !app.stripeSubscriptionId) {
+    return saveApp(env, {
+      ...app,
+      plan: 'free',
+    })
+  }
+  if (!app.plan) return saveApp(env, { ...app, plan: 'free' })
+  return app
+}
+
 export function publicApp(app: AppRecord) {
+  const plan = effectivePlanId(app)
   return {
     id: app.id,
     name: app.name,
     email: app.email || null,
-    plan: planOf(app.plan).id,
+    plan,
+    proUntil: plan === 'pro' ? app.proUntil || null : null,
+    proSource: plan === 'pro' ? app.proSource || null : null,
     createdAt: app.createdAt,
   }
 }
@@ -295,7 +318,8 @@ export async function authMiddleware(
   next: Next,
 ) {
   const { app, token } = await requireApp(c.env, c.req.raw)
-  c.set('app', app)
+  const hydrated = await hydrateAppPlan(c.env, app)
+  c.set('app', hydrated)
   c.set('apiKey', token)
   await next()
 }
@@ -304,7 +328,14 @@ export async function applyStripePlan(env: Env, appId: string, patch: Partial<Ap
   if (!appId) return
   const app = await env.KV.get<AppRecord>(`app:${appId}`, 'json')
   if (!app) return
-  await saveApp(env, { ...app, ...patch })
+  const nextPlan = patch.plan === 'pro' || patch.stripeSubscriptionId ? 'pro' : patch.plan === 'free' ? 'free' : app.plan
+  await saveApp(env, {
+    ...app,
+    ...patch,
+    plan: nextPlan,
+    proSource: nextPlan === 'pro' ? 'stripe' : app.proSource,
+    proUntil: nextPlan === 'pro' && patch.stripeSubscriptionId ? undefined : patch.plan === 'free' ? undefined : app.proUntil,
+  })
 }
 
 export async function wipeApp(env: Env, app: AppRecord, previousToken?: string) {

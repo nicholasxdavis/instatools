@@ -7,7 +7,7 @@ import {
 } from '@/config/constants'
 
 function clampPct(pct) {
-  return Math.min(78, Math.max(22, Number(pct) || 50))
+  return Math.min(80, Math.max(28, Number(pct) || 48))
 }
 
 function clampWidth(px) {
@@ -19,6 +19,7 @@ export function useSplitDrag(bodyEl, options = {}) {
   const dragging = ref(false)
   let raf = 0
   let lastPct = 50
+  let handleEl = null
 
   function pctFromY(y) {
     const box = bodyEl.value?.getBoundingClientRect()
@@ -28,6 +29,7 @@ export function useSplitDrag(bodyEl, options = {}) {
 
   function onMove(event) {
     if (!dragging.value) return
+    event.preventDefault()
     const y = event.clientY
     if (raf) cancelAnimationFrame(raf)
     raf = requestAnimationFrame(() => {
@@ -38,7 +40,7 @@ export function useSplitDrag(bodyEl, options = {}) {
     })
   }
 
-  function stop() {
+  function stop(event) {
     if (!dragging.value) return
     dragging.value = false
     store.splitDragging = false
@@ -46,9 +48,15 @@ export function useSplitDrag(bodyEl, options = {}) {
       cancelAnimationFrame(raf)
       raf = 0
     }
-    window.removeEventListener('pointermove', onMove)
-    window.removeEventListener('pointerup', stop)
-    window.removeEventListener('pointercancel', stop)
+    if (handleEl) {
+      handleEl.removeEventListener('pointermove', onMove)
+      handleEl.removeEventListener('pointerup', stop)
+      handleEl.removeEventListener('pointercancel', stop)
+      if (event?.pointerId != null) {
+        try { handleEl.releasePointerCapture(event.pointerId) } catch { /* ignore */ }
+      }
+      handleEl = null
+    }
     if (options.onCommit) options.onCommit(lastPct)
     else store.setMobileEditorPct(lastPct, true)
   }
@@ -57,13 +65,14 @@ export function useSplitDrag(bodyEl, options = {}) {
     event.preventDefault()
     dragging.value = true
     store.splitDragging = true
+    handleEl = event.currentTarget
     lastPct = pctFromY(event.clientY)
     if (options.onDrag) options.onDrag(lastPct)
     else store.setMobileEditorPct(lastPct, false)
-    event.currentTarget.setPointerCapture?.(event.pointerId)
-    window.addEventListener('pointermove', onMove, { passive: false })
-    window.addEventListener('pointerup', stop)
-    window.addEventListener('pointercancel', stop)
+    handleEl.setPointerCapture?.(event.pointerId)
+    handleEl.addEventListener('pointermove', onMove, { passive: false })
+    handleEl.addEventListener('pointerup', stop)
+    handleEl.addEventListener('pointercancel', stop)
   }
 
   function reset() {
@@ -83,6 +92,7 @@ export function useSidebarDrag(bodyEl, options = {}) {
   const dragging = ref(false)
   let raf = 0
   let lastWidth = EDITOR_WIDTH_DEFAULT
+  let handleEl = null
 
   function widthFromX(x) {
     const box = bodyEl.value?.getBoundingClientRect()
@@ -92,6 +102,7 @@ export function useSidebarDrag(bodyEl, options = {}) {
 
   function onMove(event) {
     if (!dragging.value) return
+    event.preventDefault()
     const x = event.clientX
     if (raf) cancelAnimationFrame(raf)
     raf = requestAnimationFrame(() => {
@@ -102,16 +113,22 @@ export function useSidebarDrag(bodyEl, options = {}) {
     })
   }
 
-  function stop() {
+  function stop(event) {
     if (!dragging.value) return
     dragging.value = false
     if (raf) {
       cancelAnimationFrame(raf)
       raf = 0
     }
-    window.removeEventListener('pointermove', onMove)
-    window.removeEventListener('pointerup', stop)
-    window.removeEventListener('pointercancel', stop)
+    if (handleEl) {
+      handleEl.removeEventListener('pointermove', onMove)
+      handleEl.removeEventListener('pointerup', stop)
+      handleEl.removeEventListener('pointercancel', stop)
+      if (event?.pointerId != null) {
+        try { handleEl.releasePointerCapture(event.pointerId) } catch { /* ignore */ }
+      }
+      handleEl = null
+    }
     if (options.onCommit) options.onCommit(lastWidth)
     else store.setEditorWidth(lastWidth, true)
   }
@@ -119,13 +136,14 @@ export function useSidebarDrag(bodyEl, options = {}) {
   function start(event) {
     event.preventDefault()
     dragging.value = true
+    handleEl = event.currentTarget
     lastWidth = widthFromX(event.clientX)
     if (options.onDrag) options.onDrag(lastWidth)
     else store.setEditorWidth(lastWidth, false)
-    event.currentTarget.setPointerCapture?.(event.pointerId)
-    window.addEventListener('pointermove', onMove, { passive: false })
-    window.addEventListener('pointerup', stop)
-    window.addEventListener('pointercancel', stop)
+    handleEl.setPointerCapture?.(event.pointerId)
+    handleEl.addEventListener('pointermove', onMove, { passive: false })
+    handleEl.addEventListener('pointerup', stop)
+    handleEl.addEventListener('pointercancel', stop)
   }
 
   function reset() {

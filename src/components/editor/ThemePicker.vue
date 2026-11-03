@@ -1,8 +1,10 @@
 <script setup>
 import { THEMES, themePath } from '@/themes'
 import { useEditorStore } from '@/stores/editor'
+import { useAccountPlan } from '@/composables/useAccountPlan'
 
 const store = useEditorStore()
+const { isPro, isProTheme } = useAccountPlan()
 </script>
 
 <template>
@@ -16,6 +18,8 @@ const store = useEditorStore()
       :aria-current="store.templateId === theme.id ? 'page' : undefined"
     >
       <div class="thumb">
+        <span v-if="isProTheme(theme) && !isPro" class="pro-badge">Pro</span>
+        <span v-else-if="isProTheme(theme)" class="pro-badge pro-badge-owned">Pro</span>
         <img :src="theme.cardImageFallback || theme.previewImage" :alt="`${theme.name} Instagram template preview`" width="216" height="270" loading="lazy" decoding="async" />
       </div>
       <span class="meta">
@@ -58,6 +62,24 @@ const store = useEditorStore()
   border: 0;
   background: #242424;
 }
+.pro-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #e1306c;
+}
+.pro-badge-owned {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
 .card img {
   position: absolute;
   inset: 0;
@@ -91,4 +113,20 @@ const store = useEditorStore()
 .card.active .note { color: #bdbdbd; }
 .card:not(.active) .thumb { opacity: 0.7; }
 .card.active { color: #fff; }
+
+@media (max-width: 899px) {
+  .picker {
+    gap: 12px;
+    padding: 12px 12px 20px;
+  }
+  .card .name {
+    font-size: 13px;
+  }
+  .pro-badge {
+    top: 10px;
+    left: 10px;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
 </style>

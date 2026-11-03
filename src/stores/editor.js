@@ -19,6 +19,7 @@ import {
   validateDesignPost,
   designExportPayload,
 } from '@/utils/design-io'
+import { clearDraft, draftFingerprint, readDraft, writeDraft } from '@/utils/draft'
 
 function loadPresets() {
   try {
@@ -34,10 +35,10 @@ function loadPresets() {
 function loadSplit() {
   try {
     const value = Number(localStorage.getItem(MOBILE_SPLIT_KEY))
-    if (!Number.isFinite(value)) return 50
-    return Math.min(78, Math.max(22, value))
+    if (!Number.isFinite(value)) return 48
+    return Math.min(80, Math.max(28, value))
   } catch {
-    return 50
+    return 48
   }
 }
 
@@ -58,20 +59,33 @@ export const useEditorStore = defineStore('editor', {
     initial.mobileEditorPct = loadSplit()
     initial.editorWidth = loadEditorWidth()
     initial.splitDragging = false
+    initial.sessionDirty = false
+    initial.draftRestored = false
+    initial._cleanFingerprint = draftFingerprint(initial.post, initial.mode)
+    initial._suppressDirty = false
     return initial
   },
 
   getters: {
     templateId: (state) => state.post.template,
-    isSquare: (state) => state.post.template === 'template7',
+    isSquare: (state) =>
+      state.post.template === 'template7' ||
+      state.post.template === 'template23' ||
+      state.post.template === 'template24',
     canvasSize: (state) => ({
       width: POST_WIDTH,
-      height: state.post.template === 'template7' ? POST_WIDTH : POST_HEIGHT,
+      height:
+        state.post.template === 'template7' ||
+        state.post.template === 'template23' ||
+        state.post.template === 'template24'
+          ? POST_WIDTH
+          : POST_HEIGHT,
     }),
     themeSlice: (state) => {
       const key = templateStateKey(state.post.template)
       return key === 'style' ? state.post.style : state.post[key]
     },
+    hasUnsavedWork: (state) => state.sessionDirty,
   },
 
   actions: {
@@ -81,6 +95,21 @@ export const useEditorStore = defineStore('editor', {
 
     setValue(path, value) {
       setByPath(this, path, value)
+      if (!this._suppressDirty) this.markDirty()
+    },
+
+    markDirty() {
+      this.sessionDirty = true
+    },
+
+    markClean() {
+      this.sessionDirty = false
+      this._cleanFingerprint = draftFingerprint(this.post, this.mode)
+    },
+
+    syncDirtyFromFingerprint() {
+      const next = draftFingerprint(this.post, this.mode)
+      this.sessionDirty = next !== this._cleanFingerprint
     },
 
     selectTemplate(id) {
@@ -91,6 +120,7 @@ export const useEditorStore = defineStore('editor', {
       this.post.template = id
       this.activeTab = 'editor'
       this.manualZoom = null
+      this.persistDraft()
     },
 
     resetCurrentTheme() {
@@ -102,9 +132,11 @@ export const useEditorStore = defineStore('editor', {
         this.post.caption = defaults.caption
         this.post.bgImage = defaults.bgImage
         this.post.style = fresh
-        return
+      } else {
+        this.post[key] = fresh
       }
-      this.post[key] = fresh
+      this.markDirty()
+      this.persistDraft()
     },
 
     buildCurrentDesign() {
@@ -124,7 +156,55 @@ export const useEditorStore = defineStore('editor', {
       this.mode = design.mode === 'highlight' ? 'post' : (design.mode || 'post')
       this.activeTab = 'editor'
       this.manualZoom = null
+      this.markDirty()
+      this.persistDraft()
       return true
+    },
+
+    applyDraft(draft) {
+      if (!draft?.post?.template) return false
+      this._suppressDirty = true
+      try {
+        const base = createDefaultState().post
+        const incoming = clone(draft.post)
+        this.post = {
+          ...base,
+          ...incoming,
+          style: { ...base.style, ...(incoming.style || {}) },
+        }
+        for (const key of Object.keys(base)) {
+          if (key === 'style' || key === 'template' || key === 'headline' || key === 'caption' || key === 'bgImage') continue
+          if (incoming[key] && typeof incoming[key] === 'object') {
+            this.post[key] = { ...(base[key] || {}), ...incoming[key] }
+          }
+        }
+        this.mode = draft.mode === 'highlight' ? 'post' : (draft.mode || 'post')
+        this.activeTab = 'editor'
+        this.manualZoom = null
+        this.draftRestored = true
+        this.markClean()
+        return true
+      } finally {
+        this._suppressDirty = false
+      }
+    },
+
+    restoreDraftIfAny() {
+      const draft = readDraft()
+      if (!draft) return false
+      return this.applyDraft(draft)
+    },
+
+    persistDraft() {
+      return writeDraft({
+        mode: this.mode === 'highlight' ? 'post' : (this.mode || 'post'),
+        post: this.post,
+      })
+    },
+
+    discardDraft() {
+      clearDraft()
+      this.markClean()
     },
 
     savePreset(name) {
@@ -139,6 +219,8 @@ export const useEditorStore = defineStore('editor', {
       }
       this.presets.unshift(preset)
       this.persistPresets()
+      this.markClean()
+      this.persistDraft()
       return preset
     },
 
@@ -177,7 +259,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     setMobileEditorPct(pct, persist = true) {
-      const next = Math.round(Math.min(78, Math.max(22, Number(pct) || 50)))
+      const next = Math.round(Math.min(80, Math.max(28, Number(pct) || 48)))
       this.mobileEditorPct = next
       if (!persist) return
       try {

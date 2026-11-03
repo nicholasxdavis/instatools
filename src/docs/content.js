@@ -5,7 +5,7 @@ export const DOC_PAGES = [
     slug: '',
     title: 'API',
     heading: 'JSON in. PNG out.',
-    lead: 'Same layouts as Instatools. JSON in, PNG out. No AI.',
+    lead: 'Same layouts as Instatools. JSON in, PNG out. Pro layouts need a Pro plan.',
   },
   {
     slug: 'quickstart',
@@ -23,7 +23,7 @@ export const DOC_PAGES = [
     slug: 'templates',
     title: 'Templates',
     heading: 'Seventeen layouts.',
-    lead: 'Each template has defaults, fields, and JSON Schema.',
+    lead: 'Each template has defaults, fields, and JSON Schema. Three are Pro-only.',
   },
   {
     slug: 'designs',
@@ -41,7 +41,7 @@ export const DOC_PAGES = [
     slug: 'limits',
     title: 'Limits',
     heading: 'Free and Pro caps.',
-    lead: 'Renders reset on the 1st of each UTC month.',
+    lead: 'Pro unlocks premium layouts plus higher render and design caps. Renders reset on the 1st of each UTC month.',
   },
   {
     slug: 'reference',

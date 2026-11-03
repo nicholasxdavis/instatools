@@ -4,6 +4,8 @@ import { resolveMediaUrl, normalizeGithubBlob } from '../utils/mediaUrl.js'
 import { designExportPayload, downloadDesignJson } from '../utils/design-io.js'
 import { applyGrain, getGrainDataUrl } from './filter.js'
 import { tweetIconSvg } from '../themes/template7/icons.js'
+import { buildWashPatternLayout } from '../themes/template24/pattern.js'
+import { parseStyledRuns } from '../themes/template24/styledText.js'
 
 if (typeof window !== 'undefined') {
   window.CONSTANTS = { POST_WIDTH, POST_HEIGHT, HIGHLIGHT_SIZE }
@@ -122,6 +124,13 @@ function _activeVideoSourceFromPost(post) {
         post.t15 && post.t15.watermarkUrl,
     );
     else if (t === 'template16') checks.push(post.t16 && post.t16.productUrl, post.t16 && post.t16.logoUrl);
+    else if (t === 'template18') checks.push(post.t18 && post.t18.bgImage, post.t18 && post.t18.watermarkUrl);
+    else if (t === 'template19') checks.push(post.t19 && post.t19.bgImage, post.t19 && post.t19.watermarkUrl);
+    else if (t === 'template20') checks.push(post.t20 && post.t20.bgImage, post.t20 && post.t20.watermarkUrl);
+    else if (t === 'template21') checks.push(post.t21 && post.t21.bgImage, post.t21 && post.t21.watermarkUrl);
+    else if (t === 'template22') checks.push(post.t22 && post.t22.bgImage, post.t22 && post.t22.markUrl, post.t22 && post.t22.watermarkUrl);
+    else if (t === 'template23') checks.push(post.t23 && post.t23.imageLeft, post.t23 && post.t23.imageRight, post.t23 && post.t23.logoUrl, post.t23 && post.t23.watermarkUrl);
+    else if (t === 'template24') checks.push(post.t24 && post.t24.bgImage, post.t24 && post.t24.homeCrest, post.t24 && post.t24.awayCrest, post.t24 && post.t24.centerMarkUrl, post.t24 && post.t24.watermarkUrl);
     else checks.push(post.bgImage, s.overlayImgUrl, s.logoUrl, s.watermarkUrl);
     return checks.find(v => _isVideoSource(v)) || null;
 }
@@ -404,7 +413,9 @@ async function loadImg(src) {
 function _postTemplateSize(state) {
     const tmpl = state.post ? state.post.template : null;
     const W = window.CONSTANTS.POST_WIDTH;
-    const H = tmpl === 'template7' ? window.CONSTANTS.POST_WIDTH : window.CONSTANTS.POST_HEIGHT;
+    const H = (tmpl === 'template7' || tmpl === 'template23' || tmpl === 'template24')
+        ? window.CONSTANTS.POST_WIDTH
+        : window.CONSTANTS.POST_HEIGHT;
     return { W, H, tmpl };
 }
 
@@ -426,6 +437,13 @@ async function _renderPostToCtx(ctx, state, W, H) {
     else if (tmpl === 'template14')                    await exportT14(ctx, state, W, H);
     else if (tmpl === 'template15')                    await exportT15(ctx, state, W, H);
     else if (tmpl === 'template16')                    await exportT16(ctx, state, W, H);
+    else if (tmpl === 'template18')                    await exportT18(ctx, state, W, H);
+    else if (tmpl === 'template19')                    await exportT19(ctx, state, W, H);
+    else if (tmpl === 'template20')                    await exportT20(ctx, state, W, H);
+    else if (tmpl === 'template21')                    await exportT21(ctx, state, W, H);
+    else if (tmpl === 'template22')                    await exportT22(ctx, state, W, H);
+    else if (tmpl === 'template23')                    await exportT23(ctx, state, W, H);
+    else if (tmpl === 'template24')                    await exportT24(ctx, state, W, H);
     else                                               await exportT1(ctx, state, W, H);
 }
 
@@ -3982,6 +4000,1112 @@ async function exportT16(ctx, state, W, H) {
         ctx.fillText(label, bx + padX, y + btnH / 2);
         ctx.restore();
     }
+}
+
+function _drawWm(ctx, wmImg, t, W, H) {
+    if (!wmImg || t.showWatermark === false || !t.watermarkUrl) return;
+    const wmW = t.watermarkSize || 160;
+    const natW = wmImg.naturalWidth || wmImg.width || 1;
+    const natH = wmImg.naturalHeight || wmImg.height || 1;
+    const wmH = (natH / natW) * wmW;
+    const { x: wx, y: wy } = calcWmXY(t.watermarkPosX ?? 94, t.watermarkPosY ?? 5, W, H, wmW, wmH);
+    ctx.save();
+    ctx.globalAlpha = t.watermarkOpacity ?? 0.85;
+    ctx.drawImage(wmImg, wx, wy, wmW, wmH);
+    ctx.restore();
+}
+
+function _fillCoverPhoto(ctx, bgImg, t, W, H, opacity = 1) {
+    if (!bgImg) return;
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    drawCover(ctx, bgImg, 0, 0, W, H, t.imagePosX ?? 50, t.imagePosY ?? 50, (t.imageScale ?? 100) / 100);
+    ctx.restore();
+}
+
+// ─── TEMPLATE 18 (Award Week) ─────────────────────────────────────────────────
+async function exportT18(ctx, state, W, H) {
+    const t = state.post.t18 || {};
+    const [bgImg, wmImg] = await Promise.all([
+        loadImg(t.bgImage),
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Anton';
+    const metaFF = t.customMetaFontFamily || t.metaFontFamily || 'Inter';
+    const fs = t.fontSize || 132;
+    await Promise.all([
+        loadFont(`${t.fontWeight || 400} ${fs}px "${ff}"`),
+        loadFont(`800 ${t.badgeSize || 20}px "${metaFF}"`),
+        loadFont(`800 ${t.matchupSize || 22}px "${metaFF}"`),
+        loadFont(`800 ${t.playerSize || 26}px "${metaFF}"`),
+    ]);
+
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+    _fillCoverPhoto(ctx, bgImg, t, W, H, t.bgOpacity ?? 1);
+
+    const washW = ((t.fadeHeight ?? 62) / 100) * W;
+    const fadeStrength = t.fadeStrength ?? 0.72;
+    const hex = t.fadeColor || '#000000';
+    const r = parseInt(hex.slice(1, 3), 16) || 0;
+    const g = parseInt(hex.slice(3, 5), 16) || 0;
+    const b = parseInt(hex.slice(5, 7), 16) || 0;
+    const wash = ctx.createLinearGradient(W - washW, 0, W, 0);
+    wash.addColorStop(0, `rgba(${r},${g},${b},0)`);
+    wash.addColorStop(0.48, `rgba(${r},${g},${b},${fadeStrength * 0.45})`);
+    wash.addColorStop(1, `rgba(${r},${g},${b},${fadeStrength})`);
+    ctx.fillStyle = wash;
+    ctx.fillRect(W - washW, 0, washW, H);
+
+    if ((t.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t.overlayOpacity;
+        ctx.fillStyle = t.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    if ((t.vignetteOpacity ?? 0) > 0) {
+        const vg = ctx.createRadialGradient(W * 0.35, H * 0.45, W * 0.2, W * 0.35, H * 0.45, W * 0.85);
+        vg.addColorStop(0, 'rgba(0,0,0,0)');
+        vg.addColorStop(1, `rgba(0,0,0,${t.vignetteOpacity})`);
+        ctx.fillStyle = vg;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    const padH = t.paddingH ?? 48;
+    const align = t.textAlign || 'right';
+    const uppercase = t.uppercase !== false;
+    const lines = String(t.headline || '').split(/\r?\n/);
+    const lineH = Math.round(fs * (t.lineHeight ?? 0.92));
+    const stackGap = 16;
+    let stackH = 0;
+    for (let i = 0; i < lines.length; i += 1) {
+        const small = /^(of the|of)$/i.test(String(lines[i]).trim());
+        stackH += small ? Math.round(fs * 0.34 * 1.45) : lineH;
+        if (i < lines.length - 1) stackH += stackGap;
+    }
+    if (t.showBadge !== false) stackH += (t.badgeSize || 20) + 38;
+    if (t.showMatchup !== false && t.matchup) stackH += (t.matchupSize || 22) + 18;
+    if (t.showPlayer !== false && t.player) stackH += (t.playerSize || 26) + 10;
+    let y = (H - stackH) / 2;
+
+    if (t.showBadge !== false) {
+        const label = String(t.badgeText || 'DEFENSIVE').toUpperCase();
+        ctx.font = `800 ${t.badgeSize || 20}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.badgeLetterSpacing ?? 0.16) * (t.badgeSize || 20));
+        const tw = mW(ctx, label);
+        const boxW = tw + 48;
+        const boxH = (t.badgeSize || 20) + 18;
+        const bx = align === 'left' ? padH : align === 'center' ? (W - boxW) / 2 : W - padH - boxW;
+        ctx.strokeStyle = t.badgeBorder || t.accentColor || '#FB4F14';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(bx, y, boxW, boxH, boxH / 2);
+        else ctx.rect(bx, y, boxW, boxH);
+        ctx.stroke();
+        ctx.fillStyle = t.badgeColor || '#FFFFFF';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, bx + 24, y + boxH / 2);
+        y += boxH + 18;
+    }
+
+    ctx.textBaseline = 'top';
+    for (let i = 0; i < lines.length; i += 1) {
+        const raw = lines[i];
+        const small = /^(of the|of)$/i.test(String(raw).trim());
+        const text = uppercase ? String(raw).toUpperCase() : String(raw);
+        const curFs = small ? Math.round(fs * 0.34) : fs;
+        ctx.font = `${t.fontWeight || 400} ${curFs}px "${ff}", "Arial Narrow", sans-serif`;
+        setLS(ctx, (t.letterSpacing ?? -0.01) * curFs);
+        ctx.fillStyle = t.headlineColor || '#FFFFFF';
+        const tw = mW(ctx, text);
+        const x = align === 'left' ? padH : align === 'center' ? (W - tw) / 2 : W - padH - tw;
+        ctx.fillText(text, x, y);
+        y += small ? Math.round(curFs * 1.45) : lineH;
+        if (i < lines.length - 1) y += stackGap;
+    }
+
+    if (t.showMatchup !== false && t.matchup) {
+        y += 8;
+        ctx.font = `800 ${t.matchupSize || 22}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.matchupLetterSpacing ?? 0.2) * (t.matchupSize || 22));
+        ctx.fillStyle = t.accentColor || '#FB4F14';
+        const text = String(t.matchup).toUpperCase();
+        const tw = mW(ctx, text);
+        const x = align === 'left' ? padH : align === 'center' ? (W - tw) / 2 : W - padH - tw;
+        ctx.fillText(text, x, y);
+        y += (t.matchupSize || 22) + 14;
+    }
+
+    if (t.showPlayer !== false && t.player) {
+        ctx.font = `800 ${t.playerSize || 26}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.playerLetterSpacing ?? 0.06) * (t.playerSize || 26));
+        const role = t.playerRole ? String(t.playerRole).toUpperCase() + ' ' : '';
+        const name = String(t.player).toUpperCase();
+        const full = role + name;
+        const tw = mW(ctx, full);
+        const x = align === 'left' ? padH : align === 'center' ? (W - tw) / 2 : W - padH - tw;
+        if (role) {
+            ctx.fillStyle = t.accentColor || '#FB4F14';
+            ctx.fillText(role, x, y);
+            ctx.fillStyle = t.playerColor || '#FFFFFF';
+            ctx.fillText(name, x + mW(ctx, role), y);
+        } else {
+            ctx.fillStyle = t.playerColor || '#FFFFFF';
+            ctx.fillText(name, x, y);
+        }
+    }
+
+    if (t.showStars !== false) {
+        const count = Math.max(1, Math.min(5, t.starCount || 3));
+        ctx.fillStyle = t.starColor || '#FFFFFF';
+        ctx.font = '700 22px "Inter", sans-serif';
+        const startY = H / 2 - ((count - 1) * 18);
+        for (let i = 0; i < count; i += 1) ctx.fillText('★', W - 48, startY + i * 36);
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
+}
+
+// ─── TEMPLATE 19 (Breaking Slash) ─────────────────────────────────────────────
+async function exportT19(ctx, state, W, H) {
+    const t = state.post.t19 || {};
+    const [bgImg, wmImg] = await Promise.all([
+        loadImg(t.bgImage),
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Anton';
+    const metaFF = t.customMetaFontFamily || t.metaFontFamily || 'Inter';
+    await Promise.all([
+        loadFont(`400 ${t.bannerSize || 48}px "${ff}"`),
+        loadFont(`800 ${t.bylineSize || 20}px "${metaFF}"`),
+        loadFont(`${t.bodyWeight || 600} ${t.bodySize || 32}px "${metaFF}"`),
+    ]);
+
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+    _fillCoverPhoto(ctx, bgImg, t, W, H, t.bgOpacity ?? 1);
+
+    if ((t.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t.overlayOpacity;
+        ctx.fillStyle = t.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    const fadeH = ((t.fadeHeight ?? 48) / 100) * H;
+    const fadeStrength = t.fadeStrength ?? 0.92;
+    const hex = t.fadeColor || '#120408';
+    const r = parseInt(hex.slice(1, 3), 16) || 18;
+    const g = parseInt(hex.slice(3, 5), 16) || 4;
+    const b = parseInt(hex.slice(5, 7), 16) || 8;
+    const grad = ctx.createLinearGradient(0, H - fadeH, 0, H);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+    grad.addColorStop(0.48, `rgba(${r},${g},${b},${fadeStrength * 0.55})`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},${fadeStrength})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H - fadeH, W, fadeH);
+
+    const padH = t.paddingH ?? 44;
+    const padB = t.paddingBottom ?? 58;
+    const align = t.textAlign || 'left';
+    let y = H - padB;
+
+    ctx.font = `${t.bodyWeight || 600} ${t.bodySize || 32}px "${metaFF}", Inter, sans-serif`;
+    setLS(ctx, (t.bodyLetterSpacing ?? -0.01) * (t.bodySize || 32));
+    const maxW = W * ((t.bodyMaxWidth || 94) / 100);
+    const bodyLines = wrapSimple(ctx, String(t.body || ''), maxW);
+    const bodyLH = Math.round((t.bodySize || 32) * (t.bodyLineHeight ?? 1.28));
+    const bodyH = bodyLines.length * bodyLH;
+    y -= bodyH;
+
+    let bylineH = 0;
+    if (t.showByline !== false && t.byline) bylineH = (t.bylineSize || 20) + 16;
+    let bannerH = 0;
+    if (t.showBanner !== false) bannerH = (t.bannerSize || 48) + 24 + 16;
+    y -= bylineH + bannerH;
+
+    if (t.showBanner !== false) {
+        const label = String(t.bannerText || 'BREAKING NEWS').toUpperCase();
+        ctx.font = `400 ${t.bannerSize || 48}px "${ff}", "Arial Narrow", sans-serif`;
+        setLS(ctx, (t.bannerLetterSpacing ?? 0.01) * (t.bannerSize || 48));
+        const tw = mW(ctx, label);
+        const boxW = tw + 56;
+        const boxH = (t.bannerSize || 48) + 24;
+        const bx = align === 'center' ? (W - boxW) / 2 : align === 'right' ? W - padH - boxW : padH;
+        ctx.fillStyle = t.bannerBg || '#0a0a0a';
+        ctx.strokeStyle = t.bannerBorder || '#CC0000';
+        ctx.lineWidth = 5;
+        ctx.fillRect(bx, y, boxW, boxH);
+        ctx.strokeRect(bx, y, boxW, boxH);
+        ctx.fillStyle = t.bannerColor || '#FFFFFF';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, bx + (boxW - tw) / 2, y + boxH / 2);
+        y += boxH + 16;
+    }
+
+    if (t.showByline !== false && t.byline) {
+        ctx.font = `800 ${t.bylineSize || 18}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.bylineLetterSpacing ?? 0.16) * (t.bylineSize || 18));
+        ctx.fillStyle = t.bylineColor || '#FFFFFF';
+        ctx.textBaseline = 'top';
+        const text = String(t.byline).toUpperCase();
+        const tw = mW(ctx, text);
+        const x = align === 'center' ? (W - tw) / 2 : align === 'right' ? W - padH - tw : padH;
+        if (align === 'center') {
+            const ruleW = 56;
+            const gap = 14;
+            const total = tw + gap * 2 + ruleW * 2;
+            const startX = (W - total) / 2;
+            ctx.fillStyle = t.bannerBorder || '#CC0000';
+            ctx.fillRect(startX, y + (t.bylineSize || 18) / 2, ruleW, 2);
+            ctx.fillStyle = t.bylineColor || '#FFFFFF';
+            ctx.fillText(text, startX + ruleW + gap, y);
+            ctx.fillStyle = t.bannerBorder || '#CC0000';
+            ctx.fillRect(startX + ruleW + gap + tw + gap, y + (t.bylineSize || 18) / 2, ruleW, 2);
+            y += (t.bylineSize || 18) + 18;
+        } else {
+            ctx.fillText(text, x, y);
+            y += (t.bylineSize || 18) + 16;
+        }
+    }
+
+    ctx.font = `${t.bodyWeight || 600} ${t.bodySize || 32}px "${metaFF}", Inter, sans-serif`;
+    setLS(ctx, (t.bodyLetterSpacing ?? -0.01) * (t.bodySize || 32));
+    ctx.fillStyle = t.bodyColor || '#FFFFFF';
+    ctx.textBaseline = 'top';
+    for (const line of bodyLines) {
+        const tw = mW(ctx, line);
+        const x = align === 'center' ? (W - tw) / 2 : align === 'right' ? W - padH - tw : padH;
+        ctx.fillText(line, x, y);
+        y += bodyLH;
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
+}
+
+// ─── TEMPLATE 20 (Scoreline) ──────────────────────────────────────────────────
+async function exportT20(ctx, state, W, H) {
+    const t = state.post.t20 || {};
+    const [bgImg, wmImg, homeCrest, awayCrest] = await Promise.all([
+        loadImg(t.bgImage),
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+        (t.showCrests && t.homeCrest) ? loadImg(t.homeCrest) : null,
+        (t.showCrests && t.awayCrest) ? loadImg(t.awayCrest) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Anton';
+    const metaFF = t.customMetaFontFamily || t.metaFontFamily || 'Inter';
+    await Promise.all([
+        loadFont(`400 ${t.fontSize || 88}px "${ff}"`),
+        loadFont(`800 ${t.teamSize || 20}px "${metaFF}"`),
+        loadFont(`800 ${t.statusSize || 15}px "${metaFF}"`),
+        loadFont(`700 ${t.scorerSize || 17}px "${metaFF}"`),
+    ]);
+
+    ctx.fillStyle = t.bgColor || '#050505';
+    ctx.fillRect(0, 0, W, H);
+    _fillCoverPhoto(ctx, bgImg, t, W, H, t.bgOpacity ?? 1);
+
+    const fadeH = ((t.bottomFadeHeight ?? 34) / 100) * H;
+    const fadeS = t.bottomFadeStrength ?? 0.45;
+    const bfg = ctx.createLinearGradient(0, H - fadeH, 0, H);
+    bfg.addColorStop(0, 'rgba(0,0,0,0)');
+    bfg.addColorStop(1, `rgba(0,0,0,${fadeS})`);
+    ctx.fillStyle = bfg;
+    ctx.fillRect(0, H - fadeH, W, fadeH);
+
+    if ((t.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t.overlayOpacity;
+        ctx.fillStyle = t.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    const inset = t.barInset ?? 24;
+    const bottom = t.barBottom ?? 48;
+    const padV = t.barPadV ?? 18;
+    const padH = t.barPadH ?? 22;
+    const scoreFs = t.fontSize || 84;
+    const teamFs = t.teamSize || 18;
+    const hasCrest = !!(homeCrest || awayCrest);
+    const barH = Math.max(hasCrest ? 140 : 118, scoreFs + padV * 2);
+    const barY = H - bottom - barH;
+    const barW = W - inset * 2;
+    const hex = t.barColor || '#1A0A2E';
+    const r = parseInt(hex.slice(1, 3), 16) || 26;
+    const g = parseInt(hex.slice(3, 5), 16) || 10;
+    const b = parseInt(hex.slice(5, 7), 16) || 46;
+    ctx.save();
+    ctx.fillStyle = `rgba(${r},${g},${b},${t.barOpacity ?? 0.86})`;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(inset, barY, barW, barH, t.barRadius ?? 14);
+    else ctx.rect(inset, barY, barW, barH);
+    ctx.fill();
+    ctx.restore();
+
+    const midY = barY + barH / 2;
+    const home = String(t.homeName || 'HOME').toUpperCase();
+    const away = String(t.awayName || 'AWAY').toUpperCase();
+    const colW = (barW - padH * 2) / 3;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const homeCX = inset + padH + colW / 2;
+    if (homeCrest) {
+        ctx.drawImage(homeCrest, homeCX - 26, midY - 44, 52, 52);
+        ctx.font = `800 ${teamFs}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.teamLetterSpacing ?? 0.06) * teamFs);
+        ctx.fillStyle = t.teamColor || '#FFFFFF';
+        ctx.fillText(home, homeCX, midY + 28);
+    } else {
+        ctx.font = `800 ${teamFs}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.teamLetterSpacing ?? 0.06) * teamFs);
+        ctx.fillStyle = t.teamColor || '#FFFFFF';
+        ctx.fillText(home, homeCX, midY);
+    }
+
+    ctx.font = `400 ${scoreFs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? 0.01) * scoreFs);
+    ctx.fillStyle = t.scoreColor || '#FFFFFF';
+    const hs = String(t.homeScore ?? '0');
+    const as = String(t.awayScore ?? '1');
+    const scoreGap = 18;
+    const midBlock = 78;
+    const totalScores = mW(ctx, hs) + mW(ctx, as) + midBlock + scoreGap * 2;
+    let sx = (W - totalScores) / 2;
+    ctx.textAlign = 'left';
+    ctx.fillText(hs, sx, midY);
+    sx += mW(ctx, hs) + scoreGap;
+    const midCX = sx + midBlock / 2;
+    if (t.showCenterMark !== false) {
+        ctx.font = `800 ${t.markSize || 14}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, 0.18 * (t.markSize || 14));
+        ctx.fillStyle = t.markColor || '#FFFFFF';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(t.centerMark || 'LIVE').toUpperCase(), midCX, midY - 14);
+    }
+    if (t.showStatus !== false) {
+        ctx.font = `800 ${t.statusSize || 14}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.statusLetterSpacing ?? 0.18) * (t.statusSize || 14));
+        ctx.fillStyle = t.statusColor || 'rgba(255,255,255,0.88)';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(t.statusText || 'FULL-TIME').toUpperCase(), midCX, midY + 18);
+    }
+    sx += midBlock + scoreGap;
+    ctx.textAlign = 'left';
+    ctx.font = `400 ${scoreFs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? 0.01) * scoreFs);
+    ctx.fillStyle = t.scoreColor || '#FFFFFF';
+    ctx.fillText(as, sx, midY);
+
+    const awayCX = inset + barW - padH - colW / 2;
+    ctx.textAlign = 'center';
+    if (awayCrest) {
+        ctx.drawImage(awayCrest, awayCX - 26, midY - 44, 52, 52);
+        ctx.font = `800 ${teamFs}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.teamLetterSpacing ?? 0.06) * teamFs);
+        ctx.fillStyle = t.teamColor || '#FFFFFF';
+        ctx.fillText(away, awayCX, midY + 28);
+    } else {
+        ctx.font = `800 ${teamFs}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.teamLetterSpacing ?? 0.06) * teamFs);
+        ctx.fillStyle = t.teamColor || '#FFFFFF';
+        ctx.fillText(away, awayCX, midY);
+    }
+    ctx.textAlign = 'left';
+
+    if (t.showScorer !== false && t.scorer) {
+        ctx.font = `700 ${t.scorerSize || 16}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.scorerLetterSpacing ?? 0.03) * (t.scorerSize || 16));
+        ctx.fillStyle = t.scorerColor || '#FFFFFF';
+        ctx.textBaseline = 'bottom';
+        const sc = String(t.scorer);
+        ctx.fillText(sc, inset + padH, barY - 10);
+    }
+
+    if (t.showDots !== false) {
+        const count = Math.max(2, Math.min(6, t.dotCount || 4));
+        const active = t.activeDot || 0;
+        const size = 8;
+        const gap = 6;
+        const total = count * size + (count - 1) * gap + 12;
+        let dx = (W - total) / 2;
+        const dy = H - 26;
+        ctx.fillStyle = t.dotColor || '#FFFFFF';
+        for (let i = 0; i < count; i += 1) {
+            const w = i === active ? 20 : size;
+            ctx.globalAlpha = i === active ? 1 : 0.45;
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(dx, dy - size / 2, w, size, size / 2);
+            else ctx.rect(dx, dy - size / 2, w, size);
+            ctx.fill();
+            dx += w + gap;
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
+}
+
+// ─── TEMPLATE 21 (Impact) ────────────────────────────────────────────────────
+async function exportT21(ctx, state, W, H) {
+    const t = state.post.t21 || {};
+    const [bgImg, wmImg] = await Promise.all([
+        loadImg(t.bgImage),
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Anton';
+    const metaFF = t.customMetaFontFamily || t.metaFontFamily || 'Inter';
+    const fs = t.fontSize || 150;
+    await Promise.all([
+        loadFont(`${t.fontWeight || 400} ${fs}px "${ff}"`),
+        loadFont(`${t.captionWeight || 700} ${t.captionSize || 24}px "${metaFF}"`),
+    ]);
+
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+    _fillCoverPhoto(ctx, bgImg, t, W, H, t.bgOpacity ?? 1);
+
+    if ((t.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t.overlayOpacity;
+        ctx.fillStyle = t.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    const fadeH = ((t.fadeHeight ?? 46) / 100) * H;
+    const fadeStrength = t.fadeStrength ?? 0.82;
+    const hex = t.fadeColor || '#000000';
+    const r = parseInt(hex.slice(1, 3), 16) || 0;
+    const g = parseInt(hex.slice(3, 5), 16) || 0;
+    const b = parseInt(hex.slice(5, 7), 16) || 0;
+    const grad = ctx.createLinearGradient(0, H - fadeH, 0, H);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+    grad.addColorStop(0.45, `rgba(${r},${g},${b},${fadeStrength * 0.4})`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},${fadeStrength})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H - fadeH, W, fadeH);
+
+    const padH = t.paddingH ?? 28;
+    const align = t.textAlign || 'center';
+    const uppercase = t.uppercase !== false;
+    const hlRaw = String(t.headline || '');
+    const hl = uppercase ? hlRaw.toUpperCase() : hlRaw;
+    const accent = t.highlightColor || '#C83803';
+    ctx.font = `${t.fontWeight || 400} ${fs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? -0.01) * fs);
+    const maxTextW = W - padH * 2;
+    const allLines = [];
+    for (const rawLine of hl.split(/\r?\n/)) {
+        const parts = rawLine.split(/(\[.*?\])/);
+        const words = [];
+        for (const p of parts) {
+            if (!p) continue;
+            if (p.startsWith('[') && p.endsWith(']')) {
+                p.slice(1, -1).split(/\s+/).forEach((w) => { if (w) words.push({ word: w, color: accent }); });
+            } else {
+                p.split(/\s+/).forEach((w) => { if (w) words.push({ word: w, color: t.headlineColor || '#FFFFFF' }); });
+            }
+        }
+        if (!words.length) { allLines.push([]); continue; }
+        for (const line of wrapColored(ctx, words, maxTextW)) allLines.push(line);
+    }
+    const lineH = Math.round(fs * (t.lineHeight ?? 0.99));
+    const stackH = Math.max(1, allLines.length) * lineH;
+    const midY = (H * ((t.headlineTop ?? 50) / 100)) - stackH / 2;
+    let y = midY;
+
+    ctx.font = `${t.fontWeight || 400} ${fs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? -0.01) * fs);
+    ctx.textBaseline = 'top';
+    const shBlur = t.shadowBlur ?? 28;
+    const shAlpha = t.shadowOpacity ?? 0.78;
+    for (const line of allLines) {
+        if (!line.length) { y += lineH; continue; }
+        let lineW = 0;
+        for (let i = 0; i < line.length; i += 1) {
+            lineW += mW(ctx, line[i].word);
+            if (i < line.length - 1) lineW += mW(ctx, ' ');
+        }
+        let x = align === 'left' ? padH : align === 'right' ? W - padH - lineW : (W - lineW) / 2;
+        for (let i = 0; i < line.length; i += 1) {
+            ctx.save();
+            ctx.shadowColor = `rgba(0,0,0,${shAlpha})`;
+            ctx.shadowBlur = shBlur;
+            ctx.shadowOffsetY = Math.round(shBlur * 0.18);
+            ctx.fillStyle = line[i].color;
+            ctx.fillText(line[i].word, x, y);
+            ctx.restore();
+            x += mW(ctx, line[i].word);
+            if (i < line.length - 1) x += mW(ctx, ' ');
+        }
+        y += lineH;
+    }
+
+    if (t.showCaption !== false && t.caption) {
+        ctx.font = `${t.captionWeight || 700} ${t.captionSize || 24}px "${metaFF}", Inter, sans-serif`;
+        setLS(ctx, (t.captionLetterSpacing ?? 0.04) * (t.captionSize || 24));
+        const captionLines = wrapSimple(ctx, String(t.caption).toUpperCase(), maxTextW * ((t.captionMaxWidth || 92) / 100));
+        const captionLH = Math.round((t.captionSize || 24) * (t.captionLineHeight ?? 1.25));
+        let cy = H - (t.paddingBottom ?? 56) - captionLines.length * captionLH;
+        ctx.fillStyle = t.captionColor || '#FFFFFF';
+        for (const line of captionLines) {
+            const tw = mW(ctx, line);
+            const x = align === 'left' ? padH : align === 'right' ? W - padH - tw : (W - tw) / 2;
+            ctx.fillText(line, x, cy);
+            cy += captionLH;
+        }
+    }
+
+    if (t.showDots !== false) {
+        const count = Math.max(2, Math.min(6, t.dotCount || 5));
+        const active = t.activeDot || 0;
+        const size = 8;
+        const gap = 6;
+        let dx = (W - (count * size + (count - 1) * gap + 12)) / 2;
+        const dy = H - 26;
+        ctx.fillStyle = t.dotColor || '#FFFFFF';
+        for (let i = 0; i < count; i += 1) {
+            const w = i === active ? 20 : size;
+            ctx.globalAlpha = i === active ? 1 : 0.45;
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(dx, dy - size / 2, w, size, size / 2);
+            else ctx.rect(dx, dy - size / 2, w, size);
+            ctx.fill();
+            dx += w + gap;
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
+}
+
+// ─── TEMPLATE 22 (Trending) ───────────────────────────────────────────────────
+async function exportT22(ctx, state, W, H) {
+    const t = state.post.t22 || {};
+    const [bgImg, wmImg, markImg] = await Promise.all([
+        loadImg(t.bgImage),
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+        (t.showMark && t.markUrl) ? loadImg(t.markUrl) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Anton';
+    const fs = t.showBanner ? (t.bannerSize || 64) : (t.fontSize || 140);
+    await loadFont(`${t.fontWeight || 400} ${fs}px "${ff}"`);
+
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+    _fillCoverPhoto(ctx, bgImg, t, W, H, t.bgOpacity ?? 1);
+
+    if ((t.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t.overlayOpacity;
+        ctx.fillStyle = t.overlayColor || '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    const fadeH = ((t.fadeHeight ?? 38) / 100) * H;
+    const fadeStrength = t.fadeStrength ?? 0.88;
+    const hex = t.fadeColor || '#6B0000';
+    const r = parseInt(hex.slice(1, 3), 16) || 107;
+    const g = parseInt(hex.slice(3, 5), 16) || 0;
+    const b = parseInt(hex.slice(5, 7), 16) || 0;
+    const grad = ctx.createLinearGradient(0, H - fadeH, 0, H);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0)`);
+    grad.addColorStop(0.55, `rgba(${r},${g},${b},${fadeStrength * 0.45})`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},${fadeStrength})`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H - fadeH, W, fadeH);
+
+    if (markImg) {
+        const size = t.markSize || 180;
+        const bottom = t.markBottom || 210;
+        const natW = markImg.naturalWidth || markImg.width || 1;
+        const natH = markImg.naturalHeight || markImg.height || 1;
+        const h = (natH / natW) * size;
+        ctx.save();
+        ctx.globalAlpha = t.markOpacity ?? 1;
+        ctx.drawImage(markImg, (W - size) / 2, H - bottom - h, size, h);
+        ctx.restore();
+    }
+
+    const padH = t.paddingH ?? 24;
+    const padB = t.paddingBottom ?? 42;
+    const uppercase = t.uppercase !== false;
+    const label = uppercase ? String(t.headline || 'TRENDING').toUpperCase() : String(t.headline || 'TRENDING');
+    ctx.font = `${t.fontWeight || 400} ${fs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, ((t.showBanner ? t.bannerLetterSpacing : t.letterSpacing) ?? 0.01) * fs);
+    const tw = mW(ctx, label.replace(/\[|\]/g, ''));
+
+    if (t.showBanner) {
+        const boxW = Math.min(W - padH * 2, tw + 56);
+        const boxH = fs + 20;
+        const bx = (W - boxW) / 2;
+        const by = H - padB - boxH;
+        ctx.fillStyle = t.bannerBg || '#C6011F';
+        ctx.strokeStyle = t.bannerBorder || '#FFFFFF';
+        ctx.lineWidth = t.bannerBorderWidth ?? 4;
+        ctx.fillRect(bx, by, boxW, boxH);
+        ctx.strokeRect(bx, by, boxW, boxH);
+        ctx.fillStyle = t.bannerColor || '#FFFFFF';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label.replace(/\[|\]/g, ''), (W - tw) / 2, by + boxH / 2);
+    } else {
+        const text = label.replace(/\[|\]/g, '');
+        const topY = H - padB - fs;
+        const botY = H - padB;
+        const fade = ctx.createLinearGradient(0, topY, 0, botY);
+        fade.addColorStop(0, t.headlineColor || '#FFFFFF');
+        fade.addColorStop(1, t.headlineFadeColor || '#C8C8C8');
+        ctx.fillStyle = fade;
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(text, (W - tw) / 2, botY);
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
+}
+
+// ─── TEMPLATE 23 (World Tape / 1:1 gossip) ────────────────────────────────────
+async function exportT23(ctx, state, W, H) {
+    const t = state.post.t23 || {};
+    const dual = t.showDual !== false;
+    const imgH = Math.round((Math.min(75, Math.max(50, t.imageSplit ?? 64)) / 100) * H);
+    const leftW = dual
+        ? Math.round(W * (Math.min(70, Math.max(30, t.leftWidth ?? 43)) / 100))
+        : W;
+    const rightW = W - leftW;
+    const [leftImg, rightImg, logoImg, wmImg] = await Promise.all([
+        loadImg(t.imageLeft),
+        dual ? loadImg(t.imageRight || t.imageLeft) : null,
+        (t.showRibbon !== false && t.logoUrl) ? loadImg(t.logoUrl) : null,
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Impact';
+    const metaFF = t.customMetaFontFamily || t.metaFontFamily || 'Impact';
+    const fsSize = t.fontSize || 72;
+    await Promise.all([
+        loadFont(`${t.fontWeight || 400} ${fsSize}px "${ff}"`),
+        loadFont(`400 ${t.badgeSize || 20}px "${metaFF}"`),
+        loadFont(`400 ${t.siteSize || 13}px "${metaFF}"`),
+    ]);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+
+    if (leftImg) {
+        ctx.save();
+        if ((t.bgOpacity ?? 1) < 1) ctx.globalAlpha = t.bgOpacity;
+        drawCover(ctx, leftImg, 0, 0, leftW, imgH,
+            t.leftPosX ?? 48, t.leftPosY ?? 42, (t.leftScale ?? 100) / 100);
+        ctx.restore();
+    }
+    if (dual && rightImg) {
+        ctx.save();
+        if ((t.bgOpacity ?? 1) < 1) ctx.globalAlpha = t.bgOpacity;
+        drawCover(ctx, rightImg, leftW, 0, rightW, imgH,
+            t.rightPosX ?? 4, t.rightPosY ?? 12, (t.rightScale ?? 100) / 100);
+        ctx.restore();
+    }
+    if (dual && t.imageSeparator) {
+        ctx.fillStyle = t.separatorColor || '#000';
+        ctx.fillRect(leftW - (t.separatorWidth || 2) / 2, 0, t.separatorWidth || 2, imgH);
+    }
+
+    if (t.showRibbon !== false) {
+        const size = t.ribbonSize || 140;
+        ctx.fillStyle = t.ribbonColor || '#000000';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(size, 0);
+        ctx.lineTo(0, size);
+        ctx.closePath();
+        ctx.fill();
+        const markSize = t.logoSize || 60;
+        if (logoImg) {
+            ctx.drawImage(logoImg, 14, 14, markSize, markSize);
+        } else {
+            ctx.fillStyle = '#ba5518';
+            ctx.font = `900 ${Math.round(markSize * 0.7)}px "${ff}", Impact, sans-serif`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('W', 16, 16);
+        }
+    }
+
+    const footerY = imgH;
+    ctx.fillStyle = t.footerBg || '#000000';
+    ctx.fillRect(0, footerY, W, H - imgH);
+
+    const padH = t.paddingH ?? 52;
+    const padTop = t.paddingTop ?? 34;
+    const padBottom = t.paddingBottom ?? 26;
+    const uppercase = t.uppercase !== false;
+    const align = t.textAlign || 'center';
+    const accent = t.highlightColor || '#CC0000';
+
+    if (t.showBadge !== false) {
+        const label = String(t.badgeText || 'VIA NOBODY').toUpperCase();
+        const bFs = t.badgeSize || 20;
+        ctx.font = `400 ${bFs}px "${metaFF}", Impact, sans-serif`;
+        setLS(ctx, (t.badgeLetterSpacing ?? 0.06) * bFs);
+        const tw = mW(ctx, label);
+        const boxW = tw + 24;
+        const boxH = bFs + 11;
+        const bx = (W - boxW) / 2;
+        const by = footerY + (t.badgeOffset ?? -14);
+        ctx.fillStyle = t.badgeBg || '#ba5518';
+        ctx.fillRect(bx, by, boxW, boxH);
+        ctx.fillStyle = t.badgeColor || '#FFFFFF';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, bx + 12, by + boxH / 2);
+    }
+
+    ctx.font = `${t.fontWeight || 400} ${fsSize}px "${ff}", Impact, "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? -0.01) * fsSize);
+    const lines = [];
+    for (const rawLine of String(t.headline || '').split(/\r?\n/)) {
+        const words = [];
+        for (const p of rawLine.split(/(\[.*?\])/)) {
+            if (!p) continue;
+            if (p.startsWith('[') && p.endsWith(']')) {
+                const body = uppercase ? p.slice(1, -1).toUpperCase() : p.slice(1, -1);
+                body.split(/\s+/).forEach((w) => { if (w) words.push({ word: w, color: accent }); });
+            } else {
+                const body = uppercase ? p.toUpperCase() : p;
+                body.split(/\s+/).forEach((w) => { if (w) words.push({ word: w, color: t.headlineColor || '#FFFFFF' }); });
+            }
+        }
+        if (!words.length) { lines.push([]); continue; }
+        for (const line of wrapColored(ctx, words, W - padH * 2)) lines.push(line);
+    }
+    const lineH = Math.round(fsSize * (t.lineHeight ?? 0.98));
+    const siteBlock = (t.showSite !== false) ? (t.siteSize || 13) + 18 : 0;
+    const textH = Math.max(1, lines.length) * lineH;
+    let y = footerY + padTop + Math.max(0, (H - footerY - padTop - padBottom - textH - siteBlock) / 2);
+    ctx.textBaseline = 'top';
+    for (const line of lines) {
+        if (!line.length) { y += lineH; continue; }
+        let lineW = 0;
+        for (let i = 0; i < line.length; i += 1) {
+            lineW += mW(ctx, line[i].word);
+            if (i < line.length - 1) lineW += mW(ctx, ' ');
+        }
+        let x = align === 'left' ? padH : align === 'right' ? W - padH - lineW : (W - lineW) / 2;
+        for (let i = 0; i < line.length; i += 1) {
+            ctx.fillStyle = line[i].color;
+            ctx.fillText(line[i].word, x, y);
+            x += mW(ctx, line[i].word);
+            if (i < line.length - 1) x += mW(ctx, ' ');
+        }
+        y += lineH;
+    }
+
+    if (t.showSite !== false) {
+        const site = String(t.siteText || 'WORLDSTAR.COM').toUpperCase();
+        const sFs = t.siteSize || 13;
+        ctx.font = `400 ${sFs}px "${metaFF}", Impact, sans-serif`;
+        setLS(ctx, (t.siteLetterSpacing ?? 0.16) * sFs);
+        const tw = mW(ctx, site);
+        const gap = 10;
+        const ruleW = 52;
+        const total = tw + gap * 2 + ruleW * 2;
+        const startX = (W - total) / 2;
+        const sy = H - padBottom - sFs;
+        const midY = sy + sFs / 2;
+        ctx.fillStyle = t.siteRuleColor || '#ba5518';
+        ctx.fillRect(startX, midY - 1, ruleW, 2);
+        ctx.fillStyle = t.siteColor || '#C8C8C8';
+        ctx.textBaseline = 'top';
+        ctx.fillText(site, startX + ruleW + gap, sy);
+        ctx.fillStyle = t.siteRuleColor || '#ba5518';
+        ctx.fillRect(startX + ruleW + gap + tw + gap, midY - 1, ruleW, 2);
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
+}
+
+// ─── TEMPLATE 24 (Match Tape / 1:1 full-time grain wash) ──────────────────────
+async function exportT24(ctx, state, W, H) {
+    const t = state.post.t24 || {};
+    const [bgImg, wmImg, homeCrest, awayCrest, markImg, patternImg] = await Promise.all([
+        loadImg(t.bgImage),
+        (t.showWatermark && t.watermarkUrl) ? loadImg(t.watermarkUrl) : null,
+        (t.showCrests && t.homeCrest) ? loadImg(t.homeCrest) : null,
+        (t.showCrests && t.awayCrest) ? loadImg(t.awayCrest) : null,
+        (t.showCenterMark !== false && t.centerMarkUrl) ? loadImg(t.centerMarkUrl) : null,
+        (t.showPattern && (t.patternUrl || t.watermarkUrl)) ? loadImg(t.patternUrl || t.watermarkUrl) : null,
+    ]);
+    const ff = t.customFontFamily || t.fontFamily || 'Anton';
+    const metaFF = t.customMetaFontFamily || t.metaFontFamily || 'Inter';
+    const scoreFs = t.fontSize || 125;
+    const teamFs = t.teamSize || 32;
+    const scorerFs = t.scorerSize || 15;
+    const statusFs = t.statusSize || 13;
+    const teamWeight = t.teamWeight || 800;
+    const statusWeight = t.statusWeight || 800;
+    const scorerWeight = t.scorerWeight || 600;
+    await Promise.all([
+        loadFont(`400 ${scoreFs}px "${ff}"`),
+        loadFont(`${teamWeight} ${teamFs}px "${metaFF}"`),
+        loadFont(`${statusWeight} ${statusFs}px "${metaFF}"`),
+        loadFont(`${scorerWeight} ${scorerFs}px "${metaFF}"`),
+        loadFont(`800 ${scorerFs}px "${metaFF}"`),
+    ]);
+
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+    _fillCoverPhoto(ctx, bgImg, t, W, H, t.bgOpacity ?? 1);
+
+    if ((t.overlayOpacity ?? 0) > 0) {
+        ctx.save();
+        ctx.globalAlpha = t.overlayOpacity;
+        ctx.fillStyle = t.overlayColor || '#FFFFFF';
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+    }
+
+    if ((t.noiseAmount || 0) > 0) applyGrain(ctx, W, H, t.noiseAmount);
+
+    const washH = ((t.washHeight ?? 40) / 100) * H;
+    const washHex = t.washColor || '#A855F7';
+    const wr = parseInt(washHex.slice(1, 3), 16) || 168;
+    const wg = parseInt(washHex.slice(3, 5), 16) || 85;
+    const wb = parseInt(washHex.slice(5, 7), 16) || 247;
+    const peak = t.washOpacity ?? 0.46;
+    const washGrad = ctx.createLinearGradient(0, H - washH, 0, H);
+    washGrad.addColorStop(0, `rgba(${wr},${wg},${wb},0)`);
+    washGrad.addColorStop(0.38, `rgba(${wr},${wg},${wb},${peak * 0.45})`);
+    washGrad.addColorStop(0.72, `rgba(${wr},${wg},${wb},${peak * 0.88})`);
+    washGrad.addColorStop(1, `rgba(${wr},${wg},${wb},${peak})`);
+    ctx.fillStyle = washGrad;
+    ctx.fillRect(0, H - washH, W, washH);
+
+    if (patternImg && (t.patternOpacity ?? 0) > 0) {
+        const tile = t.patternSize || 98;
+        const icons = buildWashPatternLayout({
+            width: W,
+            height: washH,
+            count: t.patternCount ?? 8,
+            iconSize: tile,
+            gap: t.patternGap ?? 183,
+            random: t.patternRandom !== false,
+            jitter: t.patternJitter ?? 93,
+            padTop: t.patternPadTop ?? 0,
+            padLeft: t.patternPadLeft ?? 79,
+            padRight: t.patternPadRight ?? 0,
+            padBottom: t.patternPadBottom ?? 0,
+            seed: t.patternSeed ?? 49,
+        });
+        // Match preview: white silhouette on transparent (zia/etc often ship on black squares)
+        const tileCanvas = document.createElement('canvas');
+        tileCanvas.width = tile;
+        tileCanvas.height = tile;
+        const tctx = tileCanvas.getContext('2d');
+        tctx.drawImage(patternImg, 0, 0, tile, tile);
+        const pix = tctx.getImageData(0, 0, tile, tile);
+        const data = pix.data;
+        for (let i = 0; i < data.length; i += 4) {
+            const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            const a = data[i + 3];
+            if (a < 8 || lum < 28) {
+                data[i + 3] = 0;
+            } else {
+                data[i] = 255;
+                data[i + 1] = 255;
+                data[i + 2] = 255;
+                data[i + 3] = Math.min(255, Math.round(a * Math.min(1.4, lum / 90)));
+            }
+        }
+        tctx.putImageData(pix, 0, 0);
+
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, (t.patternOpacity ?? 0.25) * 1.35);
+        ctx.globalCompositeOperation = 'soft-light';
+        const washTop = H - washH;
+        for (const icon of icons) {
+            ctx.drawImage(tileCanvas, icon.x, washTop + icon.y);
+        }
+        // second pass keeps marks readable on purple wash (soft-light alone can vanish)
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.globalAlpha = Math.min(1, (t.patternOpacity ?? 0.25) * 0.55);
+        for (const icon of icons) {
+            ctx.drawImage(tileCanvas, icon.x, washTop + icon.y);
+        }
+        ctx.restore();
+    }
+
+    const inset = t.boardInset ?? 34;
+    const bottom = t.boardBottom ?? 52;
+    const crestSize = t.crestSize || 96;
+    const crestR = t.crestRadius ?? 0;
+    const tileHex = t.crestTileColor || '#cba3f0';
+    const tr = parseInt(tileHex.slice(1, 3), 16) || 203;
+    const tg = parseInt(tileHex.slice(3, 5), 16) || 163;
+    const tb = parseInt(tileHex.slice(5, 7), 16) || 240;
+    const tileA = t.crestTileOpacity ?? 0.64;
+    const teamGap = t.teamGap ?? 9;
+    const scorerGap = t.scorerGap ?? 6;
+    const hasScorer = t.showScorer !== false && t.scorer;
+    const boardH = crestSize + teamGap + teamFs + (hasScorer ? scorerGap + scorerFs : 0) + 8;
+    const boardTop = H - bottom - boardH;
+    const colW = (W - inset * 2) / 3;
+    const homeCX = inset + colW / 2;
+    const awayCX = inset + colW * 2.5;
+    const midCX = W / 2;
+
+    function drawCrestTile(cx, crest) {
+        if (!crest) return;
+        const x = cx - crestSize / 2;
+        const y = boardTop;
+        ctx.fillStyle = `rgba(${tr},${tg},${tb},${tileA})`;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(x, y, crestSize, crestSize, crestR);
+        else ctx.rect(x, y, crestSize, crestSize);
+        ctx.fill();
+        const pad = crestSize * 0.15;
+        ctx.drawImage(crest, x + pad, y + pad, crestSize - pad * 2, crestSize - pad * 2);
+    }
+
+    if (t.showCrests !== false) {
+        drawCrestTile(homeCX, homeCrest);
+        drawCrestTile(awayCX, awayCrest);
+    }
+
+    const nameY = boardTop + crestSize + teamGap;
+    const teamStyle = t.teamStyle === 'italic' ? 'italic' : 'normal';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.font = `${teamStyle} ${teamWeight} ${teamFs}px "${metaFF}", Inter, sans-serif`;
+    setLS(ctx, (t.teamLetterSpacing ?? 0.08) * teamFs);
+    ctx.fillStyle = t.teamColor || '#FFFFFF';
+    ctx.fillText(String(t.homeName || 'HOME').toUpperCase(), homeCX, nameY);
+    ctx.fillText(String(t.awayName || 'AWAY').toUpperCase(), awayCX, nameY);
+
+    const hs = String(t.homeScore ?? '0');
+    const as = String(t.awayScore ?? '1');
+    const markPx = t.markSize || 36;
+    const scoreGap = t.scoreGap ?? 14;
+    const markGap = t.markGap ?? 14;
+    ctx.font = `400 ${scoreFs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? 0.01) * scoreFs);
+    const scoresW = mW(ctx, hs) + mW(ctx, as) + markPx + scoreGap + markGap;
+    let sx = midCX - scoresW / 2;
+    const scoreBaseline = boardTop + crestSize * 0.72;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = t.scoreColor || '#FFFFFF';
+    ctx.fillText(hs, sx, scoreBaseline);
+    sx += mW(ctx, hs) + markGap;
+    if (t.showCenterMark !== false) {
+        const mx = sx + (t.markOffsetX || 0);
+        const my = scoreBaseline - markPx * 0.82 + (t.markOffsetY || 0);
+        if (markImg) {
+            const off = document.createElement('canvas');
+            off.width = markPx;
+            off.height = markPx;
+            const octx = off.getContext('2d');
+            octx.drawImage(markImg, 0, 0, markPx, markPx);
+            const markColor = t.markColor || '#FFFFFF';
+            if (String(markColor).toUpperCase() !== '#FFFFFF') {
+                octx.globalCompositeOperation = 'source-in';
+                octx.fillStyle = markColor;
+                octx.fillRect(0, 0, markPx, markPx);
+            }
+            ctx.save();
+            ctx.globalAlpha = t.markOpacity ?? 1;
+            ctx.drawImage(off, mx, my);
+            ctx.restore();
+        } else {
+            ctx.font = `800 ${Math.max(12, markPx * 0.4)}px "${metaFF}", Inter, sans-serif`;
+            setLS(ctx, 0.12 * Math.max(12, markPx * 0.4));
+            ctx.textAlign = 'center';
+            ctx.globalAlpha = t.markOpacity ?? 1;
+            ctx.fillStyle = t.markColor || '#FFFFFF';
+            ctx.fillText(String(t.centerMark || 'FT').toUpperCase(), mx + markPx / 2, scoreBaseline - markPx * 0.2 + (t.markOffsetY || 0));
+            ctx.globalAlpha = 1;
+            ctx.textAlign = 'left';
+        }
+    }
+    sx += markPx + scoreGap;
+    ctx.font = `400 ${scoreFs}px "${ff}", "Arial Narrow", sans-serif`;
+    setLS(ctx, (t.letterSpacing ?? 0.01) * scoreFs);
+    ctx.fillStyle = t.scoreColor || '#FFFFFF';
+    ctx.fillText(as, sx, scoreBaseline);
+
+    function drawStyledLine(runs, xCenter, y, size, tracking, color) {
+        ctx.textBaseline = 'top';
+        let total = 0;
+        for (const run of runs) {
+            const style = run.style === 'italic' ? 'italic' : 'normal';
+            ctx.font = `${style} ${run.weight} ${size}px "${metaFF}", Inter, sans-serif`;
+            setLS(ctx, tracking * size);
+            total += mW(ctx, run.text);
+        }
+        let x = xCenter - total / 2;
+        ctx.fillStyle = color;
+        for (const run of runs) {
+            const style = run.style === 'italic' ? 'italic' : 'normal';
+            ctx.font = `${style} ${run.weight} ${size}px "${metaFF}", Inter, sans-serif`;
+            setLS(ctx, tracking * size);
+            ctx.textAlign = 'left';
+            ctx.fillText(run.text, x, y);
+            x += mW(ctx, run.text);
+        }
+    }
+
+    if (t.showStatus !== false) {
+        const runs = parseStyledRuns(
+            String(t.statusText || 'FULL-TIME'),
+            statusWeight,
+            t.statusStyle || 'normal',
+        ).map((run) => ({ ...run, text: run.text.toUpperCase() }));
+        drawStyledLine(
+            runs,
+            midCX + (t.statusOffsetX || 0),
+            scoreBaseline + (t.statusGap ?? 6) + (t.statusOffsetY || 0),
+            statusFs,
+            t.statusLetterSpacing ?? 0.2,
+            t.statusColor || 'rgba(255,255,255,0.92)',
+        );
+    }
+
+    if (hasScorer) {
+        const runs = parseStyledRuns(String(t.scorer), scorerWeight, t.scorerStyle || 'normal');
+        drawStyledLine(
+            runs,
+            awayCX + (t.scorerOffsetX || 0),
+            nameY + teamFs + scorerGap + (t.scorerOffsetY || 0),
+            scorerFs,
+            t.scorerLetterSpacing ?? 0.02,
+            t.scorerColor || 'rgba(255,255,255,0.88)',
+        );
+    }
+
+    if (t.showDots !== false) {
+        const count = Math.max(2, Math.min(6, t.dotCount || 2));
+        const active = t.activeDot || 0;
+        const size = 8;
+        const gapDot = 6;
+        let dx = (W - (count * size + (count - 1) * gapDot + 12)) / 2;
+        const dy = H - 24;
+        ctx.fillStyle = t.dotColor || '#FFFFFF';
+        for (let i = 0; i < count; i += 1) {
+            const wDot = i === active ? 20 : size;
+            ctx.globalAlpha = i === active ? 1 : 0.45;
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(dx, dy - size / 2, wDot, size, size / 2);
+            else ctx.rect(dx, dy - size / 2, wDot, size);
+            ctx.fill();
+            dx += wDot + gapDot;
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    _drawWm(ctx, wmImg, t, W, H);
 }
 
 // ─── MAIN EXPORT FUNCTION ─────────────────────────────────────────────────────

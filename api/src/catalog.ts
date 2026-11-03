@@ -33,6 +33,7 @@ export type CatalogTemplate = {
   name: string
   note: string
   description: string
+  pro?: boolean
   square: boolean
   size: { width: number; height: number }
   stateKey: string
@@ -65,11 +66,23 @@ export function listTemplates() {
     name: template.name,
     note: template.note,
     description: template.description,
+    pro: Boolean(template.pro),
     square: template.square,
     size: template.size,
     stateKey: template.stateKey,
     previewImage: template.previewImage,
   }))
+}
+
+export function assertTemplatePlan(template: CatalogTemplate, planId: string | undefined) {
+  if (!template.pro) return
+  if (planId === 'pro') return
+  throw new HttpError(
+    402,
+    'pro_required',
+    `${template.name} is a Pro layout. Upgrade to Pro to render it.`,
+    { template: template.id, slug: template.slug },
+  )
 }
 
 export function getTemplate(idOrSlug: string) {
@@ -100,6 +113,7 @@ export function templateDetail(template: CatalogTemplate) {
     name: template.name,
     note: template.note,
     description: template.description,
+    pro: Boolean(template.pro),
     square: template.square,
     size: template.size,
     stateKey: template.stateKey,

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MarketingShell from '@/components/marketing/MarketingShell.vue'
 import CodeBlock from '@/components/marketing/CodeBlock.vue'
@@ -9,11 +9,21 @@ import '@/assets/marketing.css'
 const route = useRoute()
 const router = useRouter()
 const email = ref('')
+const redeemCode = ref('')
 const status = ref('')
 const busy = ref(false)
 const me = ref(null)
 const revealedKey = ref('')
 const checkoutNote = ref('')
+
+const isPro = computed(() => me.value?.quota?.plan === 'pro')
+const proUntilLabel = computed(() => {
+  const raw = me.value?.quota?.proUntil || me.value?.app?.proUntil
+  if (!raw) return ''
+  const date = new Date(raw)
+  if (!Number.isFinite(date.getTime())) return ''
+  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+})
 
 async function refresh() {
   const token = getSession()
@@ -105,6 +115,27 @@ async function portal() {
   }
 }
 
+async function redeem() {
+  busy.value = true
+  status.value = 'Checking code...'
+  try {
+    const result = await apiRequest('/v1/me/redeem', {
+      method: 'POST',
+      body: { code: redeemCode.value },
+    })
+    me.value = {
+      app: result.app,
+      quota: result.quota,
+    }
+    redeemCode.value = ''
+    status.value = result.message || 'Code redeemed.'
+  } catch (error) {
+    status.value = error.message || 'Could not redeem that code.'
+  } finally {
+    busy.value = false
+  }
+}
+
 function signOut() {
   setSession('')
   me.value = null
@@ -113,7 +144,7 @@ function signOut() {
 }
 
 async function destroy() {
-  if (!window.confirm('Delete this API account, keys, and designs? Pro will cancel.')) return
+  if (!window.confirm('Delete this account, keys, and designs? Pro will cancel.')) return
   busy.value = true
   try {
     await apiRequest('/v1/me', { method: 'DELETE' })
@@ -142,9 +173,9 @@ onMounted(async () => {
   <MarketingShell footer="mini">
     <main id="content" class="m-account">
       <p class="m-docs-kicker">Account</p>
-      <h1>{{ me ? 'Your API account' : 'Sign in with email.' }}</h1>
+      <h1>{{ me ? 'Your Instatools account' : 'Sign in with email.' }}</h1>
       <p class="m-docs-lead">
-        We email a login link. No password. Buy Pro with this same email, even before you have a key.
+        We email a login link. No password. Manage Pro layouts, API keys, redeem codes, and billing from here.
       </p>
       <p v-if="checkoutNote" class="m-plan-status">{{ checkoutNote }}</p>
 
@@ -168,11 +199,35 @@ onMounted(async () => {
             <span>{{ me.quota.rendersUsed }} / {{ me.quota.rendersLimit }} renders this month</span>
           </div>
           <p class="m-plan-note">{{ me.quota.designsUsed }} / {{ me.quota.maxDesigns }} saved designs</p>
+          <p class="m-plan-note">
+            <template v-if="isPro && proUntilLabel">Pro layouts unlocked until {{ proUntilLabel }}.</template>
+            <template v-else-if="isPro">Pro layouts unlocked in the editor and API.</template>
+            <template v-else>Upgrade for Cutout Stack, Launch, Smoke Cutout, World Tape, and Match Tape.</template>
+          </p>
           <div class="m-account-actions">
-            <button v-if="me.quota.plan !== 'pro'" class="btn-try" type="button" :disabled="busy" @click="upgrade">Upgrade to Pro</button>
-            <button v-else class="btn-ghost" type="button" :disabled="busy" @click="portal">Manage billing</button>
+            <button v-if="!isPro" class="btn-try" type="button" :disabled="busy" @click="upgrade">Upgrade to Pro</button>
+            <button v-else-if="me.app.proSource !== 'redeem'" class="btn-ghost" type="button" :disabled="busy" @click="portal">Manage billing</button>
             <button class="btn-ghost" type="button" @click="signOut">Sign out</button>
           </div>
+        </div>
+
+        <div class="m-account-card">
+          <h2>Redeem code</h2>
+          <p class="m-plan-note">Have a promo code? Redeem it here for one month of Pro. Each code works once.</p>
+          <form class="m-plan-form" @submit.prevent="redeem">
+            <label>
+              Code
+              <input
+                v-model="redeemCode"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                required
+                placeholder="XXXX-XXXX-XXXX"
+              />
+            </label>
+            <button class="btn-try" type="submit" :disabled="busy || !redeemCode.trim()">Redeem</button>
+          </form>
         </div>
 
         <div class="m-account-card">

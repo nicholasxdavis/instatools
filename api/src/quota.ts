@@ -1,6 +1,6 @@
 import type { AppRecord } from './auth'
 import { HttpError } from './http'
-import { monthKey, planOf } from './plans'
+import { effectivePlanId, monthKey, planOf } from './plans'
 
 type Usage = { renders: number }
 
@@ -14,7 +14,7 @@ export async function readUsage(env: Env, appId: string) {
 }
 
 export async function quotaSnapshot(env: Env, app: AppRecord) {
-  const plan = planOf(app.plan)
+  const plan = planOf(effectivePlanId(app))
   const usage = await readUsage(env, app.id)
   return {
     plan: plan.id,
@@ -25,6 +25,8 @@ export async function quotaSnapshot(env: Env, app: AppRecord) {
     rendersRemaining: Math.max(0, plan.rendersPerMonth - usage.renders),
     designsUsed: 0,
     maxDesigns: plan.maxDesigns,
+    proUntil: effectivePlanId(app) === 'pro' ? app.proUntil || null : null,
+    proSource: effectivePlanId(app) === 'pro' ? app.proSource || null : null,
   }
 }
 
@@ -51,7 +53,7 @@ export async function consumeRender(env: Env, app: AppRecord) {
 }
 
 export async function assertDesignQuota(env: Env, app: AppRecord, currentCount: number) {
-  const plan = planOf(app.plan)
+  const plan = planOf(effectivePlanId(app))
   if (currentCount >= plan.maxDesigns) {
     throw new HttpError(
       429,

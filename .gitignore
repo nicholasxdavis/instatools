@@ -30,3 +30,10 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Holder + textures ship from instatools-cdn (jsDelivr). Do not re-add to public/.
+public/holder/
+public/textures/
+# Full-res theme captures are intermediates for `npm run thumbs` → public/themes/cards/
+public/themes/template*.png
+.tmp-*.json

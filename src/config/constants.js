@@ -3,6 +3,7 @@ export const POST_HEIGHT = 1350
 export const HIGHLIGHT_SIZE = 1080
 
 export const PRESETS_KEY = 'ig_news_gen_presets_vanilla_v1'
+export const DRAFT_KEY = 'instatools_editor_draft_v1'
 export const MOBILE_SPLIT_KEY = 'instatools_mobile_split'
 export const EDITOR_WIDTH_KEY = 'instatools_editor_width'
 export const EDITOR_WIDTH_DEFAULT = 300
@@ -14,6 +15,7 @@ export const FONTS = [
   'Anton',
   'Bebas Neue',
   'DM Sans',
+  'Impact',
   'Inter',
   'Montserrat',
   'Oswald',
