@@ -10,9 +10,7 @@ await mkdir(publicDir, { recursive: true })
 const browser = await chromium.launch()
 const page = await browser.newPage()
 
-await page.setViewportSize({ width: 1200, height: 630 })
-await page.goto(pathToFileURL(join(root, 'scripts/og-card.html')).href, { waitUntil: 'networkidle' })
-await page.locator('.card').screenshot({ path: join(publicDir, 'og.png'), type: 'png' })
+// og.png / share.png come from `npm run share` (scripts/share-card.html). Do not overwrite here.
 
 const favicon = pathToFileURL(join(publicDir, 'favicon.svg')).href
 async function raster(size, file, pad = 0.18) {

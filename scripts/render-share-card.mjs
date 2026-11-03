@@ -14,7 +14,8 @@ const page = await browser.newPage({
   deviceScaleFactor: 1,
 })
 await page.goto(html, { waitUntil: 'networkidle', timeout: 60000 })
-await page.waitForTimeout(800)
+await page.locator('.post-photo').evaluate((img) => (img.complete ? null : new Promise((r) => { img.onload = r; img.onerror = r })))
+await page.waitForTimeout(400)
 const card = page.locator('.card')
 await card.waitFor({ state: 'visible' })
 const og = join(outDir, 'og.png')

@@ -18,7 +18,7 @@ export const SITE = {
     sharePath: '/share.png',
     width: 1200,
     height: 630,
-    alt: 'Instatools free Instagram post maker with ready-to-edit layouts on a light marketing canvas',
+    alt: 'Instatools free Instagram post maker editing a layout headline in the browser',
     type: 'image/png',
   },
 }
